@@ -537,7 +537,11 @@ function showTab(tab){
  const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress"};
  const group=groups[tab]||"tasks";
  document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
- document.querySelectorAll(".subtab-group").forEach(x=>x.classList.toggle("hidden",x.dataset.subgroup!==group));
+ document.querySelectorAll("#subTabs .subtab-group").forEach(x=>{
+  const visible=x.dataset.subgroup===group;
+  x.classList.toggle("hidden",!visible);
+  x.style.setProperty("display",visible?"flex":"none","important");
+ });
  document.querySelectorAll(".subtab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
  const subTabs=$("subTabs");if(subTabs)subTabs.classList.remove("hidden");
  const hero=document.querySelector(".hero");if(hero)hero.classList.toggle("hidden",tab!=="board");
