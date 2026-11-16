@@ -8,8 +8,8 @@ export const firebaseConfig = {
   appId: "1:724192963087:web:dffbcd20963a43ab1a117a"
 };
 
-// Замени email на реальные адреса Егора и Даниила (строчными буквами).
+// Учётные записи двух учеников.
 export const members = {
-  "egor@example.com": { id: "egor", name: "Егор" },
-  "danila@example.com": { id: "daniil", name: "Даниил" }
+  "egor.fateew@icloud.com": { id: "egor", name: "Егор" },
+  "egorfateew@yandex.ru": { id: "daniil", name: "Даниил" }
 };
