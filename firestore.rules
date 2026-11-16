@@ -4,8 +4,8 @@ service cloud.firestore {
     function isAllowedStudent() {
       return request.auth != null
         && request.auth.token.email in [
-          'egor@example.com',
-          'danila@example.com'
+          'egor.fateew@icloud.com',
+          'egorfateew@yandex.ru'
         ];
     }
 
