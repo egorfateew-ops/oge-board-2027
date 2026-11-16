@@ -515,3 +515,125 @@ button.calendar-cell:hover{border-color:#c9c5ff;background:#fbfaff}
   #subTabs .subtab-group{gap:17px!important}
   #subTabs .subtab{min-height:31px!important;padding:5px 1px 7px!important;font-size:11px!important}
 }
+
+
+
+/* Complete learning platform: mistakes, knowledge, daily plan, duels and focus */
+.smart-plan{padding:22px;margin-bottom:14px}
+.smart-plan-head{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.smart-plan-head h2{margin:3px 0 5px;font-size:23px;letter-spacing:-.04em}
+.smart-plan-head p{margin:0;color:var(--muted);font-size:12px}
+.smart-plan-summary{margin:16px 0 10px;color:var(--muted);font-size:11px}
+.smart-plan-items{display:grid;gap:8px}
+.smart-plan-item{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.smart-plan-item.is-done{opacity:.62}
+.smart-plan-check{flex:0 0 24px;display:grid;place-items:center}
+.smart-plan-check input{width:17px;height:17px;accent-color:var(--accent)}
+.smart-plan-copy{flex:1;min-width:0}
+.smart-plan-copy small{display:block;color:var(--accent);font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.smart-plan-copy b{display:block;margin:3px 0;font-size:13px}
+.smart-plan-copy p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+.smart-plan-item.is-done .smart-plan-copy b{text-decoration:line-through}
+.knowledge-map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.knowledge-subject{padding:17px}
+.knowledge-subject-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.knowledge-subject-head h3{margin:0;font-size:16px}
+.knowledge-subject-head small{color:var(--muted);font-size:10px}
+.knowledge-subject-head>b{color:var(--accent);font-size:20px}
+.knowledge-progress{height:6px;margin:12px 0;border-radius:20px;background:var(--soft2);overflow:hidden}
+.knowledge-progress span{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#7771ff,#aaa6ff)}
+.knowledge-topic-list{display:grid;gap:5px}
+.knowledge-topic{display:flex;align-items:center;gap:9px;width:100%;padding:9px 8px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);text-align:left;font-size:11px}
+.knowledge-topic:hover{border-color:var(--line);background:var(--soft)}
+.knowledge-topic>span:nth-child(2){flex:1}
+.knowledge-topic small{color:var(--muted);font-size:9px;white-space:nowrap}
+.knowledge-status-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#c3c9d4}
+.knowledge-topic.done .knowledge-status-dot{background:#28a879}
+.knowledge-topic.doing .knowledge-status-dot{background:#e5ad45}
+.knowledge-topic.weak .knowledge-status-dot{background:#df6868}
+.knowledge-topic.done small{color:#20845e}
+.knowledge-topic.weak small{color:#c34e4e}
+.mistakes-toolbar{display:flex;gap:9px;padding:12px;margin-bottom:12px}
+.mistakes-toolbar .field{max-width:220px}
+.mistake-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mistake-card{padding:16px}
+.mistake-card.resolved{opacity:.72}
+.mistake-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.mistake-card-head .eyebrow{color:var(--accent);font-size:9px}
+.mistake-card-head h3{margin:5px 0 0;font-size:13px;line-height:1.5}
+.mistake-status{flex:0 0 auto;padding:5px 8px;border-radius:8px;background:var(--yellowSoft);color:#95691d;font-size:9px;font-weight:750}
+.mistake-card.resolved .mistake-status{background:var(--greenSoft);color:var(--green)}
+.mistake-answers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.mistake-answers>div{min-width:0;padding:9px;border-radius:10px;background:var(--soft)}
+.mistake-answers small{display:block;margin-bottom:3px;color:var(--muted);font-size:9px}
+.mistake-answers b{display:block;overflow-wrap:anywhere;font-size:11px}
+.mistake-explain{margin:0;padding:10px;border-left:2px solid var(--accent);background:var(--soft);color:var(--muted);font-size:11px;line-height:1.6}
+.mistake-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.mistake-date{display:block;margin-top:9px;color:var(--faint);font-size:9px}
+.duel-hero{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:23px;margin-bottom:12px;background:linear-gradient(120deg,#fff 0%,#f4f2ff 100%);border-color:#e6e3ff}
+.duel-hero h2{margin:3px 0 5px;font-size:25px;letter-spacing:-.04em}
+.duel-hero p{max-width:650px;margin:0;color:var(--muted);font-size:12px}
+.duel-mark{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--accentSoft);color:var(--accent);font-size:31px}
+.duel-create{display:grid;grid-template-columns:1fr 1.4fr;gap:16px;align-items:end;padding:17px}
+.duel-create h3{margin:0 0 4px;font-size:16px}
+.duel-create p{margin:0}
+.duel-create-fields{display:flex;align-items:end;gap:9px}
+.duel-create-fields label{display:grid;flex:1;gap:5px;color:var(--muted);font-size:10px}
+.duel-create-fields .btn{flex:0 0 auto}
+.duel-list-head{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 9px}
+.duel-list-head h3{margin:0;font-size:16px}
+.duel-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.duel-card{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px}
+.duel-card-main{min-width:0}
+.duel-card-main .eyebrow{font-size:9px;color:var(--accent)}
+.duel-card-main h3{margin:5px 0;font-size:14px}
+.duel-card-main h3 span{color:var(--muted);font-weight:500}
+.duel-card-main p{margin:0;color:var(--muted);font-size:11px}
+.duel-card-action{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.duel-waiting{color:var(--muted);font-size:10px}
+.duel-scores{display:grid;gap:3px;font-size:10px}
+.focus-widget{position:fixed;right:22px;bottom:20px;z-index:20}
+.focus-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #dcd9ff;border-radius:15px;background:#fff;color:var(--text);box-shadow:0 8px 30px #20253618;font-size:12px;font-weight:700}
+.focus-toggle>span:first-child{color:var(--accent);font-size:16px}
+.focus-toggle b{color:var(--accent);font-variant-numeric:tabular-nums}
+.focus-panel{position:absolute;right:0;bottom:55px;display:grid;gap:11px;width:min(330px,calc(100vw - 28px));padding:17px;box-shadow:0 18px 50px #20253625}
+.focus-panel-head{display:flex;justify-content:space-between;align-items:flex-start}
+.focus-panel-head h3{margin:3px 0;font-size:16px}
+.focus-close{border:0;background:transparent;color:var(--muted);font-size:22px}
+.focus-panel>label{display:grid;gap:5px;color:var(--muted);font-size:10px}
+.focus-clock{padding:14px 0;text-align:center;color:var(--accent);font-size:47px;line-height:1;font-weight:850;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.focus-actions{display:flex;gap:6px}
+.focus-actions .btn{flex:1;padding:0 8px;font-size:11px}
+.focus-panel>p{margin:0;text-align:center;font-size:10px}
+.topic-practice{margin-top:18px;padding-top:15px;border-top:1px solid var(--line)}
+.topic-practice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.topic-practice-head h3{margin:3px 0;font-size:16px}
+.topic-practice-head p{margin:0;color:var(--muted);font-size:11px}
+.topic-practice-score{color:var(--accent);font-size:15px;font-weight:800}
+.topic-practice-question{display:grid;gap:8px;margin-top:10px;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.topic-practice-question>b{color:var(--muted);font-size:10px}
+.topic-practice-question>p{margin:0;color:var(--text);font-size:12px}
+.topic-practice-question .small{justify-self:start}
+.topic-practice-question.is-correct{border-color:#bfe5d3}
+.topic-practice-question.is-wrong{border-color:#f0d0d0}
+.topic-complete-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--muted);font-size:11px}
+@media(max-width:850px){
+ .knowledge-map,.mistake-list,.duel-list{grid-template-columns:1fr}
+ .duel-create{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+ .smart-plan{padding:15px}
+ .smart-plan-head{align-items:flex-start;flex-direction:column}
+ .smart-plan-head .btn{width:100%}
+ .smart-plan-item{align-items:flex-start;flex-wrap:wrap}
+ .smart-plan-item>.btn{margin-left:36px}
+ .mistakes-toolbar{flex-direction:column}
+ .mistakes-toolbar .field{max-width:none}
+ .duel-hero{padding:16px}
+ .duel-mark{width:48px;height:48px;font-size:23px}
+ .duel-create-fields{align-items:stretch;flex-direction:column}
+ .duel-card{align-items:flex-start;flex-direction:column}
+ .duel-card-action{width:100%;justify-content:flex-start}
+ .topic-complete-row{align-items:flex-start;flex-direction:column}
+ .focus-widget{right:12px;bottom:12px}
+}
