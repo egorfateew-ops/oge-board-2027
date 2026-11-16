@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAllowedStudent() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'egor@example.com',
+          'danila@example.com'
+        ];
+    }
+
+    match /rooms/oge2027/{document=**} {
+      allow read, write: if isAllowedStudent();
+    }
+  }
+}
