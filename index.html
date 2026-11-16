@@ -799,7 +799,7 @@ function renderDuels(){
   else if(d.status==="waiting"){status= d.createdByName+" вызывает тебя на дуэль";action='<button class="btn primary" data-duel-accept="'+esc(d.id)+'">Принять вызов</button>'}
   else if(d.status==="active"&&my===undefined){status="Дуэль началась · "+(other!==undefined?"Соперник уже ответил":"Оба решают один вариант");action='<button class="btn primary" data-duel-start="'+esc(d.id)+'">Начать вариант</button>'}
   else if(d.status==="active"){status="Твой результат: "+my+"% · ждём соперника";action='<span class="duel-waiting">Ответ отправлен</span>'}
-  else{const winner=my>other?member.name:other>my?opponent:"Ничья";status="Завершена · "+(winner==="Ничья"?"ничья":"победитель — "+winner);action='<div class="duel-scores"><b>'+member.name+": "+my+"%</b><b>"+opponent+": "+other+"%</b></div>'}
+  else{const winner=my>other?member.name:other>my?opponent:"Ничья";status="Завершена · "+(winner==="Ничья"?"ничья":"победитель — "+winner);action='<div class="duel-scores"><b>'+member.name+": "+my+"%</b><b>"+opponent+": "+other+"%</b></div>" }
   return '<article class="panel duel-card"><div class="duel-card-main"><span class="eyebrow">'+esc(d.subject)+' · '+(d.questionCount||d.questions?.length||5)+' вопросов</span><h3>'+esc(d.createdByName||"Участник")+' <span>vs</span> '+opponent+'</h3><p>'+esc(status)+'</p></div><div class="duel-card-action">'+action+'</div></article>';
  }).join(""):'<div class="study-empty">Пока дуэлей нет. Создай вызов — второй ученик увидит его в своём аккаунте.</div>';
 }
