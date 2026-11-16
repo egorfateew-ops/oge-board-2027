@@ -507,3 +507,8 @@ button{cursor:pointer}
 .lab-result p{margin:0;color:#6e7868;font-size:11px;line-height:1.55}
 .lab-card>.sub{margin-top:8px;font-size:10px}
 @media(max-width:700px){.lab-grid{grid-template-columns:1fr}.lab-controls{grid-template-columns:1fr 1fr}.practice-head{align-items:flex-start}}
+
+
+.study-sources{display:flex;gap:16px;flex-wrap:wrap;margin-top:13px}
+.study-sources a{color:#f0d27e;font-size:10px;text-decoration:none;border-bottom:1px solid #ffffff45;padding-bottom:2px}
+.study-sources a:hover{color:#fff}
