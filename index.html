@@ -40,7 +40,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 </div></div>
 <div id="app" class="hidden"><div class="wrap">
  <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Егор × Даниил · учебный сезон 2026–2027</div></div><div class="actions"><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
- <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Курс физики</button><button class="tab" data-tab="subjects">Предметы</button><button class="tab" data-tab="calendar">Календарь</button></nav>
+ <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Курс физики</button><button class="tab" data-tab="subjects">Предметы</button><button class="tab" data-tab="calendar">Календарь</button><button class="tab" data-tab="tests">Тесты</button></nav>
  <section class="hero">
   <div class="panel welcome"><div><h2>Два ученика. Одна цель — сдать ОГЭ.</h2><p>Планируйте подготовку, разбирайте сложные темы и следите за личным прогрессом. Всё в одной общей доске.</p></div><div class="today"><strong id="todayCount">0 / 0</strong><span>заданий на сегодня</span></div></div>
   <div class="students">
@@ -82,6 +82,30 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <div class="panel calendar-panel"><div class="calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="calendarGrid" class="calendar-grid"></div><div class="calendar-legend"><span><i class="legend-dot todo"></i>К выполнению</span><span><i class="legend-dot doing"></i>В процессе</span><span><i class="legend-dot done"></i>Готово</span></div></div>
    <aside class="panel calendar-day"><div id="calendarDayTitle"></div><div id="calendarDayList" class="calendar-day-list"></div><button class="btn primary" id="calendarAddBtn">＋ Добавить задание на этот день</button></aside>
   </div>
+
+ </section>
+ <section id="testsPage" class="hidden">
+  <div class="panel tests-hero"><div><span class="eyebrow">ТРЕНИРОВКА ЭКЗАМЕНА</span><h2>Тестирование ОГЭ</h2><p>Собери случайный вариант, пройди его на время и разбери ответы после завершения.</p></div><div class="tests-hero-stat"><b>11</b><span>предметов</span></div></div>
+  <div id="testsSetup" class="tests-setup">
+   <div class="panel tests-config">
+    <span class="eyebrow">НОВАЯ ПОПЫТКА</span><h3>Настройки теста</h3>
+    <div class="tests-fields">
+     <label>Предмет<select id="testSubject" class="field"></select></label>
+     <label>Количество вопросов<select id="testCount" class="field"><option value="5">5 вопросов</option><option value="10" selected>10 вопросов</option><option value="15">15 вопросов</option></select></label>
+     <label>Время на тест<select id="testDuration" class="field"><option value="10">10 минут</option><option value="20" selected>20 минут</option><option value="30">30 минут</option><option value="45">45 минут</option></select></label>
+    </div>
+    <div class="tests-hint">Вопросы и варианты ответов перемешиваются. Результат сохраняется в твоём аккаунте.</div>
+    <button class="btn primary" id="startTestBtn">Начать тестирование →</button>
+   </div>
+   <div class="panel tests-history"><div class="tests-history-head"><div><span class="eyebrow">ЛИЧНЫЕ РЕЗУЛЬТАТЫ</span><h3>История попыток</h3></div><span id="testHistoryCount" class="tests-history-count">0 попыток</span></div><div id="testHistoryList" class="tests-history-list"><div class="study-empty">Загружаем историю…</div></div></div>
+  </div>
+  <div id="testRun" class="hidden">
+   <div class="panel test-run-head"><div><span class="eyebrow" id="testRunSubject"></span><h2 id="testRunTitle">Тренировочный вариант</h2><p id="testRunProgress">Вопрос 1 из 10</p></div><div class="test-timer" id="testTimer">20:00</div></div>
+   <div class="test-progress"><div id="testProgressFill"></div></div>
+   <div class="test-layout"><aside class="panel test-question-nav"><b>Навигация по вопросам</b><div id="testQuestionNav"></div><small>Нажимай на номер, чтобы перейти к вопросу.</small></aside><article class="panel test-question-card" id="testQuestionCard"></article></div>
+   <div class="test-bottom-actions"><button class="btn" id="testPrevBtn">← Назад</button><span id="testAnsweredLabel">Отвечено: 0 / 10</span><button class="btn primary" id="testNextBtn">Следующий →</button><button class="btn danger" id="finishTestBtn">Завершить тест</button></div>
+  </div>
+  <div id="testResult" class="hidden"></div>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
 </div></div>
@@ -99,6 +123,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 import {firebaseConfig,members} from './config.js';
 import {physicsWeeks} from './physics.js';
 import {physicsPractice,physicsLabs} from './physics-practice.js';
+import {testBanks} from './tests.js';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
@@ -264,6 +289,10 @@ function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove(
 let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
 let studyNotes={},activeSubjectName="",activeTopicId="";
 let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1),calendarSelectedDate=today();
+let testSession=null,testTimerHandle=null,testSecondsLeft=0,testHistory=[],testQuestionIndex=0;
+const testResultsCol=()=>collection(db,"rooms","oge2027","testResults");
+let stopTestHistory=null;
+
 const subjectCatalog=[
  {name:"Математика",icon:"∑",description:"Алгебра, геометрия, вычисления и задачи на рассуждение.",topics:[
   {id:"math-numbers",title:"Числа и вычисления",description:"Дроби, проценты, степени, корни, числовые выражения и преобразования."},
@@ -421,10 +450,11 @@ function renderCalendar(){
 }
 function showTab(tab){
  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
- ["board","daily","stats","study","subjects","calendar"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
+ ["board","daily","stats","study","subjects","calendar","tests"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
  if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
  if(tab==="subjects"){backToSubjects();renderSubjects()}
  if(tab==="calendar")renderCalendar();
+ if(tab==="tests")renderTestSetup();
 }
 
 function totalLessons(){return physicsWeeks.reduce((n,w)=>n+w.lessons.length,0)}
@@ -505,6 +535,90 @@ $('labList').addEventListener('input',e=>{const input=e.target.closest('[data-la
 function moveStudy(delta){let wi=studyWeekIndex,li=studyLessonIndex+delta;if(li<0){wi--;if(wi<0)return;li=physicsWeeks[wi].lessons.length-1}else if(li>=physicsWeeks[wi].lessons.length){wi++;if(wi>=physicsWeeks.length)return;li=0}studyWeekIndex=wi;studyLessonIndex=li;renderStudyWeeks();renderStudyLessons();renderStudyContent()}
 function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();renderLabs();updateStudyProgress()}
 function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};studyNotes=snap.exists()?(snap.data().studyNotes||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent();if(activeSubjectName)renderSubjectDetail()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
+function listenTestHistory(){
+ if(stopTestHistory)stopTestHistory();
+ stopTestHistory=onSnapshot(testResultsCol(),snap=>{
+  testHistory=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.userId===user.uid).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+  if(!$("testsPage").classList.contains("hidden")&&!testSession&&!$("testResult").classList.contains("hidden"))renderTestHistory();
+  else if(!$("testsPage").classList.contains("hidden")&&!testSession)renderTestHistory();
+ },err=>toast("Не удалось загрузить историю тестов: "+err.message));
+}
+function shuffle(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderTestSetup(){
+ const select=$("testSubject"),current=select.value;
+ select.innerHTML=Object.keys(testBanks).map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join("");
+ if(current&&testBanks[current])select.value=current;
+ renderTestHistory();
+}
+function renderTestHistory(){
+ $("testHistoryCount").textContent=testHistory.length+" "+(testHistory.length===1?"попытка":testHistory.length>1&&testHistory.length<5?"попытки":"попыток");
+ $("testHistoryList").innerHTML=testHistory.length?testHistory.slice(0,12).map(t=>{
+  const d=t.createdAt?.toDate?t.createdAt.toDate():t.createdAt?new Date(t.createdAt):null;
+  return '<div class="test-history-item"><div class="test-history-main"><b>'+esc(t.subject)+'</b><small>'+(d&&!isNaN(d)?d.toLocaleString("ru-RU",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Недавно")+' · '+t.correct+'/'+t.total+' правильных</small></div><strong class="'+(t.percent>=70?"score-good":t.percent>=40?"score-mid":"score-low")+'">'+t.percent+'%</strong></div>';
+ }).join(""):'<div class="study-empty">Пока нет завершённых тестов. Первая попытка появится здесь.</div>';
+}
+function startTest(){
+ const subject=$("testSubject").value,bank=testBanks[subject]||[];
+ if(!bank.length){toast("Для этого предмета пока нет вопросов");return}
+ const count=Math.min(Number($("testCount").value)||10,bank.length),duration=(Number($("testDuration").value)||20)*60;
+ const selected=shuffle(bank).slice(0,count).map(q=>({...q,options:q.type==="choice"?shuffle(q.options):undefined}));
+ testSession={subject,questions:selected,answers:{},startedAt:new Date().toISOString(),duration};
+ testQuestionIndex=0;testSecondsLeft=duration;
+ $("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");
+ renderTestQuestion();startTestTimer();
+}
+function startTestTimer(){
+ stopTestTimer();updateTestTimer();
+ testTimerHandle=setInterval(()=>{testSecondsLeft=Math.max(0,testSecondsLeft-1);updateTestTimer();if(testSecondsLeft<=0)finishTest(true)},1000);
+}
+function stopTestTimer(){if(testTimerHandle){clearInterval(testTimerHandle);testTimerHandle=null}}
+function updateTestTimer(){
+ const el=$("testTimer");if(!el)return;
+ const m=Math.floor(testSecondsLeft/60),s=testSecondsLeft%60;
+ el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ el.classList.toggle("urgent",testSecondsLeft<=60);
+}
+function renderTestQuestion(){
+ if(!testSession)return;
+ const q=testSession.questions[testQuestionIndex],total=testSession.questions.length,answered=Object.keys(testSession.answers).length;
+ $("testRunSubject").textContent=testSession.subject.toUpperCase();
+ $("testRunProgress").textContent="Вопрос "+(testQuestionIndex+1)+" из "+total;
+ $("testProgressFill").style.width=((testQuestionIndex+1)/total*100)+"%";
+ $("testAnsweredLabel").textContent="Отвечено: "+answered+" / "+total;
+ $("testQuestionNav").innerHTML=testSession.questions.map((_,i)=>'<button type="button" class="test-nav-number '+(i===testQuestionIndex?"active ":"")+(testSession.answers[i]!==undefined?"answered":"")+'" data-test-jump="'+i+'">'+(i+1)+'</button>').join("");
+ const value=testSession.answers[testQuestionIndex]??"";
+ const control=q.type==="choice"?'<div class="test-options">'+q.options.map((o,i)=>'<button type="button" class="test-option '+(value===o?"selected":"")+'" data-test-option="'+esc(o)+'"><span>'+String.fromCharCode(65+i)+'</span>'+esc(o)+'</button>').join("")+'</div>':'<label class="test-number-answer">Твой ответ<input id="testNumericAnswer" class="field" inputmode="decimal" placeholder="Введи число" value="'+esc(value)+'"><small>'+esc(q.unit||"Числовой ответ")+'</small></label>';
+ $("testQuestionCard").innerHTML='<div class="test-question-kicker">ЗАДАНИЕ '+(testQuestionIndex+1)+' <span>'+esc(q.topic||"ОГЭ")+'</span></div><h2>'+esc(q.prompt)+'</h2>'+control+'<div class="test-question-footer"><span>'+(value!==""?"Ответ сохранён":"Выбери или введи ответ")+'</span><span>'+answered+' из '+total+' отвечено</span></div>';
+ $("testPrevBtn").disabled=testQuestionIndex===0;
+ $("testNextBtn").textContent=testQuestionIndex===total-1?"К результатам →":"Следующий →";
+}
+function saveTestAnswer(value){
+ if(!testSession)return;
+ if(value==="")delete testSession.answers[testQuestionIndex];else testSession.answers[testQuestionIndex]=value;
+ renderTestQuestion();
+}
+function testCorrect(q,value){
+ if(value===undefined||value===null||String(value).trim()==="")return false;
+ if(q.type==="choice")return String(value)===String(q.answer);
+ const n=Number(String(value).trim().replace(",","."));
+ return Number.isFinite(n)&&Math.abs(n-q.answer)<=(q.tolerance??0.01);
+}
+async function finishTest(timeExpired=false){
+ if(!testSession)return;
+ stopTestTimer();
+ const session=testSession,questions=session.questions;
+ const details=questions.map((q,i)=>({prompt:q.prompt,answer:q.answer,given:session.answers[i]??"",correct:testCorrect(q,session.answers[i]),explain:q.explain,topic:q.topic||""}));
+ const correct=details.filter(x=>x.correct).length,total=questions.length,percent=Math.round(correct/total*100);
+ const result={subject:session.subject,total,correct,percent,answers:details,duration:session.duration,secondsLeft:testSecondsLeft,timeExpired,startedAt:session.startedAt,finishedAt:new Date().toISOString(),userId:user.uid,userName:member.name};
+ testSession=null;
+ $("testRun").classList.add("hidden");$("testResult").classList.remove("hidden");
+ $("testResult").innerHTML='<div class="panel test-result-hero"><span class="eyebrow">ТЕСТ ЗАВЕРШЁН'+(timeExpired?" · ВРЕМЯ ВЫШЛО":"")+'</span><div class="test-result-score '+(percent>=70?"score-good":percent>=40?"score-mid":"score-low")+'">'+percent+'%</div><h2>'+correct+' из '+total+' правильных ответов</h2><p>'+ (percent>=85?"Отличный результат.":percent>=60?"Хорошая работа. Есть темы для повторения.":"Разбери ошибки и попробуй ещё раз.")+'</p><div class="test-result-actions"><button class="btn primary" id="retryTestBtn">Пройти новый вариант</button><button class="btn" id="testBackBtn">К выбору предмета</button></div></div><div class="test-review"><div class="test-review-head"><h3>Разбор ответов</h3><span>'+details.filter(x=>!x.correct).length+' ошибок</span></div>'+details.map((x,i)=>'<article class="test-review-item '+(x.correct?"review-correct":"review-wrong")+'"><div class="review-item-head"><b>Вопрос '+(i+1)+'</b><span>'+(x.correct?"Верно":"Ошибка")+'</span></div><p>'+esc(x.prompt)+'</p><div class="review-answer"><span>Твой ответ</span><b>'+(x.given!==""?esc(x.given):"Нет ответа")+'</b></div><div class="review-answer"><span>Правильный ответ</span><b>'+esc(x.answer)+'</b></div><div class="review-explain">'+esc(x.explain)+'</div></article>').join("")+'</div>';
+ $("retryTestBtn").addEventListener("click",()=>{ $("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");startTest()});
+ $("testBackBtn").addEventListener("click",()=>{$("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");renderTestHistory()});
+ try{await addDoc(testResultsCol(),{...result,createdAt:serverTimestamp()});toast("Результат сохранён в истории")}catch(e){toast("Тест завершён, но история не сохранена: "+e.message)}
+ renderTestHistory();
+}
+
 function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
 function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
@@ -520,14 +634,24 @@ function openModal(t=null,daily=false){editing=t?.id||null;$('modalTitle').textC
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
-$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();await signOut(auth)});
+$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();stopTestTimer();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:'todo',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[data-action]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;try{if(b.dataset.action==='edit')openModal(t);if(b.dataset.action==='delete'&&confirm('Удалить задание?'))await deleteDoc(taskDoc(t.id));if(b.dataset.action==='move'){const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён')}}catch(err){toast('Не удалось изменить: '+err.message)}});
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
+
+$("startTestBtn").addEventListener("click",startTest);
+$("testQuestionNav").addEventListener("click",e=>{const b=e.target.closest("[data-test-jump]");if(!b||!testSession)return;testQuestionIndex=Number(b.dataset.testJump);renderTestQuestion()});
+$("testQuestionCard").addEventListener("click",e=>{const b=e.target.closest("[data-test-option]");if(b)saveTestAnswer(b.dataset.testOption)});
+$("testQuestionCard").addEventListener("change",e=>{if(e.target.id==="testNumericAnswer")saveTestAnswer(e.target.value.trim())});
+$("testQuestionCard").addEventListener("keydown",e=>{if(e.target.id==="testNumericAnswer"&&e.key==="Enter"){saveTestAnswer(e.target.value.trim());if(testQuestionIndex<testSession.questions.length-1){testQuestionIndex++;renderTestQuestion()}}});
+$("testPrevBtn").addEventListener("click",()=>{if(testSession&&testQuestionIndex>0){testQuestionIndex--;renderTestQuestion()}});
+$("testNextBtn").addEventListener("click",()=>{if(!testSession)return;if(testQuestionIndex<testSession.questions.length-1){testQuestionIndex++;renderTestQuestion()}else finishTest(false)});
+$("finishTestBtn").addEventListener("click",()=>{if(testSession&&confirm("Завершить тест и проверить ответы?"))finishTest(false)});
+
 $('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить задания по физике за первую неделю для Егора и Даниила?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title&&x.person===t.person)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Задания по физике добавлены')}catch(err){toast(err.message)}});
-if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen();listenProgress()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
+if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen();listenProgress();listenTestHistory()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
 </script>
 </body></html>
