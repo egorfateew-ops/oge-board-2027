@@ -25,6 +25,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 @media(max-width:850px){.study-layout{grid-template-columns:1fr}.study-sidebar{position:static}.study-week-wrap{display:flex;overflow:auto;gap:6px}.study-week{min-width:190px}.study-content{padding:15px}}
 @media(max-width:560px){.study-hero{padding:18px}.study-kpi{font-size:10px}.study-lesson{padding:11px}}
 </style>
+  <link rel="stylesheet" href="./theme.css">
 </head>
 <body>
 <div id="auth" class="auth"><div class="panel authbox">
@@ -38,9 +39,10 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <div id="setupHint" class="hint hidden">Сначала настрой Firebase: внеси параметры проекта в файл <b>config.js</b>. Подробная инструкция находится в README.md.</div>
 </div></div>
 <div id="app" class="hidden"><div class="wrap">
- <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Общая доска Егора и Даниила · 2026–2027</div></div><div class="actions"><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
+ <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Егор × Даниил · учебный сезон 2026–2027</div></div><div class="actions"><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
+ <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Учебник</button></nav>
  <section class="hero">
-  <div class="panel welcome"><div><h2>Готовимся вместе, сдаём каждый сам.</h2><p>Добавляйте задания, отмечайте выполненное, разбирайте ошибки и набирайте XP. Изменения синхронизируются между устройствами.</p></div><div class="today"><strong id="todayCount">0 / 0</strong><span>заданий на сегодня</span></div></div>
+  <div class="panel welcome"><div><h2>Два ученика. Одна цель — сдать ОГЭ.</h2><p>Планируйте подготовку, разбирайте сложные темы и следите за личным прогрессом. Всё в одной общей доске.</p></div><div class="today"><strong id="todayCount">0 / 0</strong><span>заданий на сегодня</span></div></div>
   <div class="students">
    <div class="panel student"><div class="studenthead"><div class="avatar">Е</div><div><b>Егор</b><div class="sub">Личный прогресс</div></div><div class="xp" id="egorXp">0 XP</div></div><div class="progressline"><span>Выполнено</span><span id="egorPct">0%</span></div><div class="track"><div class="fill" id="egorFill"></div></div></div>
    <div class="panel student"><div class="studenthead"><div class="avatar d">Д</div><div><b>Даниил</b><div class="sub">Личный прогресс</div></div><div class="xp" id="danXp">0 XP</div></div><div class="progressline"><span>Выполнено</span><span id="danPct">0%</span></div><div class="track"><div class="fill" id="danFill"></div></div></div>
@@ -56,7 +58,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ · Физика ⚛️</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">📚 6 учебных недель</span><span class="study-kpi">🧠 18 уроков</span><span class="study-kpi">⏱ До 6 недель</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div></div>
-  <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap" style="display:block"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
+  <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
 </div></div>
