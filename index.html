@@ -31,7 +31,7 @@
  </section>
  <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button></nav>
  <section id="boardPage">
-  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">＋ Стартовые задания</button></div>
+  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">＋ Физика · неделя 1</button></div>
   <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
  </section>
  <section id="dailyPage" class="hidden"><div class="sectiongrid"><div class="panel section"><h3>📅 План на сегодня</h3><div class="sub" id="dateLabel"></div><div class="dailylist" id="dailyList" style="margin-top:12px"></div></div><div class="panel section"><h3>Ежедневная подготовка</h3><p class="sub">Добавляйте небольшие задания: повторение правил, один блок теста, 20 минут математики или разбор ошибок.</p><button class="btn primary" id="dailyAdd">＋ Ежедневное задание</button></div></div></section>
@@ -56,12 +56,154 @@ import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTra
 const $=id=>document.getElementById(id),today=()=>new Date().toLocaleDateString('sv-SE');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const starter=[
- {id:'seed-math-e',title:'Решить тренировочный вариант № 1',subject:'Математика',person:'Егор',points:15,desc:'Решить вариант полностью и выписать ошибки.',status:'todo'},
- {id:'seed-rus-d',title:'Повторить орфографические правила',subject:'Русский язык',person:'Даниил',points:10,desc:'Повторить правила и выполнить упражнения.',status:'todo'},
- {id:'seed-together',title:'Разобрать ошибки пробного теста',subject:'Математика',person:'Вместе',points:20,desc:'По очереди объяснить решения и записать сложные темы.',status:'doing'},
- {id:'seed-inf-d',title:'Пройти тест по информатике',subject:'Информатика',person:'Даниил',points:10,desc:'Пройти тест и разобрать неправильные ответы.',status:'todo'},
- {id:'seed-rules-e',title:'Повторить правила пунктуации',subject:'Русский язык',person:'Егор',points:10,desc:'Повторить теорию и решить задания на пунктуацию.',status:'todo',daily:true}
+  {
+    "id": "seed-math-e",
+    "title": "Решить тренировочный вариант № 1",
+    "subject": "Математика",
+    "person": "Егор",
+    "points": 15,
+    "desc": "Решить вариант полностью и выписать ошибки.",
+    "status": "todo"
+  },
+  {
+    "id": "seed-rus-d",
+    "title": "Повторить орфографические правила",
+    "subject": "Русский язык",
+    "person": "Даниил",
+    "points": 10,
+    "desc": "Повторить правила и выполнить упражнения.",
+    "status": "todo"
+  },
+  {
+    "id": "seed-together",
+    "title": "Разобрать ошибки пробного теста",
+    "subject": "Математика",
+    "person": "Вместе",
+    "points": 20,
+    "desc": "По очереди объяснить решения и записать сложные темы.",
+    "status": "doing"
+  },
+  {
+    "id": "seed-inf-d",
+    "title": "Пройти тест по информатике",
+    "subject": "Информатика",
+    "person": "Даниил",
+    "points": 10,
+    "desc": "Пройти тест и разобрать неправильные ответы.",
+    "status": "todo"
+  },
+  {
+    "id": "seed-rules-e",
+    "title": "Повторить правила пунктуации",
+    "subject": "Русский язык",
+    "person": "Егор",
+    "points": 10,
+    "desc": "Повторить теорию и решить задания на пунктуацию.",
+    "status": "todo",
+    "daily": true
+  },
+  {
+    "id": "physics-w1-d1-egor",
+    "title": "Физика · Неделя 1 / День 1: величины и СИ",
+    "subject": "Физика",
+    "person": "Егор",
+    "points": 10,
+    "desc": "Повтори обозначения пути s, времени t и скорости v. Реши: 1) 72 км/ч переведи в м/с; 2) 450 см — в м; 3) 2,5 мин — в секунды; 4) 0,08 кг — в граммы; 5) тело прошло 180 м за 30 с — найди среднюю скорость. В каждой задаче запиши перевод в СИ, формулу и ответ. Ориентир: демоверсия ФИПИ-2027, задание 1.",
+    "status": "todo",
+    "date": "2026-11-18"
+  },
+  {
+    "id": "physics-w1-d1-daniil",
+    "title": "Физика · Неделя 1 / День 1: величины и СИ",
+    "subject": "Физика",
+    "person": "Даниил",
+    "points": 10,
+    "desc": "Повтори обозначения пути s, времени t и скорости v. Реши: 1) 72 км/ч переведи в м/с; 2) 450 см — в м; 3) 2,5 мин — в секунды; 4) 0,08 кг — в граммы; 5) тело прошло 180 м за 30 с — найди среднюю скорость. В каждой задаче запиши перевод в СИ, формулу и ответ. Ориентир: демоверсия ФИПИ-2027, задание 1.",
+    "status": "todo",
+    "date": "2026-11-18"
+  },
+  {
+    "id": "physics-w1-d2-egor",
+    "title": "Физика · Неделя 1 / День 2: равномерное движение",
+    "subject": "Физика",
+    "person": "Егор",
+    "points": 12,
+    "desc": "Реши: 1) поезд движется 15 м/с в течение 40 с — найди путь; 2) пешеход прошёл 900 м за 15 мин — найди скорость в м/с; 3) автомобиль прошёл 120 км за 2 ч — найди скорость в км/ч; 4) за сколько секунд пройдут 1,2 км при скорости 1,5 м/с? Для каждой задачи выпиши «Дано», формулу, подстановку и ответ.",
+    "status": "todo",
+    "date": "2026-11-19"
+  },
+  {
+    "id": "physics-w1-d2-daniil",
+    "title": "Физика · Неделя 1 / День 2: равномерное движение",
+    "subject": "Физика",
+    "person": "Даниил",
+    "points": 12,
+    "desc": "Реши: 1) поезд движется 15 м/с в течение 40 с — найди путь; 2) пешеход прошёл 900 м за 15 мин — найди скорость в м/с; 3) автомобиль прошёл 120 км за 2 ч — найди скорость в км/ч; 4) за сколько секунд пройдут 1,2 км при скорости 1,5 м/с? Для каждой задачи выпиши «Дано», формулу, подстановку и ответ.",
+    "status": "todo",
+    "date": "2026-11-19"
+  },
+  {
+    "id": "physics-w1-d3-egor",
+    "title": "Физика · Неделя 1 / День 3: графики движения",
+    "subject": "Физика",
+    "person": "Егор",
+    "points": 12,
+    "desc": "Построй на бумаге график координаты x от времени t по точкам: (0 с; 0 м), (2; 6), (4; 12), (6; 12), (8; 6). Определи: 1) на каких участках тело двигалось; 2) когда покоилось; 3) модуль скорости на каждом участке движения; 4) весь путь за 8 с. Подпиши оси и единицы измерения. Ориентир: формат задания 6 демоверсии ФИПИ-2027.",
+    "status": "todo",
+    "date": "2026-11-20"
+  },
+  {
+    "id": "physics-w1-d3-daniil",
+    "title": "Физика · Неделя 1 / День 3: графики движения",
+    "subject": "Физика",
+    "person": "Даниил",
+    "points": 12,
+    "desc": "Построй на бумаге график координаты x от времени t по точкам: (0 с; 0 м), (2; 6), (4; 12), (6; 12), (8; 6). Определи: 1) на каких участках тело двигалось; 2) когда покоилось; 3) модуль скорости на каждом участке движения; 4) весь путь за 8 с. Подпиши оси и единицы измерения. Ориентир: формат задания 6 демоверсии ФИПИ-2027.",
+    "status": "todo",
+    "date": "2026-11-20"
+  },
+  {
+    "id": "physics-w1-d4-egor",
+    "title": "Физика · Неделя 1 / День 4: ускорение",
+    "subject": "Физика",
+    "person": "Егор",
+    "points": 15,
+    "desc": "Реши: 1) скорость тела выросла с 4 до 16 м/с за 6 с — найди ускорение; 2) тело начинает движение из состояния покоя с ускорением 2 м/с² — найди скорость через 5 с; 3) начальная скорость 3 м/с, ускорение 1,5 м/с² — найди скорость через 4 с. Используй a=(v−v₀)/t и v=v₀+at. Записывай единицы.",
+    "status": "todo",
+    "date": "2026-11-21"
+  },
+  {
+    "id": "physics-w1-d4-daniil",
+    "title": "Физика · Неделя 1 / День 4: ускорение",
+    "subject": "Физика",
+    "person": "Даниил",
+    "points": 15,
+    "desc": "Реши: 1) скорость тела выросла с 4 до 16 м/с за 6 с — найди ускорение; 2) тело начинает движение из состояния покоя с ускорением 2 м/с² — найди скорость через 5 с; 3) начальная скорость 3 м/с, ускорение 1,5 м/с² — найди скорость через 4 с. Используй a=(v−v₀)/t и v=v₀+at. Записывай единицы.",
+    "status": "todo",
+    "date": "2026-11-21"
+  },
+  {
+    "id": "physics-w1-d5-egor",
+    "title": "Физика · Неделя 1 / День 5: смешанная кинематика",
+    "subject": "Физика",
+    "person": "Егор",
+    "points": 15,
+    "desc": "Реши без подсказок: 1) велосипедист едет 5 м/с в течение 3 мин — найди путь; 2) автомобиль за 10 с увеличил скорость с 10 до 20 м/с — найди ускорение; 3) координата изменилась с 30 до 10 м за 5 с — найди модуль скорости; 4) сравни 54 км/ч и 12 м/с. В конце составь краткую памятку: формулы v, s, t, a и единицы СИ.",
+    "status": "todo",
+    "date": "2026-11-22"
+  },
+  {
+    "id": "physics-w1-d5-daniil",
+    "title": "Физика · Неделя 1 / День 5: смешанная кинематика",
+    "subject": "Физика",
+    "person": "Даниил",
+    "points": 15,
+    "desc": "Реши без подсказок: 1) велосипедист едет 5 м/с в течение 3 мин — найди путь; 2) автомобиль за 10 с увеличил скорость с 10 до 20 м/с — найди ускорение; 3) координата изменилась с 30 до 10 м за 5 с — найди модуль скорости; 4) сравни 54 км/ч и 12 м/с. В конце составь краткую памятку: формулы v, s, t, a и единицы СИ.",
+    "status": "todo",
+    "date": "2026-11-22"
+  }
 ];
+
 let app,auth,db,user,member,tasks=[],editing=null,stopTasks=null;
 const configured=firebaseConfig.apiKey&&!firebaseConfig.apiKey.includes('YOUR_');
 const tasksCol=()=>collection(db,'rooms','oge2027','tasks'),taskDoc=id=>doc(db,'rooms','oge2027','tasks',id);
@@ -77,7 +219,7 @@ function renderBoard(){const arr=filtered();[['todo','todoList','todoCount'],['d
 function renderDaily(){const a=tasks.filter(t=>t.daily||t.date===today()),done=a.filter(t=>t.status==='done').length;$('todayCount').textContent=done+' / '+a.length;$('dateLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});$('dailyList').innerHTML=a.length?a.map(t=>'<label class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==='done'?'checked':'')+'><span><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></span><span class="points">+'+(Number(t.points)||0)+' XP</span></label>').join(''):'<div class="empty">На сегодня заданий пока нет</div>'}
 function renderStats(){const done=tasks.filter(t=>t.status==='done');$('statTotal').textContent=tasks.length;$('statDone').textContent=done.length;$('statXp').textContent=pointsFor('Егор')+pointsFor('Даниил');const people=[{n:'Егор',xp:pointsFor('Егор'),a:'Е'},{n:'Даниил',xp:pointsFor('Даниил'),a:'Д'}].sort((a,b)=>b.xp-a.xp);$('ranking').innerHTML=people.map((p,i)=>'<div class="rankitem"><span class="ranknum">'+(i===0&&p.xp?'🏆':i+1)+'</span><b>'+p.n+'</b><span class="rankscore">'+p.xp+' XP</span></div>').join('');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toLocaleDateString('sv-SE'),n=done.filter(t=>{const x=t.completedAt?.toDate?t.completedAt.toDate():t.completedAt?new Date(t.completedAt):null;return x&&!isNaN(x)&&x.toLocaleDateString('sv-SE')===k}).length;days.push({l:d.toLocaleDateString('ru-RU',{weekday:'short'}),n})}const max=Math.max(1,...days.map(x=>x.n));$('chart').innerHTML=days.map(x=>'<div class="barwrap"><b>'+x.n+'</b><div class="bar" style="height:'+Math.max(4,x.n/max*105)+'px"></div><small>'+x.l+'</small></div>').join('')}
 function render(){renderBoard();renderDaily();renderStats();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
-async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
+async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
 function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 function openModal(t=null,daily=false){editing=t?.id||null;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
@@ -90,7 +232,7 @@ $('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[dat
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['board','daily','stats'].forEach(p=>$(p+'Page').classList.toggle('hidden',p!==b.dataset.tab))});
-$('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить стартовые задания?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Стартовые задания добавлены')}catch(err){toast(err.message)}});
+$('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить задания по физике за первую неделю для Егора и Даниила?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title&&x.person===t.person)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Задания по физике добавлены')}catch(err){toast(err.message)}});
 if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
 </script>
 </body></html>
