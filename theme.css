@@ -446,3 +446,72 @@ button.calendar-cell:hover{border-color:#c9c5ff;background:#fbfaff}
  .tests-hero{padding:17px}
 }
 @media(max-width:380px){.tab{font-size:10px}.page-note{display:none}}
+
+
+/* Sub-navigation: quiet text tabs, matching the main interface */
+#subTabs.subtabs{
+  display:flex!important;
+  align-items:center!important;
+  min-height:0!important;
+  margin:4px 0 16px!important;
+  padding:0 4px 7px!important;
+  border:0!important;
+  border-radius:0!important;
+  border-bottom:1px solid var(--line)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#subTabs .subtab-group{
+  display:flex!important;
+  align-items:center!important;
+  gap:20px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#subTabs .subtab{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:32px!important;
+  margin:0!important;
+  padding:5px 2px 7px!important;
+  border:0!important;
+  border-bottom:2px solid transparent!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  box-shadow:none!important;
+  font:600 12px/1.2 inherit!important;
+  cursor:pointer!important;
+  white-space:nowrap!important;
+  transition:color .15s,border-color .15s!important;
+}
+#subTabs .subtab:hover{
+  background:transparent!important;
+  color:var(--text)!important;
+}
+#subTabs .subtab.active{
+  border:0!important;
+  border-bottom:2px solid var(--accent)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--accent)!important;
+  box-shadow:none!important;
+}
+@media(max-width:620px){
+  #subTabs.subtabs{
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+  #subTabs.subtabs::-webkit-scrollbar{display:none}
+  #subTabs .subtab-group{gap:17px!important}
+  #subTabs .subtab{min-height:31px!important;padding:5px 1px 7px!important;font-size:11px!important}
+}
