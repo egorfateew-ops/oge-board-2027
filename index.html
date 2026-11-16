@@ -179,7 +179,7 @@ import {testBanks} from './tests.js';
 import {courseLessons} from './courses.js';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc,query,where} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),today=()=>new Date().toLocaleDateString('sv-SE');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const starter=[
@@ -657,10 +657,16 @@ function topicIdForQuestion(subject,topicName){
  if(!topicName)return "";
  const target=String(topicName).toLowerCase();
  const topics=subjectTopics(subject);
+ if(subject==="Физика"){
+  const aliases={"единицы си":"phy-01-si","равномерное движение":"phy-02-motion","ускорение":"phy-03-acceleration","плотность":"phy-04-density-forces","давление":"phy-06-pressure-archimedes","архимедова сила":"phy-06-pressure-archimedes","работа":"phy-07-work-energy","мощность":"phy-07-work-energy","электрический ток":"phy-12-current"};
+  if(aliases[target])return aliases[target];
+ }
+ const exact=topics.find(t=>(t.lesson?.practiceTopics||[]).some(tag=>tag.toLowerCase()===target)||t.title.toLowerCase()===target);
+ if(exact)return exact.id;
  const found=topics.find(t=>{
   if(t.title.toLowerCase().includes(target)||target.includes(t.title.toLowerCase()))return true;
   const tags=t.lesson?.practiceTopics||[];
-  return tags.some(tag=>tag.toLowerCase()===target||tag.toLowerCase().includes(target)||target.includes(tag.toLowerCase()));
+  return tags.some(tag=>tag.toLowerCase().includes(target)||target.includes(tag.toLowerCase()));
  });
  return found?.id||"";
 }
