@@ -777,3 +777,133 @@ body[data-theme="dark"] .exam-mode-option{background:var(--soft)!important;borde
 body[data-theme="dark"] .exam-mode-option:has(input:checked){background:var(--accentSoft)!important}
 body[data-theme="dark"] .footer{color:var(--muted)!important}
 
+
+
+/* Dark theme: universal surface pass for every page and feature panel.
+   Keep semantic accents (primary buttons, correct/wrong states, badges) intact. */
+body[data-theme="dark"] .panel,
+body[data-theme="dark"] .page-intro,
+body[data-theme="dark"] .calendar-intro,
+body[data-theme="dark"] .subject-intro,
+body[data-theme="dark"] .subject-detail-heading,
+body[data-theme="dark"] .study-hero,
+body[data-theme="dark"] .tests-hero,
+body[data-theme="dark"] .duel-hero,
+body[data-theme="dark"] .test-result-hero,
+body[data-theme="dark"] .welcome,
+body[data-theme="dark"] .calendar-panel,
+body[data-theme="dark"] .calendar-day,
+body[data-theme="dark"] .calendar-cell,
+body[data-theme="dark"] .calendar-task,
+body[data-theme="dark"] .subject-card,
+body[data-theme="dark"] .subject-detail-toolbar,
+body[data-theme="dark"] .knowledge-subject,
+body[data-theme="dark"] .knowledge-topic,
+body[data-theme="dark"] .mistake-card,
+body[data-theme="dark"] .duel-create,
+body[data-theme="dark"] .duel-card,
+body[data-theme="dark"] .smart-plan,
+body[data-theme="dark"] .study-sidebar,
+body[data-theme="dark"] .study-content,
+body[data-theme="dark"] .study-lesson,
+body[data-theme="dark"] .lab-card,
+body[data-theme="dark"] .practice-question,
+body[data-theme="dark"] .reference-card,
+body[data-theme="dark"] .review-queue-item,
+body[data-theme="dark"] .achievement-card,
+body[data-theme="dark"] .weekly-metric,
+body[data-theme="dark"] .page-note,
+body[data-theme="dark"] .subtabs {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Panels that benefit from a subtle raised layer, not a bright white fill. */
+body[data-theme="dark"] .task,
+body[data-theme="dark"] .dailyitem,
+body[data-theme="dark"] .rankitem,
+body[data-theme="dark"] .calendar-cell,
+body[data-theme="dark"] .calendar-task,
+body[data-theme="dark"] .subject-topic-item,
+body[data-theme="dark"] .topic-nav-item,
+body[data-theme="dark"] .study-lesson,
+body[data-theme="dark"] .practice-question,
+body[data-theme="dark"] .lab-result,
+body[data-theme="dark"] .smart-plan-item,
+body[data-theme="dark"] .review-queue-item,
+body[data-theme="dark"] .mistake-answers > div,
+body[data-theme="dark"] .topic-practice-question {
+  background: var(--soft) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+
+/* Consistent text contrast on all section headers and descriptions. */
+body[data-theme="dark"] .panel h1,
+body[data-theme="dark"] .panel h2,
+body[data-theme="dark"] .panel h3,
+body[data-theme="dark"] .panel h4,
+body[data-theme="dark"] .page-intro h2,
+body[data-theme="dark"] .calendar-intro h2,
+body[data-theme="dark"] .subject-intro h2,
+body[data-theme="dark"] .subject-detail-heading h2,
+body[data-theme="dark"] .study-hero h2,
+body[data-theme="dark"] .tests-hero h2,
+body[data-theme="dark"] .duel-hero h2,
+body[data-theme="dark"] .test-result-hero h2 {
+  color: var(--text) !important;
+}
+body[data-theme="dark"] .panel p,
+body[data-theme="dark"] .panel small,
+body[data-theme="dark"] .page-intro p,
+body[data-theme="dark"] .calendar-intro p,
+body[data-theme="dark"] .subject-intro p,
+body[data-theme="dark"] .subject-detail-heading p,
+body[data-theme="dark"] .study-hero p,
+body[data-theme="dark"] .tests-hero p,
+body[data-theme="dark"] .duel-hero p,
+body[data-theme="dark"] .test-result-hero p,
+body[data-theme="dark"] .duel-waiting,
+body[data-theme="dark"] .calendar-weekdays span {
+  color: var(--muted) !important;
+}
+
+/* Form controls and secondary actions in all sections. */
+body[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+body[data-theme="dark"] select,
+body[data-theme="dark"] textarea,
+body[data-theme="dark"] .field,
+body[data-theme="dark"] .btn:not(.primary),
+body[data-theme="dark"] .small {
+  background-color: var(--soft) !important;
+  color: var(--text) !important;
+  border-color: var(--line2) !important;
+}
+body[data-theme="dark"] input::placeholder,
+body[data-theme="dark"] textarea::placeholder {
+  color: var(--faint) !important;
+}
+body[data-theme="dark"] .btn.primary {
+  color: #fff !important;
+}
+body[data-theme="dark"] .calendar-cell.selected,
+body[data-theme="dark"] .study-lesson.active,
+body[data-theme="dark"] .topic-nav-item.active,
+body[data-theme="dark"] .test-option.selected,
+body[data-theme="dark"] .subtab.active {
+  background: var(--accentSoft) !important;
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+}
+body[data-theme="dark"] .test-option.is-correct,
+body[data-theme="dark"] .practice-question.is-correct {
+  background: #17372f !important;
+  border-color: #34765f !important;
+}
+body[data-theme="dark"] .test-option.is-wrong,
+body[data-theme="dark"] .practice-question.is-wrong {
+  background: #3b252d !important;
+  border-color: #75404c !important;
+}
