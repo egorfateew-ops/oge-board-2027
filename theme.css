@@ -637,3 +637,14 @@ button.calendar-cell:hover{border-color:#c9c5ff;background:#fbfaff}
  .topic-complete-row{align-items:flex-start;flex-direction:column}
  .focus-widget{right:12px;bottom:12px}
 }
+
+
+/* Only the active section's submenu should be visible.
+   This must override the display:flex!important declaration above. */
+#subTabs .subtab-group.hidden{
+  display:none!important;
+}
+#subTabs .subtab-group:not(.hidden){
+  display:flex!important;
+  min-width:0;
+}
