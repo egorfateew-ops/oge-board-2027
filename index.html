@@ -40,7 +40,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 </div></div>
 <div id="app" class="hidden"><div class="wrap">
  <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Егор × Даниил · учебный сезон 2026–2027</div></div><div class="actions"><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
- <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Учебник</button></nav>
+ <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Курс физики</button><button class="tab" data-tab="subjects">Предметы</button><button class="tab" data-tab="calendar">Календарь</button></nav>
  <section class="hero">
   <div class="panel welcome"><div><h2>Два ученика. Одна цель — сдать ОГЭ.</h2><p>Планируйте подготовку, разбирайте сложные темы и следите за личным прогрессом. Всё в одной общей доске.</p></div><div class="today"><strong id="todayCount">0 / 0</strong><span>заданий на сегодня</span></div></div>
   <div class="students">
@@ -60,6 +60,28 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">18 уроков</span><span class="study-kpi">До 6 недель</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
   <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
   <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
+
+ </section>
+ <section id="subjectsPage" class="hidden">
+  <div class="panel subject-intro">
+   <div><span class="eyebrow">УЧЕБНАЯ ПРОГРАММА</span><h2>Предметы</h2><p>Выбирай предмет, открывай темы и веди собственные конспекты. Прогресс и заметки сохраняются в личном профиле.</p></div>
+   <a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Документы ФИПИ ↗</a>
+  </div>
+  <div id="subjectsCatalog" class="subject-grid"></div>
+  <div id="subjectDetail" class="hidden">
+   <div class="subject-detail-toolbar"><button class="btn" id="backSubjects">← Все предметы</button><button class="btn primary" id="subjectTasksBtn">Задания по предмету</button></div>
+   <div id="subjectDetailContent"></div>
+  </div>
+ </section>
+ <section id="calendarPage" class="hidden">
+  <div class="panel calendar-intro">
+   <div><span class="eyebrow">ПЛАНИРОВАНИЕ</span><h2>Календарь подготовки</h2><p>Здесь собраны задания с установленными сроками. Выбери день, чтобы посмотреть план или добавить новую задачу.</p></div>
+   <div class="calendar-nav"><button class="btn" id="calPrev" aria-label="Предыдущий месяц">←</button><strong id="calendarMonthLabel"></strong><button class="btn" id="calNext" aria-label="Следующий месяц">→</button><button class="btn" id="calToday">Сегодня</button></div>
+  </div>
+  <div class="calendar-layout">
+   <div class="panel calendar-panel"><div class="calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="calendarGrid" class="calendar-grid"></div><div class="calendar-legend"><span><i class="legend-dot todo"></i>К выполнению</span><span><i class="legend-dot doing"></i>В процессе</span><span><i class="legend-dot done"></i>Готово</span></div></div>
+   <aside class="panel calendar-day"><div id="calendarDayTitle"></div><div id="calendarDayList" class="calendar-day-list"></div><button class="btn primary" id="calendarAddBtn">＋ Добавить задание на этот день</button></aside>
+  </div>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
 </div></div>
@@ -238,7 +260,173 @@ function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clea
 function showLogin(msg=''){$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('loginMsg').textContent=msg}
 function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=member.name;$('sync').textContent='Общая база подключена · синхронизация включена'; }
 
+
 let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
+let studyNotes={},activeSubjectName="",activeTopicId="";
+let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1),calendarSelectedDate=today();
+const subjectCatalog=[
+ {name:"Математика",icon:"∑",description:"Алгебра, геометрия, вычисления и задачи на рассуждение.",topics:[
+  {id:"math-numbers",title:"Числа и вычисления",description:"Дроби, проценты, степени, корни, числовые выражения и преобразования."},
+  {id:"math-algebra",title:"Алгебраические выражения",description:"Формулы сокращённого умножения, преобразование выражений и разложение на множители."},
+  {id:"math-equations",title:"Уравнения и неравенства",description:"Линейные и квадратные уравнения, системы, неравенства и текстовые задачи."},
+  {id:"math-functions",title:"Функции и графики",description:"Координатная плоскость, чтение графиков, свойства функций и зависимости."},
+  {id:"math-geometry",title:"Геометрия",description:"Треугольники, четырёхугольники, окружность, площади, периметры и доказательства."},
+  {id:"math-probability",title:"Вероятность и статистика",description:"Средние значения, таблицы, диаграммы, случайные события и вероятность."}
+ ]},
+ {name:"Русский язык",icon:"А",description:"Орфография, пунктуация, грамматика и работа с текстом.",topics:[
+  {id:"rus-spelling",title:"Орфография",description:"Правописание корней, приставок, суффиксов, окончаний и НЕ/НИ."},
+  {id:"rus-punctuation",title:"Пунктуация",description:"Знаки препинания в простом и сложном предложении, однородные члены и обращения."},
+  {id:"rus-morphemes",title:"Морфемика и словообразование",description:"Морфемный разбор, способы образования слов и состав слова."},
+  {id:"rus-syntax",title:"Синтаксис и грамматика",description:"Части речи, словосочетания, виды предложений и синтаксический разбор."},
+  {id:"rus-text",title:"Текст и средства выразительности",description:"Тема, идея, проблема, средства связи предложений и выразительные средства."},
+  {id:"rus-writing",title:"Изложение и сочинение",description:"Понимание исходного текста, аргументация, композиция и проверка работы."}
+ ]},
+ {name:"Информатика",icon:"</>",description:"Алгоритмы, логика, кодирование и работа с информацией.",topics:[
+  {id:"inf-info",title:"Информация и кодирование",description:"Количество информации, единицы измерения, кодирование текста и изображений."},
+  {id:"inf-logic",title:"Логика",description:"Логические операции, таблицы истинности и построение логических выражений."},
+  {id:"inf-algorithms",title:"Алгоритмы и исполнители",description:"Последовательность команд, ветвления, циклы и анализ алгоритмов."},
+  {id:"inf-tables",title:"Электронные таблицы",description:"Формулы, ссылки, сортировка, фильтрация и анализ табличных данных."},
+  {id:"inf-models",title:"Моделирование и системы счисления",description:"Информационные модели, двоичная запись чисел и перевод между системами счисления."},
+  {id:"inf-networks",title:"Компьютерные сети и безопасность",description:"Адресация, передача данных, интернет-сервисы и цифровая безопасность."}
+ ]},
+ {name:"Английский язык",icon:"EN",description:"Грамматика, лексика, чтение и понимание контекста.",topics:[
+  {id:"eng-tenses",title:"Времена глагола",description:"Present, Past и Future: формы, маркеры времени и выбор нужной конструкции."},
+  {id:"eng-grammar",title:"Грамматические конструкции",description:"Артикли, местоимения, степени сравнения, модальные глаголы и пассивный залог."},
+  {id:"eng-prepositions",title:"Предлоги и устойчивые выражения",description:"Предлоги времени и места, фразовые глаголы и типичные сочетания."},
+  {id:"eng-vocabulary",title:"Лексика по темам",description:"Семья, школа, досуг, путешествия, здоровье, технологии и окружающий мир."},
+  {id:"eng-reading",title:"Чтение и понимание текста",description:"Поиск главной мысли, деталей, соответствий и смысла незнакомых слов."},
+  {id:"eng-writing",title:"Письменная речь",description:"Структура личного письма, ответы на вопросы и проверка языковых ошибок."}
+ ]},
+ {name:"Физика",icon:"⚛",description:"18 подробных уроков, формулы, разобранные задачи и виртуальные лаборатории.",topics:[]},
+ {name:"Обществознание",icon:"§",description:"Человек, общество, экономика, социальные отношения, политика и право.",topics:[
+  {id:"soc-human",title:"Человек и общество",description:"Личность, деятельность, потребности, общество и его основные сферы."},
+  {id:"soc-economy",title:"Экономика",description:"Рынок, спрос и предложение, предпринимательство, деньги и семейный бюджет."},
+  {id:"soc-social",title:"Социальная сфера",description:"Социальные группы, семья, нормы, конфликты и социальная мобильность."},
+  {id:"soc-politics",title:"Политика и власть",description:"Государство, политические режимы, выборы, партии и гражданское участие."},
+  {id:"soc-law",title:"Право и государство",description:"Правоотношения, Конституция, права и обязанности, отрасли права."}
+ ]},
+ {name:"История",icon:"⌛",description:"Хронология, исторические процессы, карты, личности и культура.",topics:[
+  {id:"hist-ancient",title:"Древняя Русь и образование государства",description:"Восточные славяне, первые князья, принятие христианства и развитие Руси."},
+  {id:"hist-medieval",title:"Русские земли и объединение государства",description:"Раздробленность, ордынская зависимость, возвышение Москвы и объединение земель."},
+  {id:"hist-empire",title:"Россия в Новое время",description:"Реформы, войны, развитие государства, общества и культуры."},
+  {id:"hist-modern",title:"Россия в XX–XXI веках",description:"Революции, СССР, Великая Отечественная война, послевоенное развитие и современность."},
+  {id:"hist-maps",title:"Исторические карты и источники",description:"Работа с картами, документами, датами, причинно-следственными связями."}
+ ]},
+ {name:"Биология",icon:"BIO",description:"Клетка, организм, человек, экосистемы и закономерности живого.",topics:[
+  {id:"bio-science",title:"Биология как наука",description:"Методы исследования, уровни организации живого и признаки организмов."},
+  {id:"bio-cell",title:"Клетка и организм",description:"Строение клетки, органоиды, ткани, органы и системы органов."},
+  {id:"bio-plants",title:"Растения, грибы и бактерии",description:"Строение, жизнедеятельность, размножение и значение организмов."},
+  {id:"bio-human",title:"Человек и его здоровье",description:"Системы органов, регуляция, гигиена и профилактика заболеваний."},
+  {id:"bio-ecology",title:"Экология и эволюция",description:"Экосистемы, пищевые цепи, естественный отбор и приспособленность."}
+ ]},
+ {name:"География",icon:"GEO",description:"Карты, природные процессы, население и хозяйство России.",topics:[
+  {id:"geo-map",title:"Географические карты",description:"Масштаб, координаты, условные знаки, направления и измерения по карте."},
+  {id:"geo-nature",title:"Природа Земли",description:"Литосфера, атмосфера, гидросфера, климат и природные зоны."},
+  {id:"geo-population",title:"Население и города",description:"Численность, размещение, миграции, урбанизация и демографические показатели."},
+  {id:"geo-russia",title:"География России",description:"Рельеф, климат, природные ресурсы, регионы и население страны."},
+  {id:"geo-economy",title:"Хозяйство и мировое хозяйство",description:"Отрасли экономики, транспорт, энергетика и международные связи."}
+ ]},
+ {name:"Химия",icon:"H₂",description:"Вещества, реакции, периодический закон и расчётные задачи.",topics:[
+  {id:"chem-atom",title:"Атомы и периодический закон",description:"Строение атома, периодическая таблица и свойства химических элементов."},
+  {id:"chem-bonds",title:"Химическая связь и вещества",description:"Типы связей, валентность, степени окисления и формулы веществ."},
+  {id:"chem-reactions",title:"Химические реакции",description:"Признаки реакций, уравнения, коэффициенты и типы химических превращений."},
+  {id:"chem-classes",title:"Классы неорганических соединений",description:"Оксиды, кислоты, основания и соли: свойства и взаимосвязи."},
+  {id:"chem-calculations",title:"Расчётные задачи",description:"Количество вещества, молярная масса, массовая доля и расчёты по уравнению."}
+ ]},
+ {name:"Литература",icon:"№",description:"Теория литературы, анализ произведений и аргументация.",topics:[
+  {id:"lit-genres",title:"Роды и жанры литературы",description:"Эпос, лирика, драма, жанровые особенности и композиция произведения."},
+  {id:"lit-devices",title:"Средства художественной выразительности",description:"Тропы, фигуры речи, звукопись и роль художественной детали."},
+  {id:"lit-analysis",title:"Анализ произведения",description:"Тема, идея, конфликт, образ героя, авторская позиция и композиция."},
+  {id:"lit-context",title:"Литературные направления и контекст",description:"Историко-литературный контекст, особенности эпох и авторского стиля."},
+  {id:"lit-writing",title:"Развёрнутый ответ",description:"Тезис, доказательства текстом, логика рассуждения и грамотное оформление."}
+ ]}
+];
+function subjectTopics(name){
+ if(name==="Физика")return physicsWeeks.flatMap((w,wi)=>w.lessons.map((l,li)=>({id:l.id,title:l.title,description:l.goal,weekTitle:w.title,lesson:l,weekIndex:wi,lessonIndex:li})));
+ const s=subjectCatalog.find(x=>x.name===name);return s?s.topics:[];
+}
+function renderSubjects(){
+ const root=$("subjectsCatalog");if(!root)return;
+ root.innerHTML=subjectCatalog.map(s=>{
+  const own=tasks.filter(t=>t.subject===s.name),done=own.filter(t=>t.status==="done").length;
+  const count=s.name==="Физика"?totalLessons():s.topics.length;
+  return '<button type="button" class="subject-card" data-open-subject="'+esc(s.name)+'"><span class="subject-icon">'+esc(s.icon)+'</span><span class="subject-card-main"><b>'+esc(s.name)+'</b><small>'+esc(s.description)+'</small><span class="subject-card-meta">'+count+' тем · '+own.length+' заданий</span></span><span class="subject-card-arrow">→</span>'+(own.length?'<span class="subject-mini-progress">'+done+'/'+own.length+'</span>':'')+'</button>';
+ }).join("");
+}
+function openSubject(name){
+ activeSubjectName=name;const topics=subjectTopics(name);activeTopicId=topics.length?topics[0].id:"";
+ $("subjectsCatalog").classList.add("hidden");$("subjectDetail").classList.remove("hidden");renderSubjectDetail();
+}
+function backToSubjects(){
+ $("subjectDetail").classList.add("hidden");$("subjectsCatalog").classList.remove("hidden");activeSubjectName="";activeTopicId="";renderSubjects();
+}
+function renderSubjectDetail(){
+ const subject=subjectCatalog.find(s=>s.name===activeSubjectName),topics=subjectTopics(activeSubjectName);
+ if(!subject)return;
+ const topic=topics.find(t=>t.id===activeTopicId)||topics[0];
+ if(!topic){$("subjectDetailContent").innerHTML='<div class="study-empty">Темы пока не добавлены.</div>';return;}
+ activeTopicId=topic.id;
+ const nav=topics.map((t,i)=>'<button type="button" class="topic-nav-item '+(t.id===topic.id?'active':'')+'" data-subject-topic="'+esc(t.id)+'"><span class="topic-nav-num">'+(i+1)+'</span><span class="topic-nav-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.weekTitle||"Раздел программы")+'</small></span><span class="topic-note-mark">'+(studyNotes[t.id]?'Заметка':'')+'</span></button>').join("");
+ let material="";
+ if(topic.lesson){
+  const l=topic.lesson;
+  material=l.theory.map(x=>'<div class="topic-theory"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join("")+
+   '<h3>Формулы и соотношения</h3>'+l.formulas.map(x=>'<div class="formula"><code>'+esc(x[0])+'</code><small>'+esc(x[1])+'</small></div>').join("")+
+   '<div class="study-example"><h3>Разобранный пример</h3><p><b>Условие:</b> '+esc(l.example.task)+'</p><ol>'+l.example.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol><div class="study-answer">Ответ: '+esc(l.example.answer)+'</div></div>'+
+   '<h3>На что обратить внимание</h3>'+l.pitfalls.map(x=>'<div class="study-pitfall">'+esc(x)+'</div>').join("");
+ }else{
+  material='<div class="topic-guide"><h3>План разбора темы</h3><ol><li>Повтори определения и основные понятия.</li><li>Составь короткую схему или таблицу по теме.</li><li>Разбери один пример и объясни решение своими словами.</li><li>Выполни задания по теме на доске и отметь ошибки.</li><li>Запиши в конспект то, что нужно повторить.</li></ol><p>Это тематический раздел для самостоятельной подготовки. Сверяй формулировки и перечень проверяемых элементов с актуальными документами ФИПИ.</p></div>';
+ }
+ const note=studyNotes[topic.id]||"";
+ $("subjectDetailContent").innerHTML=
+  '<div class="subject-detail-heading"><div><span class="eyebrow">'+esc(subject.name.toUpperCase())+'</span><h2>'+esc(subject.name)+'</h2><p>'+esc(subject.description)+'</p></div><span class="subject-topic-count">'+topics.length+' тем</span></div>'+
+  '<div class="subject-workspace"><aside class="panel topic-nav"><div class="topic-nav-title">Каталог тем</div>'+nav+'</aside>'+
+  '<article class="panel topic-main"><div class="topic-heading"><span class="eyebrow">'+esc(topic.weekTitle||"ТЕМА")+'</span><h2>'+esc(topic.title)+'</h2><p>'+esc(topic.description||"")+'</p></div>'+
+  (topic.lesson?material:material)+
+  '<section class="topic-notes"><div class="topic-notes-head"><div><span class="eyebrow">ЛИЧНЫЙ КОНСПЕКТ</span><h3>Мои заметки по теме</h3><p>Запиши определения, формулы, вопросы и ошибки, к которым нужно вернуться.</p></div><span id="noteSaveState" class="note-save-state">'+(note?"Есть сохранённая заметка":"Пока пусто")+'</span></div>'+
+  '<textarea id="topicNoteInput" class="field topic-note-input" maxlength="12000" placeholder="Начни писать конспект здесь…">'+esc(note)+'</textarea>'+
+  '<div class="topic-note-actions"><small>Заметки видны только в твоём профиле.</small><button class="btn primary" id="saveTopicNoteBtn">Сохранить конспект</button></div></section></article></div>';
+}
+async function saveSubjectNote(){
+ const input=$("topicNoteInput");if(!input||!activeTopicId)return;
+ const value=input.value,next={...studyNotes,[activeTopicId]:value};
+ try{
+  await setDoc(doc(db,"rooms","oge2027","progress",user.uid),{studyNotes:next,updatedAt:serverTimestamp()},{merge:true});
+  studyNotes=next;const state=$("noteSaveState");if(state)state.textContent="Сохранено";toast("Конспект сохранён");
+ }catch(e){toast("Не удалось сохранить конспект: "+e.message)}
+}
+function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function dateFromKey(key){const p=key.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])}
+function tasksOnDate(key){return tasks.filter(t=>t.date===key)}
+function renderCalendarDay(){
+ const d=dateFromKey(calendarSelectedDate),arr=tasksOnDate(calendarSelectedDate);
+ $("calendarDayTitle").innerHTML='<span class="eyebrow">ВЫБРАННАЯ ДАТА</span><h3>'+d.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})+'</h3><p>'+arr.length+' '+(arr.length===1?"задание":arr.length>1&&arr.length<5?"задания":"заданий")+'</p>';
+ $("calendarDayList").innerHTML=arr.length?arr.map(t=>{
+  const label=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
+  return '<button type="button" class="calendar-task" data-cal-edit="'+esc(t.id)+'"><span class="calendar-task-dot '+esc(t.status||"todo")+'"></span><span class="calendar-task-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.subject||"Другое")+' · '+esc(t.person||"")+'</small></span><span class="calendar-task-status">'+label+'</span></button>';
+ }).join(""):'<div class="study-empty">На эту дату заданий нет. Можно добавить новое.</div>';
+}
+function renderCalendar(){
+ const grid=$("calendarGrid");if(!grid)return;
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth(),first=new Date(year,month,1),offset=(first.getDay()+6)%7,total=new Date(year,month+1,0).getDate();
+ $("calendarMonthLabel").textContent=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ let cells=Array(offset).fill('<div class="calendar-cell calendar-cell-empty"></div>');
+ for(let day=1;day<=total;day++){
+  const d=new Date(year,month,day),key=dateKey(d),arr=tasksOnDate(key),selected=key===calendarSelectedDate,isToday=key===today();
+  const dots=arr.slice(0,4).map(t=>'<i class="calendar-dot '+esc(t.status||"todo")+'"></i>').join("");
+  cells.push('<button type="button" class="calendar-cell '+(selected?"selected ":"")+(isToday?"is-today":"")+'" data-calendar-date="'+key+'"><span class="calendar-day-number">'+day+'</span>'+(arr.length?'<span class="calendar-event-count">'+arr.length+'</span>':'')+'<span class="calendar-dots">'+dots+'</span></button>');
+ }
+ while(cells.length%7)cells.push('<div class="calendar-cell calendar-cell-empty"></div>');
+ grid.innerHTML=cells.join("");renderCalendarDay();
+}
+function showTab(tab){
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ ["board","daily","stats","study","subjects","calendar"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
+ if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
+ if(tab==="subjects"){backToSubjects();renderSubjects()}
+ if(tab==="calendar")renderCalendar();
+}
+
 function totalLessons(){return physicsWeeks.reduce((n,w)=>n+w.lessons.length,0)}
 function updateStudyProgress(){
  const total=totalLessons(),done=completedLessons.size,pct=Math.round(done/total*100);
@@ -295,13 +483,28 @@ function updateLab(id){
  if(id==='lever'){const left=v.massLeft*v.armLeft,right=v.massRight*v.armRight;title='Моменты сил';value=left===right?'Равновесие':'Неравновесие';detail='Слева: '+left+' г·см. Справа: '+right+' г·см. '+(left===right?'Моменты равны — рычаг в равновесии.':left>right?'Левая сторона перевешивает.':'Правая сторона перевешивает.')}
  root.querySelector('[data-lab-result="'+id+'"]').innerHTML='<span>'+title+'</span><strong>'+value+'</strong><p>'+detail+'</p>';
 }
+
+$("subjectsCatalog").addEventListener("click",e=>{const b=e.target.closest("[data-open-subject]");if(b)openSubject(b.dataset.openSubject)});
+$("backSubjects").addEventListener("click",backToSubjects);
+$("subjectTasksBtn").addEventListener("click",()=>{if(!activeSubjectName)return;$("subjectFilter").value=activeSubjectName;showTab("board");renderBoard()});
+$("subjectDetailContent").addEventListener("click",e=>{
+ const topic=e.target.closest("[data-subject-topic]");if(topic){activeTopicId=topic.dataset.subjectTopic;renderSubjectDetail();return}
+ if(e.target.closest("#saveTopicNoteBtn"))saveSubjectNote();
+});
+$("calPrev").addEventListener("click",()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);calendarSelectedDate=dateKey(calendarMonth);renderCalendar()});
+$("calNext").addEventListener("click",()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);calendarSelectedDate=dateKey(calendarMonth);renderCalendar()});
+$("calToday").addEventListener("click",()=>{calendarSelectedDate=today();const d=dateFromKey(calendarSelectedDate);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()});
+$("calendarGrid").addEventListener("click",e=>{const cell=e.target.closest("[data-calendar-date]");if(!cell)return;calendarSelectedDate=cell.dataset.calendarDate;const d=dateFromKey(calendarSelectedDate);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()});
+$("calendarDayList").addEventListener("click",e=>{const b=e.target.closest("[data-cal-edit]");if(!b)return;const t=tasks.find(x=>x.id===b.dataset.calEdit);if(t)openModal(t)});
+$("calendarAddBtn").addEventListener("click",()=>{openModal(null,false);$("due").value=calendarSelectedDate});
+
 $('studyWeeks').addEventListener('click',e=>{const item=e.target.closest('[data-week]');if(!item)return;studyWeekIndex=Number(item.dataset.week);studyLessonIndex=0;renderStudyWeeks();renderStudyLessons();renderStudyContent()});
 $('studyLessons').addEventListener('click',e=>{const item=e.target.closest('[data-lesson]');if(!item)return;studyLessonIndex=Number(item.dataset.lesson);renderStudyLessons();renderStudyContent()});
 $('studyContent').addEventListener('click',e=>{const b=e.target.closest('[data-practice-check]');if(b)checkPractice(Number(b.dataset.practiceCheck))});
 $('labList').addEventListener('input',e=>{const input=e.target.closest('[data-lab]');if(input)updateLab(input.dataset.lab)});
 function moveStudy(delta){let wi=studyWeekIndex,li=studyLessonIndex+delta;if(li<0){wi--;if(wi<0)return;li=physicsWeeks[wi].lessons.length-1}else if(li>=physicsWeeks[wi].lessons.length){wi++;if(wi>=physicsWeeks.length)return;li=0}studyWeekIndex=wi;studyLessonIndex=li;renderStudyWeeks();renderStudyLessons();renderStudyContent()}
 function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();renderLabs();updateStudyProgress()}
-function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
+function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};studyNotes=snap.exists()?(snap.data().studyNotes||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent();if(activeSubjectName)renderSubjectDetail()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
 function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
 function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
@@ -310,7 +513,7 @@ function card(t){const next=t.status==='todo'?'doing':t.status==='doing'?'done':
 function renderBoard(){const arr=filtered();[['todo','todoList','todoCount'],['doing','doingList','doingCount'],['done','doneList','doneCount']].forEach(([st,list,count])=>{const a=arr.filter(t=>t.status===st);$(list).innerHTML=a.length?a.map(card).join(''):'<div class="empty">Пока пусто</div>';$ (count).textContent=a.length})}
 function renderDaily(){const a=tasks.filter(t=>t.daily||t.date===today()),done=a.filter(t=>t.status==='done').length;$('todayCount').textContent=done+' / '+a.length;$('dateLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});$('dailyList').innerHTML=a.length?a.map(t=>'<label class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==='done'?'checked':'')+'><span><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></span><span class="points">+'+(Number(t.points)||0)+' XP</span></label>').join(''):'<div class="empty">На сегодня заданий пока нет</div>'}
 function renderStats(){const done=tasks.filter(t=>t.status==='done');$('statTotal').textContent=tasks.length;$('statDone').textContent=done.length;$('statXp').textContent=pointsFor('Егор')+pointsFor('Даниил');const people=[{n:'Егор',xp:pointsFor('Егор'),a:'Е'},{n:'Даниил',xp:pointsFor('Даниил'),a:'Д'}].sort((a,b)=>b.xp-a.xp);$('ranking').innerHTML=people.map((p,i)=>'<div class="rankitem"><span class="ranknum">'+(i===0&&p.xp?'🏆':i+1)+'</span><b>'+p.n+'</b><span class="rankscore">'+p.xp+' XP</span></div>').join('');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toLocaleDateString('sv-SE'),n=done.filter(t=>{const x=t.completedAt?.toDate?t.completedAt.toDate():t.completedAt?new Date(t.completedAt):null;return x&&!isNaN(x)&&x.toLocaleDateString('sv-SE')===k}).length;days.push({l:d.toLocaleDateString('ru-RU',{weekday:'short'}),n})}const max=Math.max(1,...days.map(x=>x.n));$('chart').innerHTML=days.map(x=>'<div class="barwrap"><b>'+x.n+'</b><div class="bar" style="height:'+Math.max(4,x.n/max*105)+'px"></div><small>'+x.l+'</small></div>').join('')}
-function render(){renderBoard();renderDaily();renderStats();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
+function render(){renderBoard();renderDaily();renderStats();renderSubjects();if(!$('calendarPage').classList.contains('hidden'))renderCalendar();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
 function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 function openModal(t=null,daily=false){editing=t?.id||null;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
@@ -323,7 +526,7 @@ $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data=
 $('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[data-action]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;try{if(b.dataset.action==='edit')openModal(t);if(b.dataset.action==='delete'&&confirm('Удалить задание?'))await deleteDoc(taskDoc(t.id));if(b.dataset.action==='move'){const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён')}}catch(err){toast('Не удалось изменить: '+err.message)}});
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
-document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['board','daily','stats','study'].forEach(p=>$(p+'Page').classList.toggle('hidden',p!==b.dataset.tab));if(b.dataset.tab==='study'){renderStudy();$('studyPage').scrollIntoView({behavior:'smooth',block:'start'})}});
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
 $('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить задания по физике за первую неделю для Егора и Даниила?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title&&x.person===t.person)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Задания по физике добавлены')}catch(err){toast(err.message)}});
 if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen();listenProgress()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
 </script>
