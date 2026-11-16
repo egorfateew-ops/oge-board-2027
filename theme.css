@@ -466,3 +466,44 @@ button{cursor:pointer}
   .study-kpi{font-size:10px}
   .study-content{padding:16px}
 }
+
+
+/* Practice and virtual laboratory */
+.eyebrow{display:block;color:#9a7b35;font-size:9px;font-weight:900;letter-spacing:.16em}
+.practice-block{margin-top:23px;padding-top:18px;border-top:1px solid #dce5d8}
+.practice-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.practice-head h3,.labs-heading h2{margin:4px 0;color:#214a38;font-size:21px}
+.practice-head p,.labs-heading p{margin:0;color:#758278;font-size:12px}
+.practice-score{padding:8px 12px;background:#e6efdf;color:#315d43;border-radius:3px}
+.practice-question{margin:9px 0;padding:14px;border:1px solid #dfe7db;border-radius:3px;background:#fff}
+.practice-question.is-correct{border-left:3px solid #4d9566}
+.practice-question.is-wrong{border-left:3px solid #d0a34c}
+.question-top{display:flex;justify-content:space-between;gap:8px;color:#8a968b;font-size:9px;font-weight:900;letter-spacing:.08em}
+.practice-question p{margin:9px 0 12px;color:#31513e;font-size:13px;font-weight:650}
+.practice-input{max-width:420px}
+.answer-row{display:flex;align-items:center;gap:8px}
+.answer-row .field{max-width:220px}
+.answer-unit{color:#718176;font-size:12px}
+.practice-check{display:block;margin-top:9px}
+.practice-feedback{margin-top:10px;padding:10px 12px;border-radius:2px;font-size:12px;line-height:1.55}
+.practice-feedback.good{background:#eaf3e6;color:#35694a}
+.practice-feedback.bad{background:#fbf1dc;color:#785f2c}
+.labs-section{margin-top:30px;padding-top:24px;border-top:1px solid #d6e0d2}
+.labs-heading{margin-bottom:14px}
+.lab-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.lab-card{padding:17px;border:1px solid #dbe4d8;border-radius:3px;background:#fbfcf7}
+.lab-top{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.lab-top h3{margin:4px 0;color:#264e3a;font-size:16px}
+.lab-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#e6efe0;color:#3d7551;font-size:18px}
+.lab-card>p{min-height:42px;margin:8px 0;color:#718176;font-size:11px;line-height:1.6}
+.lab-scheme{padding:10px;margin:10px 0;background:#eaf0e5;color:#3c6448;font-size:11px;text-align:center}
+.lab-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lab-control{display:grid;gap:6px;color:#738177;font-size:10px}
+.lab-control b{color:#315b42;font-size:12px}
+.lab-control input{width:100%;accent-color:#4f805c}
+.lab-result{margin:12px 0;padding:11px;background:#f5f0df;border-left:3px solid #d5ad4c}
+.lab-result span{display:block;color:#7d704c;font-size:9px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.lab-result strong{display:block;margin:3px 0;color:#31583f;font-size:19px}
+.lab-result p{margin:0;color:#6e7868;font-size:11px;line-height:1.55}
+.lab-card>.sub{margin-top:8px;font-size:10px}
+@media(max-width:700px){.lab-grid{grid-template-columns:1fr}.lab-controls{grid-template-columns:1fr 1fr}.practice-head{align-items:flex-start}}
