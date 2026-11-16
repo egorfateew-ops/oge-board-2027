@@ -59,6 +59,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ · Физика ⚛️</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">📚 6 учебных недель</span><span class="study-kpi">🧠 18 уроков</span><span class="study-kpi">⏱ До 6 недель</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div></div>
   <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
+  <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
 </div></div>
@@ -75,6 +76,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 <script type="module">
 import {firebaseConfig,members} from './config.js';
 import {physicsWeeks} from './physics.js';
+import {physicsPractice,physicsLabs} from './physics-practice.js';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
@@ -236,7 +238,7 @@ function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clea
 function showLogin(msg=''){$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('loginMsg').textContent=msg}
 function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=member.name;$('sync').textContent='Общая база подключена · синхронизация включена'; }
 
-let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),stopProgress=null;
+let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
 function totalLessons(){return physicsWeeks.reduce((n,w)=>n+w.lessons.length,0)}
 function updateStudyProgress(){
  const total=totalLessons(),done=completedLessons.size,pct=Math.round(done/total*100);
@@ -252,18 +254,54 @@ function renderStudyLessons(){
 }
 function renderStudyContent(){
  const l=physicsWeeks[studyWeekIndex].lessons[studyLessonIndex];if(!l)return;
- const theory=l.theory.map((x,i)=>'<h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p>').join('');
+ const theory=l.theory.map(x=>'<h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p>').join('');
  const formulas=l.formulas.map(x=>'<div class="formula"><code>'+esc(x[0])+'</code><small>'+esc(x[1])+'</small></div>').join('');
  const steps=l.example.steps.map(x=>'<li>'+esc(x)+'</li>').join('');
  const pitfalls=l.pitfalls.map(x=>'<div class="study-pitfall">⚠ '+esc(x)+'</div>').join('');
  const done=completedLessons.has(l.id);
- $('studyContent').innerHTML='<div class="sub">ФИЗИКА · '+esc(physicsWeeks[studyWeekIndex].title.toUpperCase())+'</div><h2>'+esc(l.title)+'</h2><div class="sub">⏱ '+esc(l.time)+'</div><div class="goal"><b>Цель урока:</b> '+esc(l.goal)+'</div><h3>📖 Теория</h3>'+theory+'<h3>🧮 Формулы и соотношения</h3>'+formulas+'<div class="study-example"><h3>Разобранный пример</h3><p><b>Условие:</b> '+esc(l.example.task)+'</p><ol>'+steps+'</ol><div class="study-answer">Ответ: '+esc(l.example.answer)+'</div></div><h3>⚠️ Типичные ошибки</h3>'+pitfalls+'<div class="study-actions"><button class="btn primary" id="studyDoneBtn">'+(done?'✓ Урок пройден':'Отметить урок пройденным')+'</button><button class="btn" id="studyPrevBtn" '+(studyWeekIndex===0&&studyLessonIndex===0?'disabled':'')+'>← Предыдущий</button><button class="btn" id="studyNextBtn" '+(studyWeekIndex===physicsWeeks.length-1&&studyLessonIndex===physicsWeeks[studyWeekIndex].lessons.length-1?'disabled':'')+'>Следующий →</button></div>';
+ const qs=physicsPractice[l.id]||[];
+ const results=practiceResults[l.id]||{};
+ const solved=Object.keys(results).filter(k=>results[k]?.correct).length;
+ const practiceHtml=qs.length?'<section class="practice-block"><div class="practice-head"><div><span class="eyebrow">ПРОВЕРЬ СЕБЯ</span><h3>Практика по теме</h3><p>Реши задания самостоятельно. После проверки появится объяснение.</p></div><strong class="practice-score">'+solved+' / '+qs.length+'</strong></div>'+qs.map((q,i)=>{
+   const r=results[i];
+   const control=q.type==='choice'?'<select class="field practice-input" data-practice-answer="'+i+'"><option value="">Выбери ответ…</option>'+q.options.map(o=>'<option value="'+esc(o)+'" '+(r?.value===o?'selected':'')+'>'+esc(o)+'</option>').join('')+'</select>':'<div class="answer-row"><input class="field practice-input" data-practice-answer="'+i+'" inputmode="decimal" placeholder="Введи число" value="'+(r?.value!==undefined?esc(r.value):'')+'"><span class="answer-unit">'+esc(q.unit||'')+'</span></div>';
+   return '<div class="practice-question '+(r?(r.correct?'is-correct':'is-wrong'):'')+'"><div class="question-top"><span>ЗАДАНИЕ '+(i+1)+'</span><span>'+(r?(r.correct?'✓ Верно':'↻ Попробуй ещё'):'')+'</span></div><p>'+esc(q.prompt)+'</p>'+control+'<button class="small practice-check" data-practice-check="'+i+'">Проверить</button>'+(r?'<div class="practice-feedback '+(r.correct?'good':'bad')+'">'+esc(q.explain)+'</div>':'')+'</div>';
+ }).join('')+'</section>':'';
+ $('studyContent').innerHTML='<div class="sub">ФИЗИКА · '+esc(physicsWeeks[studyWeekIndex].title.toUpperCase())+'</div><h2>'+esc(l.title)+'</h2><div class="sub">⏱ '+esc(l.time)+'</div><div class="goal"><b>Цель урока:</b> '+esc(l.goal)+'</div><h3>📖 Теория</h3>'+theory+'<h3>🧮 Формулы и соотношения</h3>'+formulas+'<div class="study-example"><h3>Разобранный пример</h3><p><b>Условие:</b> '+esc(l.example.task)+'</p><ol>'+steps+'</ol><div class="study-answer">Ответ: '+esc(l.example.answer)+'</div></div><h3>⚠️ Типичные ошибки</h3>'+pitfalls+practiceHtml+'<div class="study-actions"><button class="btn primary" id="studyDoneBtn">'+(done?'✓ Урок пройден':'Отметить урок пройденным')+'</button><button class="btn" id="studyPrevBtn" '+(studyWeekIndex===0&&studyLessonIndex===0?'disabled':'')+'>← Предыдущий</button><button class="btn" id="studyNextBtn" '+(studyWeekIndex===physicsWeeks.length-1&&studyLessonIndex===physicsWeeks[studyWeekIndex].lessons.length-1?'disabled':'')+'>Следующий →</button></div>';
  $('studyDoneBtn').addEventListener('click',async()=>{const next=new Set(completedLessons);if(next.has(l.id))next.delete(l.id);else next.add(l.id);try{await setDoc(doc(db,'rooms','oge2027','progress',user.uid),{completedLessons:[...next],updatedAt:serverTimestamp()},{merge:true});toast(next.has(l.id)?'Урок отмечен как пройденный':'Отметка снята')}catch(e){toast('Не удалось сохранить прогресс: '+e.message)}});
  $('studyPrevBtn').addEventListener('click',()=>moveStudy(-1));$('studyNextBtn').addEventListener('click',()=>moveStudy(1));
 }
+async function checkPractice(index){
+ const l=physicsWeeks[studyWeekIndex].lessons[studyLessonIndex],q=(physicsPractice[l.id]||[])[index];
+ const input=$('studyContent').querySelector('[data-practice-answer="'+index+'"]');if(!q||!input)return;
+ const value=input.value.trim();if(!value){toast('Сначала введи ответ');return}
+ const correct=q.type==='choice'?value===q.answer:Math.abs(Number(value.replace(',','.'))-q.answer)<=q.tolerance;
+ const next={...practiceResults,[l.id]:{...(practiceResults[l.id]||{}),[index]:{value,correct,checkedAt:new Date().toISOString()}}};
+ try{await setDoc(doc(db,'rooms','oge2027','progress',user.uid),{practiceResults:next,updatedAt:serverTimestamp()},{merge:true});practiceResults=next;renderStudyContent();toast(correct?'Верно! Отличная работа':'Пока неверно — прочитай объяснение и попробуй ещё раз')}catch(e){toast('Не удалось сохранить результат: '+e.message)}
+}
+function renderLabs(){
+ $('labList').innerHTML=physicsLabs.map(l=>'<article class="lab-card" data-lab-card="'+l.id+'"><div class="lab-top"><div><span class="eyebrow">'+esc(l.kit)+'</span><h3>'+esc(l.title)+'</h3></div><span class="lab-icon">⚗</span></div><p>'+esc(l.objective)+'</p><div class="lab-scheme">'+esc(l.scheme)+'</div><div class="lab-controls">'+l.controls.map(c=>'<label class="lab-control"><span>'+esc(c.label)+'</span><b data-lab-value="'+c.key+'">'+c.value+' '+esc(c.unit)+'</b><input type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'" data-lab="'+l.id+'" data-key="'+c.key+'"></label>').join('')+'</div><div class="lab-result" data-lab-result="'+l.id+'"></div><div class="sub">Формула: <b>'+esc(l.formula)+'</b></div></article>').join('');
+ physicsLabs.forEach(l=>updateLab(l.id));
+}
+function updateLab(id){
+ const lab=physicsLabs.find(x=>x.id===id);if(!lab)return;
+ const root=$('labList').querySelector('[data-lab-card="'+id+'"]');if(!root)return;
+ const v={};lab.controls.forEach(c=>{const el=root.querySelector('[data-key="'+c.key+'"]');v[c.key]=Number(el.value);root.querySelector('[data-lab-value="'+c.key+'"]').textContent=v[c.key]+' '+c.unit});
+ let title='',detail='',value='';
+ if(id==='density'){const rho=(v.mass/1000)/(v.volume/1000000);title='Плотность';value=rho.toLocaleString('ru-RU',{maximumFractionDigits:0})+' кг/м³';detail='ρ = '+(v.mass/1000)+' / '+(v.volume/1000000).toFixed(6)+' = '+value+'. Сравни полученное значение с плотностью известных веществ.'}
+ if(id==='spring'){const force=v.mass/1000*9.8,k=force/(v.extension/100);title='Жёсткость пружины';value=k.toLocaleString('ru-RU',{maximumFractionDigits:1})+' Н/м';detail='F = mg = '+force.toFixed(2)+' Н; Δl = '+(v.extension/100)+' м; k = F / Δl = '+value+'.'}
+ if(id==='ohm'){const current=v.voltage/v.resistance,p=v.voltage*current;title='Сила тока и мощность';value='I = '+current.toLocaleString('ru-RU',{maximumFractionDigits:3})+' А';detail='I = U/R = '+v.voltage+'/'+v.resistance+' = '+value+'. Мощность P = UI = '+p.toLocaleString('ru-RU',{maximumFractionDigits:2})+' Вт.'}
+ if(id==='lens'){const f=v.object*v.image/(v.object+v.image),d=100/f;title='Фокусное расстояние';value=f.toLocaleString('ru-RU',{maximumFractionDigits:2})+' см';detail='F = ab/(a+b) = '+v.object+'·'+v.image+'/('+v.object+'+'+v.image+') = '+value+'. Оптическая сила ≈ '+d.toFixed(2)+' дптр.'}
+ if(id==='lever'){const left=v.massLeft*v.armLeft,right=v.massRight*v.armRight;title='Моменты сил';value=left===right?'Равновесие':'Неравновесие';detail='Слева: '+left+' г·см. Справа: '+right+' г·см. '+(left===right?'Моменты равны — рычаг в равновесии.':left>right?'Левая сторона перевешивает.':'Правая сторона перевешивает.')}
+ root.querySelector('[data-lab-result="'+id+'"]').innerHTML='<span>'+title+'</span><strong>'+value+'</strong><p>'+detail+'</p>';
+}
+$('studyWeeks').addEventListener('click',e=>{const item=e.target.closest('[data-week]');if(!item)return;studyWeekIndex=Number(item.dataset.week);studyLessonIndex=0;renderStudyWeeks();renderStudyLessons();renderStudyContent()});
+$('studyLessons').addEventListener('click',e=>{const item=e.target.closest('[data-lesson]');if(!item)return;studyLessonIndex=Number(item.dataset.lesson);renderStudyLessons();renderStudyContent()});
+$('studyContent').addEventListener('click',e=>{const b=e.target.closest('[data-practice-check]');if(b)checkPractice(Number(b.dataset.practiceCheck))});
+$('labList').addEventListener('input',e=>{const input=e.target.closest('[data-lab]');if(input)updateLab(input.dataset.lab)});
 function moveStudy(delta){let wi=studyWeekIndex,li=studyLessonIndex+delta;if(li<0){wi--;if(wi<0)return;li=physicsWeeks[wi].lessons.length-1}else if(li>=physicsWeeks[wi].lessons.length){wi++;if(wi>=physicsWeeks.length)return;li=0}studyWeekIndex=wi;studyLessonIndex=li;renderStudyWeeks();renderStudyLessons();renderStudyContent()}
-function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();updateStudyProgress()}
-function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);updateStudyProgress();renderStudyLessons();renderStudyContent()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
+function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();renderLabs();updateStudyProgress()}
+function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
 function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
 function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
