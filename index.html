@@ -882,29 +882,86 @@ function renderDuels(){
  }).join(""):'<div class="study-empty">Пока дуэлей нет. Создай вызов — второй ученик увидит его в своём аккаунте.</div>';
 }
 async function createDuel(){
- const subject=$("duelSubject").value,bank=testBanks[subject]||[],count=Math.min(Number($("duelCount").value)||5,bank.length);
- if(!bank.length){toast("Для этого предмета пока нет вопросов");return}
- const questions=shuffle(bank).slice(0,count).map(q=>({...q,options:q.options?shuffle(q.options):undefined}));
- try{await addDoc(duelsCol(),{subject,questions,questionCount:count,participants:["egor","daniil"],createdById:member.id,createdByName:member.name,status:"waiting",scores:{},answers:{},createdAt:serverTimestamp()});toast("Вызов отправлен второму ученику")}catch(e){toast("Не удалось создать дуэль: "+e.message)}
+ const button=$("createDuelBtn");
+ if(!member||!db){toast("Сначала войди в аккаунт");return}
+ const subject=$("duelSubject")?.value||"Физика";
+ const bank=testBanks[subject]||[];
+ const requestedCount=Math.max(1,Number($("duelCount")?.value)||5);
+ const count=Math.min(requestedCount,bank.length);
+ if(!bank.length){toast("Для предмета «"+subject+"» пока нет вопросов");return}
+ const questions=shuffle(bank).slice(0,count).map(q=>{
+  const copy={...q};
+  if(Array.isArray(q.options))copy.options=shuffle(q.options);
+  else delete copy.options;
+  Object.keys(copy).forEach(key=>{if(copy[key]===undefined)delete copy[key]});
+  return copy;
+ });
+ if(button){button.disabled=true;button.textContent="Отправляем..."}
+ try{
+  await addDoc(duelsCol(),{
+   subject,questions,questionCount:count,
+   participants:["egor","daniil"],
+   createdById:member.id,createdByName:member.name,
+   status:"waiting",scores:{},answers:{},createdAt:serverTimestamp()
+  });
+  toast("Вызов отправлен второму ученику");
+ }catch(e){
+  console.error("Не удалось создать дуэль:",e);
+  const code=e?.code?String(e.code)+": ":"";
+  toast("Не удалось создать дуэль: "+code+(e?.message||"проверь подключение"));
+ }finally{
+  if(button){button.disabled=false;button.textContent="Бросить вызов"}
+ }
 }
 async function acceptDuel(id){
- const d=duels.find(x=>x.id===id);if(!d||d.createdById===member.id)return;
- try{await updateDoc(duelDoc(id),{status:"active",acceptedBy:member.id,acceptedAt:serverTimestamp()});toast("Дуэль началась!")}catch(e){toast("Не удалось принять вызов: "+e.message)}
+ const duel=duels.find(x=>x.id===id);
+ if(!duel||duel.status!=="waiting"||duel.createdById===member.id)return;
+ try{
+  await runTransaction(db,async tx=>{
+   const ref=duelDoc(id),snap=await tx.get(ref);
+   if(!snap.exists())throw new Error("Вызов больше не существует");
+   const current=snap.data();
+   if(current.status!=="waiting")throw new Error("Этот вызов уже принят или завершён");
+   if(!(current.participants||[]).includes(member.id))throw new Error("Этот вызов предназначен не для твоего аккаунта");
+   if(current.createdById===member.id)throw new Error("Нельзя принять собственный вызов");
+   tx.update(ref,{status:"active",acceptedBy:member.id,acceptedAt:serverTimestamp()});
+  });
+  toast("Дуэль началась! Теперь оба можете начать вариант.");
+ }catch(e){
+  toast("Не удалось принять вызов: "+(e?.code?e.code+": ":"")+(e?.message||"ошибка"));
+ }
 }
 function startDuel(id){
- const d=duels.find(x=>x.id===id);if(!d||d.status!=="active"||d.scores?.[member.id]!==undefined)return;
- testSession={subject:d.subject,questions:d.questions||[],answers:{},startedAt:new Date().toISOString(),duration:10*60,duelId:id};
- testQuestionIndex=0;testSecondsLeft=10*60;showTab("tests");$("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");startTestTimer();renderTestQuestion();
+ const d=duels.find(x=>x.id===id);
+ if(!d||d.status!=="active"||d.scores?.[member.id]!==undefined)return;
+ const questions=Array.isArray(d.questions)?d.questions:[];
+ if(!questions.length){toast("В этой дуэли нет вопросов. Создай новый вызов.");return}
+ testSession={subject:d.subject||"Физика",questions,answers:{},startedAt:new Date().toISOString(),duration:10*60,duelId:id};
+ testQuestionIndex=0;testSecondsLeft=10*60;showTab("tests");
+ $("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");
+ startTestTimer();renderTestQuestion();
 }
 async function saveDuelResult(session,percent,details){
  try{
   await runTransaction(db,async tx=>{
-   const ref=duelDoc(session.duelId),snap=await tx.get(ref);if(!snap.exists())throw new Error("Дуэль не найдена");
-   const data=snap.data(),scores={...(data.scores||{}),[member.id]:percent},answers={...(data.answers||{}),[member.id]:details};
-   tx.update(ref,{scores,answers,status:Object.keys(scores).length>=2?"completed":"active",updatedAt:serverTimestamp()});
+   const ref=duelDoc(session.duelId),snap=await tx.get(ref);
+   if(!snap.exists())throw new Error("Дуэль не найдена");
+   const data=snap.data(),participants=Array.isArray(data.participants)?data.participants:["egor","daniil"];
+   if(!participants.includes(member.id))throw new Error("Твой аккаунт не указан среди участников дуэли");
+   const scores={...(data.scores||{})},answers={...(data.answers||{})};
+   if(scores[member.id]===undefined){
+    scores[member.id]=percent;
+    answers[member.id]=details;
+   }
+   const completed=participants.every(id=>scores[id]!==undefined);
+   tx.update(ref,{scores,answers,status:completed?"completed":"active",updatedAt:serverTimestamp()});
   });
   toast("Результат дуэли отправлен");
- }catch(e){toast("Не удалось сохранить результат дуэли: "+e.message)}
+  return true;
+ }catch(e){
+  toast("Не удалось сохранить результат дуэли: "+(e?.code?e.code+": ":"")+(e?.message||"ошибка"));
+  return false;
+ }
 }
 function listenStudySessions(){
  if(stopStudySessions)stopStudySessions();
@@ -1020,7 +1077,7 @@ async function finishTest(timeExpired=false){
  const result={subject:session.subject,total,correct,percent,answers:details,duration:session.duration,secondsLeft:testSecondsLeft,timeExpired,examMode:Boolean(session.examMode),startedAt:session.startedAt,finishedAt:new Date().toISOString(),userId:user.uid,userName:member.name,duelId:session.duelId||null};
  if(session.mistakeId){await updateMistakeReview(session.mistakeId,details.every(x=>x.correct))}
  else{try{await Promise.all(details.filter(x=>!x.correct).map(x=>recordMistake({...x,subject:session.subject,source:session.duelId?"duel":session.source||"test"})))}catch(e){toast("Не все ошибки удалось сохранить: "+e.message)}}
- if(session.duelId)await saveDuelResult(session,percent,details);
+ if(session.duelId){const saved=await saveDuelResult(session,percent,details);if(!saved)return;}
  testSession=null;
  $("testRun").classList.add("hidden");$("testResult").classList.remove("hidden");
  $("testResult").innerHTML='<div class="panel test-result-hero"><span class="eyebrow">'+(session.examMode?"ЭКЗАМЕНАЦИОННАЯ ТРЕНИРОВКА":"ТЕСТ ЗАВЕРШЁН")+(timeExpired?" · ВРЕМЯ ВЫШЛО":"")+'</span><div class="test-result-score '+(percent>=70?"score-good":percent>=40?"score-mid":"score-low")+'">'+percent+'%</div><h2>'+correct+' из '+total+' правильных ответов</h2><p>'+ (percent>=85?"Отличный результат.":percent>=60?"Хорошая работа. Есть темы для повторения.":"Разбери ошибки и попробуй ещё раз.")+'</p><div class="test-result-actions"><button class="btn primary" id="retryTestBtn">Пройти новый вариант</button><button class="btn" id="testBackBtn">К выбору предмета</button></div></div><div class="test-review"><div class="test-review-head"><h3>Разбор ответов</h3><span>'+details.filter(x=>!x.correct).length+' ошибок</span></div>'+details.map((x,i)=>'<article class="test-review-item '+(x.correct?"review-correct":"review-wrong")+'"><div class="review-item-head"><b>Вопрос '+(i+1)+'</b><span>'+(x.correct?"Верно":"Ошибка")+'</span></div><p>'+esc(x.prompt)+'</p><div class="review-answer"><span>Твой ответ</span><b>'+(x.given!==""?esc(x.given):"Нет ответа")+'</b></div><div class="review-answer"><span>Правильный ответ</span><b>'+esc(x.answer)+'</b></div><div class="review-explain">'+esc(x.explain)+'</div></article>').join("")+'</div>';
