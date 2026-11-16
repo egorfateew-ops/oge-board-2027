@@ -51,7 +51,10 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <button type="button" class="subtab active" data-tab="board">Все</button><button type="button" class="subtab" data-tab="daily">Сегодня</button>
   </div>
   <div class="subtab-group hidden" data-subgroup="learn">
-   <button type="button" class="subtab" data-tab="study">Физика</button><button type="button" class="subtab" data-tab="subjects">Предметы</button>
+   <button type="button" class="subtab" data-tab="study">Физика</button><button type="button" class="subtab" data-tab="subjects">Предметы</button><button type="button" class="subtab" data-tab="knowledge">Карта знаний</button>
+  </div>
+  <div class="subtab-group hidden" data-subgroup="tests">
+   <button type="button" class="subtab active" data-tab="tests">Тренировки</button><button type="button" class="subtab" data-tab="mistakes">Мои ошибки</button><button type="button" class="subtab" data-tab="duels">Дуэли</button>
   </div>
   <div class="subtab-group hidden" data-subgroup="progress">
    <button type="button" class="subtab" data-tab="stats">Статистика</button><button type="button" class="subtab" data-tab="calendar">Календарь</button>
@@ -70,8 +73,14 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">Добавить план физики</button></div>
   <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
  </section>
- <section id="dailyPage" class="hidden"><div class="sectiongrid"><div class="panel section"><h3>План на сегодня</h3><div class="sub" id="dateLabel"></div><div class="dailylist" id="dailyList" style="margin-top:12px"></div></div><div class="panel section"><h3>Ежедневная подготовка</h3><p class="sub">Добавляйте небольшие задания: повторение правил, один блок теста, 20 минут математики или разбор ошибок.</p><button class="btn primary" id="dailyAdd">＋ Ежедневное задание</button></div></div></section>
- <section id="statsPage" class="hidden"><div class="page-intro"><div><h2>Ваш прогресс</h2><p>Сколько заданий выполнено, как меняется активность и кто набрал больше XP.</p></div><span class="page-note">Егор и Даниил</span></div><div class="stats"><div class="panel stat"><span>Всего заданий</span><strong id="statTotal">0</strong></div><div class="panel stat"><span>Выполнено</span><strong id="statDone">0</strong></div><div class="panel stat"><span>Общий рейтинг XP</span><strong id="statXp">0</strong></div></div><div class="sectiongrid"><div class="panel section"><h3>Выполнено за последние 7 дней</h3><div class="chart" id="chart"></div></div><div class="panel section"><h3>Рейтинг</h3><div class="ranking" id="ranking"></div></div></div></section>
+ <section id="dailyPage" class="hidden">
+  <div class="panel smart-plan">
+   <div class="smart-plan-head"><div><span class="eyebrow">ПЛАН НА ДЕНЬ</span><h2>Твой учебный маршрут</h2><p>Задачи, повторение слабых тем и короткая практика — в одном списке.</p></div><button class="btn primary" id="generatePlanBtn">Составить план</button></div>
+   <div id="smartPlanSummary" class="smart-plan-summary"></div><div id="smartPlanItems" class="smart-plan-items"><div class="study-empty">Составь план на сегодня — он будет сохранён в твоём профиле.</div></div>
+  </div>
+  <div class="sectiongrid"><div class="panel section"><h3>Задания на сегодня</h3><div class="sub" id="dateLabel"></div><div class="dailylist" id="dailyList" style="margin-top:12px"></div></div><div class="panel section"><h3>Добавить задание</h3><p class="sub">Добавь задачу, если нужно запланировать что-то отдельно от учебного маршрута.</p><button class="btn primary" id="dailyAdd">＋ Добавить задание</button></div></div>
+ </section>
+ <section id="statsPage" class="hidden"><div class="page-intro"><div><h2>Ваш прогресс</h2><p>Сколько заданий выполнено, как меняется активность и кто набрал больше XP.</p></div><span class="page-note">Егор и Даниил</span></div><div class="stats"><div class="panel stat"><span>Всего заданий</span><strong id="statTotal">0</strong></div><div class="panel stat"><span>Выполнено</span><strong id="statDone">0</strong></div><div class="panel stat"><span>Общий рейтинг XP</span><strong id="statXp">0</strong></div><div class="panel stat"><span>Время занятий</span><strong id="statStudyTime">0 мин</strong></div></div><div class="sectiongrid"><div class="panel section"><h3>Выполнено за последние 7 дней</h3><div class="chart" id="chart"></div></div><div class="panel section"><h3>Рейтинг</h3><div class="ranking" id="ranking"></div></div></div></section>
  
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">18 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
@@ -101,6 +110,21 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   </div>
 
  </section>
+
+ <section id="knowledgePage" class="hidden">
+  <div class="page-intro"><div><h2>Карта знаний</h2><p>Отмечай пройденные темы и смотри, что стоит повторить.</p></div><span class="page-note" id="knowledgeSummary">0 из 36 тем</span></div>
+  <div id="knowledgeMap" class="knowledge-map"></div>
+ </section>
+ <section id="mistakesPage" class="hidden">
+  <div class="page-intro"><div><h2>Журнал ошибок</h2><p>Сюда автоматически попадают неверные ответы из тестов и практики.</p></div><span class="page-note" id="mistakeSummary">0 ошибок</span></div>
+  <div class="panel mistakes-toolbar"><select id="mistakeFilter" class="field"><option value="open">Неразобранные</option><option value="all">Все ошибки</option><option value="resolved">Разобранные</option></select><select id="mistakeSubjectFilter" class="field"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Физика</option></select></div>
+  <div id="mistakeList" class="mistake-list"><div class="study-empty">Пока ошибок нет. Неверные ответы будут появляться здесь.</div></div>
+ </section>
+ <section id="duelsPage" class="hidden">
+  <div class="panel duel-hero"><div><span class="eyebrow">ЕГОР ПРОТИВ ДАНИИЛА</span><h2>Учебные дуэли</h2><p>Получите одинаковый набор вопросов, решите его и сравните результат. Побеждает точность, а не скорость кликов.</p></div><div class="duel-mark">⚔</div></div>
+  <div class="panel duel-create"><div><h3>Новая дуэль</h3><p class="sub">Выбери предмет и количество вопросов. Второй ученик увидит вызов и сможет его принять.</p></div><div class="duel-create-fields"><label>Предмет<select id="duelSubject" class="field"><option>Физика</option><option>Математика</option><option>Русский язык</option><option>Информатика</option></select></label><label>Вопросов<select id="duelCount" class="field"><option value="5">5 вопросов</option><option value="10">10 вопросов</option></select></label><button class="btn primary" id="createDuelBtn">Бросить вызов</button></div></div>
+  <div class="duel-list-head"><h3>Наши дуэли</h3><span class="sub" id="duelCountLabel">0 дуэлей</span></div><div id="duelList" class="duel-list"><div class="study-empty">Пока дуэлей нет. Создай первую.</div></div>
+ </section>
  <section id="testsPage" class="hidden">
   <div class="panel tests-hero"><div><span class="eyebrow">ТРЕНИРОВКА ЭКЗАМЕНА</span><h2>Тестирование ОГЭ</h2><p>Собери случайный вариант, пройди его на время и разбери ответы после завершения.</p></div><div class="tests-hero-stat"><b>11</b><span>предметов</span></div></div>
   <div id="testsSetup" class="tests-setup">
@@ -125,6 +149,17 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   <div id="testResult" class="hidden"></div>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
+  <div id="focusWidget" class="focus-widget">
+   <button type="button" id="focusToggle" class="focus-toggle"><span>⏱</span><span>Фокус</span><b id="focusTimerLabel">25:00</b></button>
+   <div id="focusPanel" class="panel focus-panel hidden">
+    <div class="focus-panel-head"><div><span class="eyebrow">УЧЕБНАЯ СЕССИЯ</span><h3>Время сосредоточиться</h3></div><button type="button" class="focus-close" id="focusClose">×</button></div>
+    <label>Предмет<select id="focusSubject" class="field"><option>Физика</option><option>Математика</option><option>Русский язык</option><option>Информатика</option></select></label>
+    <label>Длительность<select id="focusMinutes" class="field"><option value="15">15 минут</option><option value="25" selected>25 минут</option><option value="45">45 минут</option></select></label>
+    <div class="focus-clock" id="focusClock">25:00</div>
+    <div class="focus-actions"><button type="button" class="btn primary" id="focusStartBtn">Начать</button><button type="button" class="btn" id="focusPauseBtn">Пауза</button><button type="button" class="btn" id="focusResetBtn">Сбросить</button></div>
+    <p class="sub">Завершённые сессии попадут в статистику.</p>
+   </div>
+  </div>
 </div></div>
 <div class="modalbg" id="modalBg"><div class="panel modal"><h2 id="modalTitle">Новое задание</h2><form id="taskForm"><div class="formgrid">
  <div class="formrow full"><label for="title">Название задания *</label><input class="field" id="title" required maxlength="120" placeholder="Например: решить вариант № 3"></div>
@@ -141,6 +176,7 @@ import {firebaseConfig,members} from './config.js';
 import {physicsWeeks} from './physics.js';
 import {physicsPractice,physicsLabs} from './physics-practice.js';
 import {testBanks} from './tests.js';
+import {courseLessons} from './courses.js';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
@@ -309,6 +345,10 @@ let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1),cal
 let testSession=null,testTimerHandle=null,testSecondsLeft=0,testHistory=[],testQuestionIndex=0;
 const testResultsCol=()=>collection(db,"rooms","oge2027","testResults");
 let stopTestHistory=null;
+let completedTopics=new Set(),topicPracticeResults={};
+let mistakes=[],stopMistakes=null,duels=[],stopDuels=null;
+let dailyPlan=null,stopDailyPlan=null,studySessions=[],stopStudySessions=null;
+let focusRemaining=25*60,focusTotal=25*60,focusInterval=null,focusStartedAt=null;
 
 const subjectCatalog=[
  {name:"Математика",icon:"∑",description:"Алгебра, геометрия, вычисления и задачи на рассуждение.",topics:[
@@ -389,7 +429,7 @@ const subjectCatalog=[
 ];
 function subjectTopics(name){
  if(name==="Физика")return physicsWeeks.flatMap((w,wi)=>w.lessons.map((l,li)=>({id:l.id,title:l.title,description:l.goal,weekTitle:w.title,lesson:l,weekIndex:wi,lessonIndex:li})));
- const s=subjectCatalog.find(x=>x.name===name);return s?s.topics:[];
+ const s=subjectCatalog.find(x=>x.name===name);return s?s.topics.map(t=>({...t,lesson:courseLessons[t.id]||null})):[];
 }
 function renderSubjects(){
  const root=$("subjectsCatalog");if(!root)return;
@@ -423,15 +463,43 @@ function renderSubjectDetail(){
  }else{
   material='<div class="topic-guide"><h3>План разбора темы</h3><ol><li>Повтори определения и основные понятия.</li><li>Составь короткую схему или таблицу по теме.</li><li>Разбери один пример и объясни решение своими словами.</li><li>Выполни задания по теме на доске и отметь ошибки.</li><li>Запиши в конспект то, что нужно повторить.</li></ol><p>Это тематический раздел для самостоятельной подготовки. Сверяй формулировки и перечень проверяемых элементов с актуальными документами ФИПИ.</p></div>';
  }
+ const qs=topicPracticeQuestions(activeSubjectName,topic),results=topicPracticeResults[topic.id]||{};
+ const practiceHtml=qs.length?'<section class="topic-practice"><div class="topic-practice-head"><div><span class="eyebrow">ЗАКРЕПЛЕНИЕ</span><h3>Проверь себя</h3><p>Ответь на вопросы по теме. Ошибки сохранятся в журнале.</p></div><span class="topic-practice-score">'+Object.values(results).filter(x=>x.correct).length+' / '+qs.length+'</span></div>'+qs.map((q,i)=>{
+  const r=results[i],control=q.type==="choice"?'<select class="field" data-topic-practice-answer="'+i+'"><option value="">Выбери ответ…</option>'+q.options.map(o=>'<option value="'+esc(o)+'" '+(r?.value===o?'selected':'')+'>'+esc(o)+'</option>').join("")+'</select>':'<div class="answer-row"><input class="field" data-topic-practice-answer="'+i+'" inputmode="decimal" placeholder="Твой ответ" value="'+(r?.value!==undefined?esc(r.value):"")+'"><span class="answer-unit">'+esc(q.unit||"")+'</span></div>';
+  return '<div class="topic-practice-question '+(r?(r.correct?"is-correct":"is-wrong"):"")+'"><b>Вопрос '+(i+1)+'</b><p>'+esc(q.prompt)+'</p>'+control+'<button type="button" class="small" data-topic-practice-check="'+i+'">Проверить</button>'+(r?'<div class="practice-feedback '+(r.correct?"good":"bad")+'">'+esc(q.explain)+'</div>':"")+'</div>';
+ }).join("")+'</section>':'<div class="topic-guide"><p>Практические вопросы по этой теме добавим следующим блоком. Пока используй конспект и задания из раздела «Тесты».</p></div>';
+ const topicDone=topic.id.startsWith("phy-")?completedLessons.has(topic.id):completedTopics.has(topic.id);
  const note=studyNotes[topic.id]||"";
  $("subjectDetailContent").innerHTML=
   '<div class="subject-detail-heading"><div><span class="eyebrow">'+esc(subject.name.toUpperCase())+'</span><h2>'+esc(subject.name)+'</h2><p>'+esc(subject.description)+'</p></div><span class="subject-topic-count">'+topics.length+' тем</span></div>'+
   '<div class="subject-workspace"><aside class="panel topic-nav"><div class="topic-nav-title">Каталог тем</div>'+nav+'</aside>'+
   '<article class="panel topic-main"><div class="topic-heading"><span class="eyebrow">'+esc(topic.weekTitle||"ТЕМА")+'</span><h2>'+esc(topic.title)+'</h2><p>'+esc(topic.description||"")+'</p></div>'+
-  (topic.lesson?material:material)+
+  material+practiceHtml+
+  '<div class="topic-complete-row"><span>'+(topicDone?"Тема отмечена как освоенная":"Прошёл теорию и практику? Отметь тему.")+'</span><button type="button" class="btn '+(topicDone?"":"primary")+'" id="topicCompleteBtn">'+(topicDone?"✓ Тема освоена":"Отметить тему освоенной")+'</button></div>'+
   '<section class="topic-notes"><div class="topic-notes-head"><div><span class="eyebrow">ЛИЧНЫЙ КОНСПЕКТ</span><h3>Мои заметки по теме</h3><p>Запиши определения, формулы, вопросы и ошибки, к которым нужно вернуться.</p></div><span id="noteSaveState" class="note-save-state">'+(note?"Есть сохранённая заметка":"Пока пусто")+'</span></div>'+
   '<textarea id="topicNoteInput" class="field topic-note-input" maxlength="12000" placeholder="Начни писать конспект здесь…">'+esc(note)+'</textarea>'+
-  '<div class="topic-note-actions"><small>Заметки видны только в твоём профиле.</small><button class="btn primary" id="saveTopicNoteBtn">Сохранить конспект</button></div></section></article></div>';
+  '<div class="topic-note-actions"><small>Заметки сохраняются в твоём личном профиле.</small><button class="btn primary" id="saveTopicNoteBtn">Сохранить конспект</button></div></section></article></div>';
+}
+async function checkTopicPractice(index){
+ const topic=subjectTopics(activeSubjectName).find(t=>t.id===activeTopicId);if(!topic)return;
+ const q=topicPracticeQuestions(activeSubjectName,topic)[index],input=$("subjectDetailContent").querySelector('[data-topic-practice-answer="'+index+'"]');
+ if(!q||!input)return;const value=input.value.trim();if(!value){toast("Сначала введи ответ");return}
+ const correct=testCorrect(q,value),next={...topicPracticeResults,[topic.id]:{...(topicPracticeResults[topic.id]||{}),[index]:{value,correct,checkedAt:new Date().toISOString()}}};
+ try{
+  await setDoc(doc(db,"rooms","oge2027","progress",user.uid),{topicPracticeResults:next,updatedAt:serverTimestamp()},{merge:true});topicPracticeResults=next;
+  if(!correct)await recordMistake({subject:activeSubjectName,topic:q.topic||topic.title,topicId:topic.id,prompt:q.prompt,given:value,answer:q.answer,explain:q.explain,type:q.type,options:q.options||[],tolerance:q.tolerance,unit:q.unit,source:"topic-practice"});
+  renderSubjectDetail();toast(correct?"Верно!":"Ответ неверный — ошибка добавлена в журнал");
+ }catch(e){toast("Не удалось сохранить ответ: "+e.message)}
+}
+async function toggleTopicComplete(){
+ const topic=subjectTopics(activeSubjectName).find(t=>t.id===activeTopicId);if(!topic)return;
+ const isPhysics=topic.id.startsWith("phy-"),set=isPhysics?new Set(completedLessons):new Set(completedTopics);
+ if(set.has(topic.id))set.delete(topic.id);else set.add(topic.id);
+ try{
+  await setDoc(doc(db,"rooms","oge2027","progress",user.uid),{[isPhysics?"completedLessons":"completedTopics"]:[...set],updatedAt:serverTimestamp()},{merge:true});
+  if(isPhysics)completedLessons=set;else completedTopics=set;
+  renderSubjectDetail();renderKnowledgeMap();updateStudyProgress();toast(set.has(topic.id)?"Тема отмечена как освоенная":"Отметка снята");
+ }catch(e){toast("Не удалось сохранить прогресс: "+e.message)}
 }
 async function saveSubjectNote(){
  const input=$("topicNoteInput");if(!input||!activeTopicId)return;
@@ -466,18 +534,22 @@ function renderCalendar(){
  grid.innerHTML=cells.join("");renderCalendarDay();
 }
 function showTab(tab){
- const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",tests:"tests",stats:"progress",calendar:"progress"};
+ const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress"};
  const group=groups[tab]||"tasks";
  document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
  document.querySelectorAll(".subtab-group").forEach(x=>x.classList.toggle("hidden",x.dataset.subgroup!==group));
  document.querySelectorAll(".subtab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
- const subTabs=$("subTabs");if(subTabs)subTabs.classList.toggle("hidden",group==="tests");
+ const subTabs=$("subTabs");if(subTabs)subTabs.classList.remove("hidden");
  const hero=document.querySelector(".hero");if(hero)hero.classList.toggle("hidden",tab!=="board");
- ["board","daily","stats","study","subjects","calendar","tests"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
+ ["board","daily","stats","study","subjects","calendar","tests","knowledge","mistakes","duels"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
  if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
  if(tab==="subjects"){backToSubjects();renderSubjects()}
  if(tab==="calendar")renderCalendar();
  if(tab==="tests")renderTestSetup();
+ if(tab==="knowledge")renderKnowledgeMap();
+ if(tab==="mistakes")renderMistakes();
+ if(tab==="duels")renderDuels();
+ if(tab==="daily")renderDailyPlan();
 }
 
 function totalLessons(){return physicsWeeks.reduce((n,w)=>n+w.lessons.length,0)}
@@ -518,7 +590,7 @@ async function checkPractice(index){
  const value=input.value.trim();if(!value){toast('Сначала введи ответ');return}
  const correct=q.type==='choice'?value===q.answer:Math.abs(Number(value.replace(',','.'))-q.answer)<=q.tolerance;
  const next={...practiceResults,[l.id]:{...(practiceResults[l.id]||{}),[index]:{value,correct,checkedAt:new Date().toISOString()}}};
- try{await setDoc(doc(db,'rooms','oge2027','progress',user.uid),{practiceResults:next,updatedAt:serverTimestamp()},{merge:true});practiceResults=next;renderStudyContent();toast(correct?'Верно! Отличная работа':'Пока неверно — прочитай объяснение и попробуй ещё раз')}catch(e){toast('Не удалось сохранить результат: '+e.message)}
+ try{await setDoc(doc(db,'rooms','oge2027','progress',user.uid),{practiceResults:next,updatedAt:serverTimestamp()},{merge:true});practiceResults=next;if(!correct)await recordMistake({subject:"Физика",topic:l.title,topicId:l.id,prompt:q.prompt,given:value,answer:q.answer,explain:q.explain,type:q.type,options:q.options||[],tolerance:q.tolerance,unit:q.unit,source:"physics-practice"});renderStudyContent();toast(correct?'Верно! Отличная работа':'Пока неверно — прочитай объяснение и попробуй ещё раз')}catch(e){toast('Не удалось сохранить результат: '+e.message)}
 }
 function renderLabs(){
  $('labList').innerHTML=physicsLabs.map(l=>'<article class="lab-card" data-lab-card="'+l.id+'"><div class="lab-top"><div><span class="eyebrow">'+esc(l.kit)+'</span><h3>'+esc(l.title)+'</h3></div><span class="lab-icon">⚗</span></div><p>'+esc(l.objective)+'</p><div class="lab-scheme">'+esc(l.scheme)+'</div><div class="lab-controls">'+l.controls.map(c=>'<label class="lab-control"><span>'+esc(c.label)+'</span><b data-lab-value="'+c.key+'">'+c.value+' '+esc(c.unit)+'</b><input type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'" data-lab="'+l.id+'" data-key="'+c.key+'"></label>').join('')+'</div><div class="lab-result" data-lab-result="'+l.id+'"></div><div class="sub">Формула: <b>'+esc(l.formula)+'</b></div></article>').join('');
@@ -542,6 +614,8 @@ $("backSubjects").addEventListener("click",backToSubjects);
 $("subjectTasksBtn").addEventListener("click",()=>{if(!activeSubjectName)return;$("subjectFilter").value=activeSubjectName;showTab("board");renderBoard()});
 $("subjectDetailContent").addEventListener("click",e=>{
  const topic=e.target.closest("[data-subject-topic]");if(topic){activeTopicId=topic.dataset.subjectTopic;renderSubjectDetail();return}
+ const practice=e.target.closest("[data-topic-practice-check]");if(practice){checkTopicPractice(Number(practice.dataset.topicPracticeCheck));return}
+ if(e.target.closest("#topicCompleteBtn")){toggleTopicComplete();return}
  if(e.target.closest("#saveTopicNoteBtn"))saveSubjectNote();
 });
 $("calPrev").addEventListener("click",()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);calendarSelectedDate=dateKey(calendarMonth);renderCalendar()});
@@ -557,15 +631,233 @@ $('studyContent').addEventListener('click',e=>{const b=e.target.closest('[data-p
 $('labList').addEventListener('input',e=>{const input=e.target.closest('[data-lab]');if(input)updateLab(input.dataset.lab)});
 function moveStudy(delta){let wi=studyWeekIndex,li=studyLessonIndex+delta;if(li<0){wi--;if(wi<0)return;li=physicsWeeks[wi].lessons.length-1}else if(li>=physicsWeeks[wi].lessons.length){wi++;if(wi>=physicsWeeks.length)return;li=0}studyWeekIndex=wi;studyLessonIndex=li;renderStudyWeeks();renderStudyLessons();renderStudyContent()}
 function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();renderLabs();updateStudyProgress()}
-function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};studyNotes=snap.exists()?(snap.data().studyNotes||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent();if(activeSubjectName)renderSubjectDetail()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
+function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);completedTopics=new Set(snap.exists()?(snap.data().completedTopics||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};topicPracticeResults=snap.exists()?(snap.data().topicPracticeResults||{}):{};studyNotes=snap.exists()?(snap.data().studyNotes||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent();if(activeSubjectName)renderSubjectDetail();if(!$("knowledgePage").classList.contains("hidden"))renderKnowledgeMap()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
 function listenTestHistory(){
  if(stopTestHistory)stopTestHistory();
- stopTestHistory=onSnapshot(testResultsCol(),snap=>{
-  testHistory=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.userId===user.uid).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-  if(!$("testsPage").classList.contains("hidden")&&!testSession&&!$("testResult").classList.contains("hidden"))renderTestHistory();
-  else if(!$("testsPage").classList.contains("hidden")&&!testSession)renderTestHistory();
+ stopTestHistory=onSnapshot(query(testResultsCol(),where("userId","==",user.uid)),snap=>{
+  testHistory=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+  if(!$("testsPage").classList.contains("hidden")&&!testSession)renderTestHistory();
  },err=>toast("Не удалось загрузить историю тестов: "+err.message));
 }
+
+const mistakesCol=()=>collection(db,"rooms","oge2027","mistakes");
+const mistakeDoc=id=>doc(db,"rooms","oge2027","mistakes",id);
+const duelsCol=()=>collection(db,"rooms","oge2027","duels");
+const duelDoc=id=>doc(db,"rooms","oge2027","duels",id);
+const sessionsCol=()=>collection(db,"rooms","oge2027","studySessions");
+const dailyPlanDoc=()=>doc(db,"rooms","oge2027","dailyPlans",member.id+"_"+today());
+function topicPracticeQuestions(subject,topic){
+ if(subject==="Физика")return physicsPractice[topic.id]||[];
+ const lesson=courseLessons[topic.id]||{},bank=testBanks[subject]||[];
+ if(lesson.customPractice?.length)return lesson.customPractice;
+ const tags=lesson.practiceTopics||[];
+ return bank.filter(q=>tags.some(tag=>String(q.topic||"").toLowerCase().includes(tag.toLowerCase())||tag.toLowerCase().includes(String(q.topic||"").toLowerCase()))).slice(0,3);
+}
+function topicIdForQuestion(subject,topicName){
+ if(!topicName)return "";
+ const target=String(topicName).toLowerCase();
+ const topics=subjectTopics(subject);
+ const found=topics.find(t=>{
+  if(t.title.toLowerCase().includes(target)||target.includes(t.title.toLowerCase()))return true;
+  const tags=t.lesson?.practiceTopics||[];
+  return tags.some(tag=>tag.toLowerCase()===target||tag.toLowerCase().includes(target)||target.includes(tag.toLowerCase()));
+ });
+ return found?.id||"";
+}
+async function recordMistake(data){
+ try{
+  await addDoc(mistakesCol(),{
+   userId:user.uid,userKey:member.id,userName:member.name,subject:data.subject||"Другое",
+   topic:data.topic||"",topicId:data.topicId||"",prompt:data.prompt||"",given:data.given??"",
+   answer:data.answer??"",explain:data.explain||"",type:data.type||"choice",options:data.options||[],
+   tolerance:data.tolerance??0.01,unit:data.unit||"",source:data.source||"practice",
+   resolved:false,createdAt:serverTimestamp()
+  });
+ }catch(e){toast("Не удалось сохранить ошибку: "+e.message)}
+}
+function listenMistakes(){
+ if(stopMistakes)stopMistakes();
+ stopMistakes=onSnapshot(query(mistakesCol(),where("userId","==",user.uid)),snap=>{
+  mistakes=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+  if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
+  if(!$("knowledgePage").classList.contains("hidden"))renderKnowledgeMap();
+  if(!$("dailyPage").classList.contains("hidden"))renderDailyPlan();
+ },err=>toast("Не удалось загрузить журнал ошибок: "+err.message));
+}
+function renderMistakes(){
+ const mode=$("mistakeFilter")?.value||"open",subject=$("mistakeSubjectFilter")?.value||"all";
+ const all=mistakes.filter(x=>subject==="all"||x.subject===subject);
+ const shown=all.filter(x=>mode==="all"||(mode==="resolved"?x.resolved:!x.resolved));
+ const openCount=mistakes.filter(x=>!x.resolved).length;
+ $("mistakeSummary").textContent=openCount+" неразобранных · "+mistakes.length+" всего";
+ $("mistakeList").innerHTML=shown.length?shown.map(m=>{
+  const date=m.createdAt?.toDate?m.createdAt.toDate():null;
+  return '<article class="panel mistake-card '+(m.resolved?"resolved":"")+'"><div class="mistake-card-head"><div><span class="eyebrow">'+esc(m.subject)+' · '+esc(m.topic||"Тема не указана")+'</span><h3>'+esc(m.prompt)+'</h3></div><span class="mistake-status">'+(m.resolved?"Разобрана":"Повторить")+'</span></div><div class="mistake-answers"><div><small>Твой ответ</small><b>'+esc(m.given===""?"Без ответа":m.given)+'</b></div><div><small>Правильный ответ</small><b>'+esc(m.answer)+'</b></div></div><p class="mistake-explain">'+esc(m.explain)+'</p><div class="mistake-actions"><button type="button" class="btn" data-mistake-repeat="'+esc(m.id)+'">Решить ещё раз</button>'+(m.resolved?'':'<button type="button" class="btn primary" data-mistake-resolve="'+esc(m.id)+'">Я разобрал ошибку</button>')+'</div><small class="mistake-date">'+(date?date.toLocaleString("ru-RU",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Недавно")+'</small></article>';
+ }).join(""):'<div class="study-empty">'+(mode==="open"?"Отлично! Неразобранных ошибок нет.":"По выбранному фильтру ошибок нет.")+'</div>';
+}
+async function resolveMistake(id){
+ const m=mistakes.find(x=>x.id===id);if(!m)return;
+ try{await updateDoc(mistakeDoc(id),{resolved:true,resolvedAt:serverTimestamp()});toast("Ошибка отмечена как разобранная")}catch(e){toast("Не удалось обновить ошибку: "+e.message)}
+}
+function repeatMistake(id){
+ const m=mistakes.find(x=>x.id===id);if(!m)return;
+ testSession={subject:m.subject,questions:[{type:m.type||"choice",prompt:m.prompt,answer:m.answer,options:m.options||[],explain:m.explain,topic:m.topic,tolerance:m.tolerance??0.01,unit:m.unit||""}],answers:{},startedAt:new Date().toISOString(),duration:5*60,source:"mistake",mistakeId:id};
+ testQuestionIndex=0;testSecondsLeft=5*60;showTab("tests");$("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");startTestTimer();renderTestQuestion();
+}
+function allKnowledgeTopics(){
+ const names=["Физика","Математика","Русский язык","Информатика"];
+ return names.flatMap(name=>subjectTopics(name).map(topic=>({subject:name,...topic})));
+}
+function knowledgeStatus(subject,topic){
+ const related=mistakes.filter(m=>!m.resolved&&(m.topicId===topic.id||(m.subject===subject&&m.topic===topic.title)));
+ if(related.length)return {key:"weak",label:"Повторить",count:related.length};
+ const done=topic.id.startsWith("phy-")?completedLessons.has(topic.id):completedTopics.has(topic.id);
+ if(done)return {key:"done",label:"Освоено",count:0};
+ const started=Boolean(studyNotes[topic.id]||topicPracticeResults[topic.id]||practiceResults[topic.id]);
+ if(started)return {key:"doing",label:"В процессе",count:0};
+ return {key:"new",label:"Не начато",count:0};
+}
+function renderKnowledgeMap(){
+ const names=["Физика","Математика","Русский язык","Информатика"],all=allKnowledgeTopics();
+ const mastered=all.filter(t=>knowledgeStatus(t.subject,t).key==="done").length;
+ $("knowledgeSummary").textContent=mastered+" из "+all.length+" тем освоено";
+ $("knowledgeMap").innerHTML=names.map(name=>{
+  const topics=all.filter(t=>t.subject===name),done=topics.filter(t=>knowledgeStatus(name,t).key==="done").length,pct=Math.round(done/Math.max(1,topics.length)*100);
+  return '<section class="panel knowledge-subject"><div class="knowledge-subject-head"><div><h3>'+esc(name)+'</h3><small>'+done+' из '+topics.length+' тем освоено</small></div><b>'+pct+'%</b></div><div class="knowledge-progress"><span style="width:'+pct+'%"></span></div><div class="knowledge-topic-list">'+topics.map(t=>{
+   const st=knowledgeStatus(name,t);
+   return '<button type="button" class="knowledge-topic '+st.key+'" data-map-subject="'+esc(name)+'" data-map-topic="'+esc(t.id)+'"><span class="knowledge-status-dot"></span><span>'+esc(t.title)+'</span><small>'+st.label+(st.count?' · '+st.count:'')+'</small></button>';
+  }).join("")+'</div></section>';
+ }).join("");
+}
+function openKnowledgeTopic(subject,id){
+ if(subject==="Физика"){
+  const all=subjectTopics("Физика"),t=all.find(x=>x.id===id);if(!t)return;
+  studyWeekIndex=t.weekIndex;studyLessonIndex=t.lessonIndex;showTab("study");renderStudy();return;
+ }
+ showTab("subjects");openSubject(subject);activeTopicId=id;renderSubjectDetail();
+}
+function listenDailyPlan(){
+ if(stopDailyPlan)stopDailyPlan();
+ stopDailyPlan=onSnapshot(dailyPlanDoc(),snap=>{dailyPlan=snap.exists()?{id:snap.id,...snap.data()}:null;renderDailyPlan()},err=>toast("Не удалось загрузить план: "+err.message));
+}
+function renderDailyPlan(){
+ const root=$("smartPlanItems");if(!root)return;
+ if(!dailyPlan){$("smartPlanSummary").textContent="План ещё не составлен.";root.innerHTML='<div class="study-empty">Нажми «Составить план». Я подберу задания по твоим срокам, урокам и ошибкам.</div>';return}
+ const done=new Set(dailyPlan.doneIds||[]),items=dailyPlan.items||[];
+ const completed=items.filter(x=>done.has(x.id)).length;
+ $("smartPlanSummary").textContent=completed+" из "+items.length+" шагов выполнено · "+new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+ root.innerHTML=items.length?items.map((item,i)=>'<div class="smart-plan-item '+(done.has(item.id)?"is-done":"")+'"><label class="smart-plan-check"><input type="checkbox" data-plan-done="'+esc(item.id)+'" '+(done.has(item.id)?"checked":"")+'><span></span></label><div class="smart-plan-copy"><small>ШАГ '+(i+1)+' · '+esc(item.subject||"Подготовка")+'</small><b>'+esc(item.title)+'</b><p>'+esc(item.detail||"")+'</p></div><button type="button" class="btn" data-plan-action="'+esc(item.id)+'">'+(item.kind==="test"?"Тест":item.kind==="lesson"?"Урок":item.kind==="mistake"?"Ошибки":"Задание")+'</button></div>').join(""):'<div class="study-empty">На сегодня всё. Можно отдохнуть или добавить задание на доску.</div>';
+}
+async function generateDailyPlan(){
+ const items=[];
+ const assigned=tasks.filter(t=>t.status!=="done"&&(t.person===member.name||t.person==="Вместе")).sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999"));
+ if(assigned.length){const t=assigned[0];items.push({id:"task-"+t.id,kind:"task",refId:t.id,subject:t.subject,title:t.title,detail:"Задание на доске · "+(t.date||"без срока")})}
+ const weak=mistakes.filter(m=>!m.resolved).reduce((acc,m)=>{const key=(m.subject||"Другое")+"|"+(m.topic||"Общая тема");acc[key]=(acc[key]||0)+1;return acc},{}),weakEntry=Object.entries(weak).sort((a,b)=>b[1]-a[1])[0];
+ if(weakEntry){const [key,count]=weakEntry,parts=key.split("|");items.push({id:"review-"+today(),kind:"mistake",subject:parts[0],title:"Повтори: "+parts[1],detail:"В журнале "+count+" неразобранных "+(count===1?"ошибка":count<5?"ошибки":"ошибок")+" по этой теме."})}
+ const nextPhysics=subjectTopics("Физика").find(t=>!completedLessons.has(t.id));
+ const nextOther=["Математика","Русский язык","Информатика"].map(n=>({name:n,topic:subjectTopics(n).find(t=>!completedTopics.has(t.id))})).find(x=>x.topic);
+ const next=nextPhysics?{subject:"Физика",topic:nextPhysics}:nextOther?{subject:nextOther.name,topic:nextOther.topic}:null;
+ if(next&&!items.some(x=>x.kind==="lesson"&&x.refId===next.topic.id))items.push({id:"lesson-"+next.topic.id,kind:"lesson",refId:next.topic.id,subject:next.subject,title:"Урок: "+next.topic.title,detail:"Пройди теорию, пример и закрепление."});
+ const preferred=weakEntry?weakEntry[0].split("|")[0]:(next?.subject||"Физика");
+ const testSubject=testBanks[preferred]?.length?preferred:"Физика";
+ items.push({id:"test-"+today(),kind:"test",subject:testSubject,title:"Короткая практика · "+testSubject,detail:"Реши 5 вопросов и проверь, что запомнил."});
+ const finalItems=items.slice(0,4);
+ try{
+  await setDoc(dailyPlanDoc(),{userId:user.uid,userKey:member.id,date:today(),items:finalItems,doneIds:[],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  toast("План на сегодня составлен");
+ }catch(e){toast("Не удалось сохранить план: "+e.message)}
+}
+async function togglePlanItem(id,checked){
+ if(!dailyPlan)return;
+ const done=new Set(dailyPlan.doneIds||[]);if(checked)done.add(id);else done.delete(id);
+ try{await setDoc(dailyPlanDoc(),{doneIds:[...done],updatedAt:serverTimestamp()},{merge:true});dailyPlan={...dailyPlan,doneIds:[...done]};renderDailyPlan()}catch(e){toast("Не удалось обновить план: "+e.message)}
+}
+function openPlanAction(id){
+ const item=dailyPlan?.items?.find(x=>x.id===id);if(!item)return;
+ if(item.kind==="lesson"){openKnowledgeTopic(item.subject,item.refId);return}
+ if(item.kind==="mistake"){showTab("mistakes");return}
+ if(item.kind==="test"){$("testSubject").value=item.subject;showTab("tests");startTest();return}
+ if(item.kind==="task"){showTab("board");const t=tasks.find(x=>x.id===item.refId);if(t)openModal(t)}
+}
+function listenDuels(){
+ if(stopDuels)stopDuels();
+ stopDuels=onSnapshot(duelsCol(),snap=>{duels=snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>(d.participants||[]).includes(member.id)).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));if(!$("duelsPage").classList.contains("hidden"))renderDuels()},err=>toast("Не удалось загрузить дуэли: "+err.message));
+}
+function renderDuels(){
+ const root=$("duelList");if(!root)return;
+ $("duelCountLabel").textContent=duels.length+" дуал"+(duels.length%10===1&&duels.length%100!==11?"ь":duels.length%10>=2&&duels.length%10<=4&&!(duels.length%100>=12&&duels.length%100<=14)?"и":"ей");
+ root.innerHTML=duels.length?duels.map(d=>{
+  const opponent=member.id==="egor"?"Даниил":"Егор",my=d.scores?.[member.id],otherId=member.id==="egor"?"daniil":"egor",other=d.scores?.[otherId];
+  let status="",action="";
+  if(d.status==="waiting"&&d.createdById===member.id){status="Ждём, пока "+opponent+" примет вызов";action='<span class="duel-waiting">Ожидание</span>'}
+  else if(d.status==="waiting"){status= d.createdByName+" вызывает тебя на дуэль";action='<button class="btn primary" data-duel-accept="'+esc(d.id)+'">Принять вызов</button>'}
+  else if(d.status==="active"&&my===undefined){status="Дуэль началась · "+(other!==undefined?"Соперник уже ответил":"Оба решают один вариант");action='<button class="btn primary" data-duel-start="'+esc(d.id)+'">Начать вариант</button>'}
+  else if(d.status==="active"){status="Твой результат: "+my+"% · ждём соперника";action='<span class="duel-waiting">Ответ отправлен</span>'}
+  else{const winner=my>other?member.name:other>my?opponent:"Ничья";status="Завершена · "+(winner==="Ничья"?"ничья":"победитель — "+winner);action='<div class="duel-scores"><b>'+member.name+": "+my+"%</b><b>"+opponent+": "+other+"%</b></div>'}
+  return '<article class="panel duel-card"><div class="duel-card-main"><span class="eyebrow">'+esc(d.subject)+' · '+(d.questionCount||d.questions?.length||5)+' вопросов</span><h3>'+esc(d.createdByName||"Участник")+' <span>vs</span> '+opponent+'</h3><p>'+esc(status)+'</p></div><div class="duel-card-action">'+action+'</div></article>';
+ }).join(""):'<div class="study-empty">Пока дуэлей нет. Создай вызов — второй ученик увидит его в своём аккаунте.</div>';
+}
+async function createDuel(){
+ const subject=$("duelSubject").value,bank=testBanks[subject]||[],count=Math.min(Number($("duelCount").value)||5,bank.length);
+ if(!bank.length){toast("Для этого предмета пока нет вопросов");return}
+ const questions=shuffle(bank).slice(0,count).map(q=>({...q,options:q.options?shuffle(q.options):undefined}));
+ try{await addDoc(duelsCol(),{subject,questions,questionCount:count,participants:["egor","daniil"],createdById:member.id,createdByName:member.name,status:"waiting",scores:{},answers:{},createdAt:serverTimestamp()});toast("Вызов отправлен второму ученику")}catch(e){toast("Не удалось создать дуэль: "+e.message)}
+}
+async function acceptDuel(id){
+ const d=duels.find(x=>x.id===id);if(!d||d.createdById===member.id)return;
+ try{await updateDoc(duelDoc(id),{status:"active",acceptedBy:member.id,acceptedAt:serverTimestamp()});toast("Дуэль началась!")}catch(e){toast("Не удалось принять вызов: "+e.message)}
+}
+function startDuel(id){
+ const d=duels.find(x=>x.id===id);if(!d||d.status!=="active"||d.scores?.[member.id]!==undefined)return;
+ testSession={subject:d.subject,questions:d.questions||[],answers:{},startedAt:new Date().toISOString(),duration:10*60,duelId:id};
+ testQuestionIndex=0;testSecondsLeft=10*60;showTab("tests");$("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");startTestTimer();renderTestQuestion();
+}
+async function saveDuelResult(session,percent,details){
+ try{
+  await runTransaction(db,async tx=>{
+   const ref=duelDoc(session.duelId),snap=await tx.get(ref);if(!snap.exists())throw new Error("Дуэль не найдена");
+   const data=snap.data(),scores={...(data.scores||{}),[member.id]:percent},answers={...(data.answers||{}),[member.id]:details};
+   tx.update(ref,{scores,answers,status:Object.keys(scores).length>=2?"completed":"active",updatedAt:serverTimestamp()});
+  });
+  toast("Результат дуэли отправлен");
+ }catch(e){toast("Не удалось сохранить результат дуэли: "+e.message)}
+}
+function listenStudySessions(){
+ if(stopStudySessions)stopStudySessions();
+ stopStudySessions=onSnapshot(query(sessionsCol(),where("userId","==",user.uid)),snap=>{
+  studySessions=snap.docs.map(d=>({id:d.id,...d.data()}));
+  if(!$("statsPage").classList.contains("hidden"))renderStats();
+ },err=>toast("Не удалось загрузить учебное время: "+err.message));
+}
+function focusDisplay(){
+ const m=Math.floor(focusRemaining/60),s=focusRemaining%60,label=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ $("focusTimerLabel").textContent=label;$("focusClock").textContent=label;
+ $("focusStartBtn").textContent=focusInterval?"Идёт занятие":"Продолжить";
+ $("focusStartBtn").disabled=Boolean(focusInterval);
+}
+function focusPause(){
+ if(focusInterval){clearInterval(focusInterval);focusInterval=null;focusDisplay();toast("Таймер на паузе")}
+}
+function focusReset(){
+ if(focusInterval){clearInterval(focusInterval);focusInterval=null}
+ focusTotal=Number($("focusMinutes").value||25)*60;focusRemaining=focusTotal;focusStartedAt=null;focusDisplay();
+}
+async function finishFocus(){
+ if(focusInterval){clearInterval(focusInterval);focusInterval=null}
+ const duration=focusTotal-focusRemaining||focusTotal,subject=$("focusSubject").value;
+ focusRemaining=0;focusDisplay();
+ try{await addDoc(sessionsCol(),{userId:user.uid,userKey:member.id,userName:member.name,subject,durationSeconds:duration,completed:true,createdAt:serverTimestamp()});toast("Сессия завершена · время сохранено")}catch(e){toast("Не удалось сохранить сессию: "+e.message)}
+ focusTotal=Number($("focusMinutes").value||25)*60;focusRemaining=focusTotal;focusDisplay();
+}
+function focusStart(){
+ if(focusInterval)return;
+ if(focusRemaining<=0)focusReset();
+ if(!focusStartedAt)focusStartedAt=Date.now();
+ $("focusSubject").disabled=true;$("focusMinutes").disabled=true;
+ focusInterval=setInterval(()=>{focusRemaining=Math.max(0,focusRemaining-1);focusDisplay();if(focusRemaining===0){$("focusSubject").disabled=false;$("focusMinutes").disabled=false;finishFocus()}},1000);
+ focusDisplay();
+}
+
 function shuffle(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function renderTestSetup(){
  const select=$("testSubject"),current=select.value;
@@ -605,6 +897,7 @@ function renderTestQuestion(){
  if(!testSession)return;
  const q=testSession.questions[testQuestionIndex],total=testSession.questions.length,answered=Object.keys(testSession.answers).length;
  $("testRunSubject").textContent=testSession.subject.toUpperCase();
+ $("testRunTitle").textContent=testSession.duelId?"Дуэль · общий вариант":testSession.mistakeId?"Повтор ошибки":"Тренировочный вариант";
  $("testRunProgress").textContent="Вопрос "+(testQuestionIndex+1)+" из "+total;
  $("testProgressFill").style.width=((testQuestionIndex+1)/total*100)+"%";
  $("testAnsweredLabel").textContent="Отвечено: "+answered+" / "+total;
@@ -631,16 +924,19 @@ async function finishTest(timeExpired=false){
  stopTestTimer();
  const session=testSession,questions=session.questions;
  const numericInput=$("testNumericAnswer");if(numericInput&&numericInput.value.trim())session.answers[testQuestionIndex]=numericInput.value.trim();
- const details=questions.map((q,i)=>({prompt:q.prompt,answer:q.answer,given:session.answers[i]??"",correct:testCorrect(q,session.answers[i]),explain:q.explain,topic:q.topic||""}));
+ const details=questions.map((q,i)=>({prompt:q.prompt,answer:q.answer,given:session.answers[i]??"",correct:testCorrect(q,session.answers[i]),explain:q.explain,topic:q.topic||"",topicId:topicIdForQuestion(session.subject,q.topic||""),type:q.type||"choice",options:q.options||[],tolerance:q.tolerance??0.01,unit:q.unit||""}));
  const correct=details.filter(x=>x.correct).length,total=questions.length,percent=Math.round(correct/total*100);
- const result={subject:session.subject,total,correct,percent,answers:details,duration:session.duration,secondsLeft:testSecondsLeft,timeExpired,startedAt:session.startedAt,finishedAt:new Date().toISOString(),userId:user.uid,userName:member.name};
+ const result={subject:session.subject,total,correct,percent,answers:details,duration:session.duration,secondsLeft:testSecondsLeft,timeExpired,startedAt:session.startedAt,finishedAt:new Date().toISOString(),userId:user.uid,userName:member.name,duelId:session.duelId||null};
+ try{await Promise.all(details.filter(x=>!x.correct).map(x=>recordMistake({...x,subject:session.subject,source:session.duelId?"duel":session.source||"test"})))}catch(e){toast("Не все ошибки удалось сохранить: "+e.message)}
+ if(session.mistakeId&&details.every(x=>x.correct)){try{await updateDoc(mistakeDoc(session.mistakeId),{resolved:true,resolvedAt:serverTimestamp()})}catch(e){}}
+ if(session.duelId)await saveDuelResult(session,percent,details);
  testSession=null;
  $("testRun").classList.add("hidden");$("testResult").classList.remove("hidden");
  $("testResult").innerHTML='<div class="panel test-result-hero"><span class="eyebrow">ТЕСТ ЗАВЕРШЁН'+(timeExpired?" · ВРЕМЯ ВЫШЛО":"")+'</span><div class="test-result-score '+(percent>=70?"score-good":percent>=40?"score-mid":"score-low")+'">'+percent+'%</div><h2>'+correct+' из '+total+' правильных ответов</h2><p>'+ (percent>=85?"Отличный результат.":percent>=60?"Хорошая работа. Есть темы для повторения.":"Разбери ошибки и попробуй ещё раз.")+'</p><div class="test-result-actions"><button class="btn primary" id="retryTestBtn">Пройти новый вариант</button><button class="btn" id="testBackBtn">К выбору предмета</button></div></div><div class="test-review"><div class="test-review-head"><h3>Разбор ответов</h3><span>'+details.filter(x=>!x.correct).length+' ошибок</span></div>'+details.map((x,i)=>'<article class="test-review-item '+(x.correct?"review-correct":"review-wrong")+'"><div class="review-item-head"><b>Вопрос '+(i+1)+'</b><span>'+(x.correct?"Верно":"Ошибка")+'</span></div><p>'+esc(x.prompt)+'</p><div class="review-answer"><span>Твой ответ</span><b>'+(x.given!==""?esc(x.given):"Нет ответа")+'</b></div><div class="review-answer"><span>Правильный ответ</span><b>'+esc(x.answer)+'</b></div><div class="review-explain">'+esc(x.explain)+'</div></article>').join("")+'</div>';
  $("retryTestBtn").addEventListener("click",()=>{ $("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");startTest()});
  $("testBackBtn").addEventListener("click",()=>{$("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");renderTestHistory()});
  try{await addDoc(testResultsCol(),{...result,createdAt:serverTimestamp()});toast("Результат сохранён в истории")}catch(e){toast("Тест завершён, но история не сохранена: "+e.message)}
- renderTestHistory();
+ renderTestHistory();if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
 }
 
 function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
@@ -650,15 +946,15 @@ function filtered(){const p=$('personFilter').value,s=$('subjectFilter').value,q
 function card(t){const next=t.status==='todo'?'doing':t.status==='doing'?'done':'todo',label=t.status==='todo'?'Начать':t.status==='doing'?'Готово':'Вернуть';return '<article class="task"><div class="tasktitle">'+esc(t.title)+'</div><span class="tag">'+esc(t.subject||'Другое')+'</span>'+(t.daily?'<span class="tag daily">Ежедневное</span>':'')+(t.desc?'<div class="desc">'+esc(t.desc)+'</div>':'')+'<div class="meta"><span>👤 '+esc(t.person)+'</span><span>📅 '+dueText(t.date)+'</span><span>⭐ '+(Number(t.points)||0)+' XP</span></div><div class="taskactions"><button class="small" data-action="move" data-id="'+esc(t.id)+'">'+label+'</button><button class="small" data-action="edit" data-id="'+esc(t.id)+'">Изменить</button><button class="small del" data-action="delete" data-id="'+esc(t.id)+'">Удалить</button></div></article>'}
 function renderBoard(){const arr=filtered();[['todo','todoList','todoCount'],['doing','doingList','doingCount'],['done','doneList','doneCount']].forEach(([st,list,count])=>{const a=arr.filter(t=>t.status===st);$(list).innerHTML=a.length?a.map(card).join(''):'<div class="empty">Пока пусто</div>';$ (count).textContent=a.length})}
 function renderDaily(){const a=tasks.filter(t=>t.daily||t.date===today()),done=a.filter(t=>t.status==='done').length;$('todayCount').textContent=done+' / '+a.length;$('dateLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});$('dailyList').innerHTML=a.length?a.map(t=>'<label class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==='done'?'checked':'')+'><span><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></span><span class="points">+'+(Number(t.points)||0)+' XP</span></label>').join(''):'<div class="empty">На сегодня заданий пока нет</div>'}
-function renderStats(){const done=tasks.filter(t=>t.status==='done');$('statTotal').textContent=tasks.length;$('statDone').textContent=done.length;$('statXp').textContent=pointsFor('Егор')+pointsFor('Даниил');const people=[{n:'Егор',xp:pointsFor('Егор'),a:'Е'},{n:'Даниил',xp:pointsFor('Даниил'),a:'Д'}].sort((a,b)=>b.xp-a.xp);$('ranking').innerHTML=people.map((p,i)=>'<div class="rankitem"><span class="ranknum">'+(i===0&&p.xp?'🏆':i+1)+'</span><b>'+p.n+'</b><span class="rankscore">'+p.xp+' XP</span></div>').join('');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toLocaleDateString('sv-SE'),n=done.filter(t=>{const x=t.completedAt?.toDate?t.completedAt.toDate():t.completedAt?new Date(t.completedAt):null;return x&&!isNaN(x)&&x.toLocaleDateString('sv-SE')===k}).length;days.push({l:d.toLocaleDateString('ru-RU',{weekday:'short'}),n})}const max=Math.max(1,...days.map(x=>x.n));$('chart').innerHTML=days.map(x=>'<div class="barwrap"><b>'+x.n+'</b><div class="bar" style="height:'+Math.max(4,x.n/max*105)+'px"></div><small>'+x.l+'</small></div>').join('')}
+function renderStats(){const done=tasks.filter(t=>t.status==='done');$('statTotal').textContent=tasks.length;$('statDone').textContent=done.length;$('statXp').textContent=pointsFor('Егор')+pointsFor('Даниил');const minutes=Math.round(studySessions.reduce((n,x)=>n+(Number(x.durationSeconds)||0),0)/60);if($("statStudyTime"))$("statStudyTime").textContent=minutes>=60?Math.floor(minutes/60)+" ч "+minutes%60+" мин":minutes+" мин";const people=[{n:'Егор',xp:pointsFor('Егор'),a:'Е'},{n:'Даниил',xp:pointsFor('Даниил'),a:'Д'}].sort((a,b)=>b.xp-a.xp);$('ranking').innerHTML=people.map((p,i)=>'<div class="rankitem"><span class="ranknum">'+(i===0&&p.xp?'🏆':i+1)+'</span><b>'+p.n+'</b><span class="rankscore">'+p.xp+' XP</span></div>').join('');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toLocaleDateString('sv-SE'),n=done.filter(t=>{const x=t.completedAt?.toDate?t.completedAt.toDate():t.completedAt?new Date(t.completedAt):null;return x&&!isNaN(x)&&x.toLocaleDateString('sv-SE')===k}).length;days.push({l:d.toLocaleDateString('ru-RU',{weekday:'short'}),n})}const max=Math.max(1,...days.map(x=>x.n));$('chart').innerHTML=days.map(x=>'<div class="barwrap"><b>'+x.n+'</b><div class="bar" style="height:'+Math.max(4,x.n/max*105)+'px"></div><small>'+x.l+'</small></div>').join('')}
 function render(){renderBoard();renderDaily();renderStats();renderSubjects();if(!$('calendarPage').classList.contains('hidden'))renderCalendar();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
-function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
+function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 function openModal(t=null,daily=false){editing=t?.id||null;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
-$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();stopTestTimer();await signOut(auth)});
+$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:'todo',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[data-action]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;try{if(b.dataset.action==='edit')openModal(t);if(b.dataset.action==='delete'&&confirm('Удалить задание?'))await deleteDoc(taskDoc(t.id));if(b.dataset.action==='move'){const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён')}}catch(err){toast('Не удалось изменить: '+err.message)}});
@@ -666,6 +962,21 @@ $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.dai
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+$("generatePlanBtn").addEventListener("click",generateDailyPlan);
+$("smartPlanItems").addEventListener("change",e=>{const input=e.target.closest("[data-plan-done]");if(input)togglePlanItem(input.dataset.planDone,input.checked)});
+$("smartPlanItems").addEventListener("click",e=>{const b=e.target.closest("[data-plan-action]");if(b)openPlanAction(b.dataset.planAction)});
+$("mistakeFilter").addEventListener("change",renderMistakes);$("mistakeSubjectFilter").addEventListener("change",renderMistakes);
+$("mistakeList").addEventListener("click",e=>{const resolve=e.target.closest("[data-mistake-resolve]"),repeat=e.target.closest("[data-mistake-repeat]");if(resolve)resolveMistake(resolve.dataset.mistakeResolve);if(repeat)repeatMistake(repeat.dataset.mistakeRepeat)});
+$("knowledgeMap").addEventListener("click",e=>{const b=e.target.closest("[data-map-topic]");if(b)openKnowledgeTopic(b.dataset.mapSubject,b.dataset.mapTopic)});
+$("createDuelBtn").addEventListener("click",createDuel);
+$("duelList").addEventListener("click",e=>{const a=e.target.closest("[data-duel-accept]"),s=e.target.closest("[data-duel-start]");if(a)acceptDuel(a.dataset.duelAccept);if(s)startDuel(s.dataset.duelStart)});
+$("focusToggle").addEventListener("click",()=>$("focusPanel").classList.toggle("hidden"));
+$("focusClose").addEventListener("click",()=>$("focusPanel").classList.add("hidden"));
+$("focusMinutes").addEventListener("change",focusReset);
+$("focusStartBtn").addEventListener("click",focusStart);
+$("focusPauseBtn").addEventListener("click",focusPause);
+$("focusResetBtn").addEventListener("click",()=>{$("focusSubject").disabled=false;$("focusMinutes").disabled=false;focusReset()});
+focusDisplay();
 
 $("startTestBtn").addEventListener("click",startTest);
 $("testQuestionNav").addEventListener("click",e=>{const b=e.target.closest("[data-test-jump]");if(!b||!testSession)return;testQuestionIndex=Number(b.dataset.testJump);renderTestQuestion()});
@@ -677,6 +988,6 @@ $("testNextBtn").addEventListener("click",()=>{if(!testSession)return;if(testQue
 $("finishTestBtn").addEventListener("click",()=>{if(testSession&&confirm("Завершить тест и проверить ответы?"))finishTest(false)});
 
 $('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить задания по физике за первую неделю для Егора и Даниила?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title&&x.person===t.person)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Задания по физике добавлены')}catch(err){toast(err.message)}});
-if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen();listenProgress();listenTestHistory()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
+if(!configured){$('login').classList.add('hidden');$('setupHint').classList.remove('hidden');$('loginMsg').textContent='Firebase ещё не настроен.'}else{try{const fb=initializeApp(firebaseConfig);auth=getAuth(fb);db=getFirestore(fb);onAuthStateChanged(auth,async u=>{$('loginBtn').disabled=false;if(!u){user=null;member=null;showLogin();return}member=members[String(u.email||'').toLowerCase()];if(!member){await signOut(auth);showLogin('Этот email не добавлен в список участников config.js');return}user=u;showApp();try{await seed();listen();listenProgress();listenTestHistory();listenMistakes();listenDuels();listenDailyPlan();listenStudySessions()}catch(err){$('sync').textContent='Ошибка базы: '+err.message}})}catch(err){showLogin('Ошибка конфигурации Firebase: '+err.message)}}
 </script>
 </body></html>
