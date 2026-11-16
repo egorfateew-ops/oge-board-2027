@@ -647,4 +647,17 @@ button.calendar-cell:hover{border-color:#c9c5ff;background:#fbfaff}
 #subTabs .subtab-group:not(.hidden){
   display:flex!important;
   min-width:0;
+  flex:0 0 auto;
+}
+/* Keep each submenu group visually separated instead of running together. */
+#subTabs.subtabs{
+  column-gap:28px!important;
+}
+#subTabs .subtab-group{
+  gap:18px!important;
+}
+#subTabs .subtab-group + .subtab-group:not(.hidden){
+  margin-left:4px;
+  padding-left:22px!important;
+  border-left:1px solid var(--line)!important;
 }
