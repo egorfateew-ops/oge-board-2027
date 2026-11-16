@@ -40,7 +40,23 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 </div></div>
 <div id="app" class="hidden"><div class="wrap">
  <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Егор × Даниил · учебный сезон 2026–2027</div></div><div class="actions"><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
- <nav class="panel tabs"><button class="tab active" data-tab="board">Доска заданий</button><button class="tab" data-tab="daily">На сегодня</button><button class="tab" data-tab="stats">Рейтинг и статистика</button><button class="tab" data-tab="study">Курс физики</button><button class="tab" data-tab="subjects">Предметы</button><button class="tab" data-tab="calendar">Календарь</button><button class="tab" data-tab="tests">Тесты</button></nav>
+ <nav class="panel tabs" id="mainTabs" aria-label="Основные разделы">
+  <button class="tab active" data-tab="board" data-group="tasks">Задания</button>
+  <button class="tab" data-tab="study" data-group="learn">Обучение</button>
+  <button class="tab" data-tab="tests" data-group="tests">Тесты</button>
+  <button class="tab" data-tab="stats" data-group="progress">Прогресс</button>
+ </nav>
+ <nav class="subtabs" id="subTabs" aria-label="Подразделы">
+  <div class="subtab-group" data-subgroup="tasks">
+   <button class="subtab active" data-tab="board">Все задания</button><button class="subtab" data-tab="daily">На сегодня</button>
+  </div>
+  <div class="subtab-group hidden" data-subgroup="learn">
+   <button class="subtab" data-tab="study">Курс физики</button><button class="subtab" data-tab="subjects">Все предметы</button>
+  </div>
+  <div class="subtab-group hidden" data-subgroup="progress">
+   <button class="subtab" data-tab="stats">Статистика</button><button class="subtab" data-tab="calendar">Календарь</button>
+  </div>
+ </nav>
  <section class="hero">
   <div class="panel welcome"><div><h2>Два ученика. Одна цель — сдать ОГЭ.</h2><p>Планируйте подготовку, разбирайте сложные темы и следите за личным прогрессом. Всё в одной общей доске.</p></div><div class="today"><strong id="todayCount">0 / 0</strong><span>заданий на сегодня</span></div></div>
   <div class="students">
@@ -50,14 +66,15 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
 
  <section id="boardPage">
-  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">＋ Физика · неделя 1</button></div>
+  <div class="page-intro"><div><h2>Все задания</h2><p>Общий список Егора и Даниила. Фильтруй по ученику или предмету и меняй статус по мере выполнения.</p></div><span class="page-note">Общая доска</span></div>
+  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">Добавить план физики</button></div>
   <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
  </section>
  <section id="dailyPage" class="hidden"><div class="sectiongrid"><div class="panel section"><h3>План на сегодня</h3><div class="sub" id="dateLabel"></div><div class="dailylist" id="dailyList" style="margin-top:12px"></div></div><div class="panel section"><h3>Ежедневная подготовка</h3><p class="sub">Добавляйте небольшие задания: повторение правил, один блок теста, 20 минут математики или разбор ошибок.</p><button class="btn primary" id="dailyAdd">＋ Ежедневное задание</button></div></div></section>
- <section id="statsPage" class="hidden"><div class="stats"><div class="panel stat"><span>Всего заданий</span><strong id="statTotal">0</strong></div><div class="panel stat"><span>Выполнено</span><strong id="statDone">0</strong></div><div class="panel stat"><span>Общий рейтинг XP</span><strong id="statXp">0</strong></div></div><div class="sectiongrid"><div class="panel section"><h3>Выполнено за последние 7 дней</h3><div class="chart" id="chart"></div></div><div class="panel section"><h3>Рейтинг</h3><div class="ranking" id="ranking"></div></div></div></section>
+ <section id="statsPage" class="hidden"><div class="page-intro"><div><h2>Ваш прогресс</h2><p>Сколько заданий выполнено, как меняется активность и кто набрал больше XP.</p></div><span class="page-note">Егор и Даниил</span></div><div class="stats"><div class="panel stat"><span>Всего заданий</span><strong id="statTotal">0</strong></div><div class="panel stat"><span>Выполнено</span><strong id="statDone">0</strong></div><div class="panel stat"><span>Общий рейтинг XP</span><strong id="statXp">0</strong></div></div><div class="sectiongrid"><div class="panel section"><h3>Выполнено за последние 7 дней</h3><div class="chart" id="chart"></div></div><div class="panel section"><h3>Рейтинг</h3><div class="ranking" id="ranking"></div></div></div></section>
  
  <section id="studyPage" class="hidden">
-  <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">18 уроков</span><span class="study-kpi">До 6 недель</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
+  <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">18 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
   <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
   <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
 
@@ -88,21 +105,21 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   <div class="panel tests-hero"><div><span class="eyebrow">ТРЕНИРОВКА ЭКЗАМЕНА</span><h2>Тестирование ОГЭ</h2><p>Собери случайный вариант, пройди его на время и разбери ответы после завершения.</p></div><div class="tests-hero-stat"><b>11</b><span>предметов</span></div></div>
   <div id="testsSetup" class="tests-setup">
    <div class="panel tests-config">
-    <span class="eyebrow">НОВАЯ ПОПЫТКА</span><h3>Настройки теста</h3>
+    <span class="eyebrow">НОВЫЙ ТЕСТ</span><h3>Выбери параметры</h3>
     <div class="tests-fields">
      <label>Предмет<select id="testSubject" class="field"></select></label>
-     <label>Количество вопросов<select id="testCount" class="field"><option value="5">5 вопросов</option><option value="10" selected>10 вопросов</option></select></label>
-     <label>Время на тест<select id="testDuration" class="field"><option value="10">10 минут</option><option value="20" selected>20 минут</option><option value="30">30 минут</option><option value="45">45 минут</option></select></label>
+     <label>Вопросов в варианте<select id="testCount" class="field"><option value="5">5 вопросов</option><option value="10" selected>10 вопросов</option></select></label>
+     <label>Время на выполнение<select id="testDuration" class="field"><option value="10">10 минут</option><option value="20" selected>20 минут</option><option value="30">30 минут</option><option value="45">45 минут</option></select></label>
     </div>
-    <div class="tests-hint">Вопросы и варианты ответов перемешиваются. Результат сохраняется в твоём аккаунте.</div>
+    <div class="tests-hint">Выбери предмет и нажми «Начать». После теста увидишь балл и разбор ошибок.</div>
     <button class="btn primary" id="startTestBtn">Начать тестирование →</button>
    </div>
-   <div class="panel tests-history"><div class="tests-history-head"><div><span class="eyebrow">ЛИЧНЫЕ РЕЗУЛЬТАТЫ</span><h3>История попыток</h3></div><span id="testHistoryCount" class="tests-history-count">0 попыток</span></div><div id="testHistoryList" class="tests-history-list"><div class="study-empty">Загружаем историю…</div></div></div>
+   <div class="panel tests-history"><div class="tests-history-head"><div><span class="eyebrow">ТВОИ РЕЗУЛЬТАТЫ</span><h3>История тестов</h3></div><span id="testHistoryCount" class="tests-history-count">0 попыток</span></div><div id="testHistoryList" class="tests-history-list"><div class="study-empty">Загружаем историю…</div></div></div>
   </div>
   <div id="testRun" class="hidden">
    <div class="panel test-run-head"><div><span class="eyebrow" id="testRunSubject"></span><h2 id="testRunTitle">Тренировочный вариант</h2><p id="testRunProgress">Вопрос 1 из 10</p></div><div class="test-timer" id="testTimer">20:00</div></div>
    <div class="test-progress"><div id="testProgressFill"></div></div>
-   <div class="test-layout"><aside class="panel test-question-nav"><b>Навигация по вопросам</b><div id="testQuestionNav"></div><small>Нажимай на номер, чтобы перейти к вопросу.</small></aside><article class="panel test-question-card" id="testQuestionCard"></article></div>
+   <div class="test-layout"><aside class="panel test-question-nav"><b>Вопросы</b><div id="testQuestionNav"></div><small>Выбери номер, чтобы перейти к нему.</small></aside><article class="panel test-question-card" id="testQuestionCard"></article></div>
    <div class="test-bottom-actions"><button class="btn" id="testPrevBtn">← Назад</button><span id="testAnsweredLabel">Отвечено: 0 / 10</span><button class="btn primary" id="testNextBtn">Следующий →</button><button class="btn danger" id="finishTestBtn">Завершить тест</button></div>
   </div>
   <div id="testResult" class="hidden"></div>
@@ -449,7 +466,13 @@ function renderCalendar(){
  grid.innerHTML=cells.join("");renderCalendarDay();
 }
 function showTab(tab){
- document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",tests:"tests",stats:"progress",calendar:"progress"};
+ const group=groups[tab]||"tasks";
+ document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
+ document.querySelectorAll(".subtab-group").forEach(x=>x.classList.toggle("hidden",x.dataset.subgroup!==group));
+ document.querySelectorAll(".subtab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ const subTabs=$("subTabs");if(subTabs)subTabs.classList.toggle("hidden",group==="tests");
+ const hero=document.querySelector(".hero");if(hero)hero.classList.toggle("hidden",tab!=="board");
  ["board","daily","stats","study","subjects","calendar","tests"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
  if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
  if(tab==="subjects"){backToSubjects();renderSubjects()}
@@ -642,6 +665,7 @@ $('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[dat
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
+$("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
 
 $("startTestBtn").addEventListener("click",startTest);
 $("testQuestionNav").addEventListener("click",e=>{const b=e.target.closest("[data-test-jump]");if(!b||!testSession)return;testQuestionIndex=Number(b.dataset.testJump);renderTestQuestion()});
