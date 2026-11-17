@@ -48,7 +48,7 @@ function motionScene() {
     '<div class="vlab-scene-caption">ТРЕК ДЛЯ ИЗМЕРЕНИЯ ДВИЖЕНИЯ</div><div class="vlab-track-line"></div>'+
     '<div class="vlab-track-mark start">СТАРТ</div><div class="vlab-track-mark finish">ФИНИШ</div>'+
     '<div class="vlab-track-ruler"><i>0</i><i>20</i><i>40</i><i>60</i><i>80</i><i>100 см</i></div>'+
-    '<div class="vlab-cart vlab-drag" data-drag-object="cart" style="left:105px;top:155px"><span class="vlab-cart-body"></span><i></i><i></i><small>тележка</small></div>'+
+    '<div class="vlab-cart vlab-drag" data-drag-object="cart" data-drag-axis="x" style="left:105px;top:155px"><span class="vlab-cart-body"></span><i></i><i></i><small>тележка</small></div>'+
     '<div class="vlab-motion-timer"><span>Секундомер</span><b data-readout="time">0,00 с</b><small data-readout="motion-state">Перетащи тележку к финишу</small></div>'+
     '<div class="vlab-scene-note">Перетащи тележку от старта к финишу. Время движения измеряется автоматически.</div>'+
   '</div>';
@@ -58,7 +58,7 @@ function springScene() {
     '<div class="vlab-scene-caption">ШТАТИВ · ПРУЖИНА · НАБОР ГРУЗОВ</div>'+
     '<div class="vlab-stand"><span class="vlab-stand-foot"></span><span class="vlab-stand-pole"></span><span class="vlab-stand-arm"></span></div>'+
     '<div class="vlab-spring-anchor"></div><div class="vlab-spring-coil" data-spring-coil></div><div class="vlab-spring-hook" data-dropzone="hook"></div>'+
-    '<div class="vlab-hanging-weight" data-readout="hanging-weight">нет груза</div>'+
+    ''+
     '<div class="vlab-ruler-vertical"><i>0</i><i>2</i><i>4</i><i>6</i><i>8</i><i>10 см</i></div>'+
     '<div class="vlab-weight-tray" data-dropzone="tray"><span>Лоток для грузов · перетащи груз на крючок</span></div>'+
       '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="50" style="left:525px;top:286px">50 г</button>'+
@@ -82,8 +82,8 @@ function leverScene() {
   return '<div class="vlab-scene vlab-lever-scene" data-scene="lever">'+
     '<div class="vlab-scene-caption">РЫЧАГ · ОПОРА · ПОДВЕСНЫЕ ГРУЗЫ</div>'+
     '<div class="vlab-lever-beam" data-lever-beam></div><div class="vlab-lever-pivot"></div>'+
-    '<div class="vlab-lever-weight left vlab-drag" data-drag-object="leftWeight" style="left:230px;top:128px"><b>200 г</b><small>груз A</small></div>'+
-    '<div class="vlab-lever-weight right vlab-drag" data-drag-object="rightWeight" style="left:480px;top:128px"><b>200 г</b><small>груз B</small></div>'+
+    '<div class="vlab-lever-weight left vlab-drag" data-drag-object="leftWeight" data-drag-axis="x" style="left:230px;top:128px"><b>200 г</b><small>груз A</small></div>'+
+    '<div class="vlab-lever-weight right vlab-drag" data-drag-object="rightWeight" data-drag-axis="x" style="left:480px;top:128px"><b>200 г</b><small>груз B</small></div>'+
     '<div class="vlab-lever-scale"><i>40</i><i>30</i><i>20</i><i>10</i><i>0</i><i>10</i><i>20</i><i>30</i><i>40 см</i></div>'+
     '<div class="vlab-balance-indicator" data-readout="balance">● Рычаг уравновешен</div>'+
     '<div class="vlab-readout-pills"><span>Левое плечо: <b data-readout="left-arm">25 см</b></span><span>Правое плечо: <b data-readout="right-arm">25 см</b></span><span>Моменты: <b data-readout="moments">равны</b></span></div>'+
@@ -134,7 +134,7 @@ function inductionScene() {
   return '<div class="vlab-scene vlab-induction-scene" data-scene="induction">'+
     '<div class="vlab-scene-caption">КАТУШКА · ПОЛОСОВОЙ МАГНИТ · ГАЛЬВАНОМЕТР</div>'+
     '<div class="vlab-induction-coil" data-dropzone="coil"><i></i><i></i><i></i><i></i><i></i><small>КАТУШКА</small></div>'+
-    '<div class="vlab-magnet vlab-drag" data-drag-object="magnet" style="left:120px;top:145px"><span>N</span><span>S</span></div>'+
+    '<div class="vlab-magnet vlab-drag" data-drag-object="magnet" data-drag-axis="x" style="left:120px;top:145px"><span>N</span><span>S</span></div>'+
     '<div class="vlab-galvanometer"><div class="vlab-galvanometer-face"><span>−</span><span>0</span><span>+</span><i data-readout="needle"></i></div><small>ГАЛЬВАНОМЕТР</small><b data-readout="induction-state">Нет изменения потока</b></div>'+
     '<div class="vlab-scene-note">Двигай магнит внутрь и наружу катушки. При неподвижном магните стрелка возвращается к нулю.</div>'+
   '</div>';
@@ -143,9 +143,9 @@ function lensScene() {
   return '<div class="vlab-scene vlab-lens-scene" data-scene="lens">'+
     '<div class="vlab-scene-caption">ОПТИЧЕСКАЯ СКАМЬЯ · СОБИРАЮЩАЯ ЛИНЗА · ЭКРАН</div>'+
     '<div class="vlab-optical-rail"></div>'+
-    '<div class="vlab-candle vlab-drag" data-drag-object="object" style="left:95px;top:110px"><span></span><b>предмет</b></div>'+
-    '<div class="vlab-lens vlab-drag" data-drag-object="lens" style="left:420px;top:70px"><i></i><small>линза</small></div>'+
-    '<div class="vlab-screen vlab-drag" data-drag-object="screen" style="left:590px;top:82px"><div class="vlab-screen-image" data-screen-image></div><small>экран</small></div>'+
+    '<div class="vlab-candle vlab-drag" data-drag-object="object" data-drag-axis="x" style="left:95px;top:110px"><span></span><b>предмет</b></div>'+
+    '<div class="vlab-lens vlab-drag" data-drag-object="lens" data-drag-axis="x" style="left:420px;top:70px"><i></i><small>линза</small></div>'+
+    '<div class="vlab-screen vlab-drag" data-drag-object="screen" data-drag-axis="x" style="left:590px;top:82px"><div class="vlab-screen-image" data-screen-image></div><small>экран</small></div>'+
     '<div class="vlab-optical-scale"><i>0</i><i>20</i><i>40</i><i>60</i><i>80</i><i>100 см</i></div>'+
     '<div class="vlab-readout-pills"><span>Расстояние до предмета: <b data-readout="object-distance">65 см</b></span><span>До изображения: <b data-readout="image-distance">—</b></span><span>Фокус: <b data-readout="focus-state">не настроен</b></span></div>'+
     '<div class="vlab-scene-note">Передвигай экран и линзу. Добейся чёткого изображения на экране.</div>'+
@@ -154,7 +154,7 @@ function lensScene() {
 function uncertaintyScene() {
   return '<div class="vlab-scene vlab-uncertainty-scene" data-scene="uncertainty">'+
     '<div class="vlab-scene-caption">ЛИНЕЙКА · ИЗМЕРИТЕЛЬНЫЙ УКАЗАТЕЛЬ</div>'+
-    '<div class="vlab-ruler-board"><div class="vlab-ruler-strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5 см</i></div><div class="vlab-ruler-object"></div><div class="vlab-ruler-marker vlab-drag" data-drag-object="marker" style="left:310px;top:125px"><span></span><b data-readout="ruler-value">3,0 см</b></div></div>'+
+    '<div class="vlab-ruler-board"><div class="vlab-ruler-strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5 см</i></div><div class="vlab-ruler-object"></div><div class="vlab-ruler-marker vlab-drag" data-drag-object="marker" data-drag-axis="x" style="left:310px;top:125px"><span></span><b data-readout="ruler-value">3,0 см</b></div></div>'+
     '<div class="vlab-uncertainty-actions"><button type="button" class="btn primary" data-vlab-action="record-measurement">＋ Записать измерение</button><span data-readout="measure-count">0 / 5 измерений</span></div>'+
     '<div class="vlab-measure-list" data-readout="measure-list">Сними пять показаний, немного меняя положение указателя.</div>'+
     '<div class="vlab-scene-note">Перетаскивай указатель по шкале. Запиши пять измерений одного и того же размера.</div>'+
@@ -163,7 +163,7 @@ function uncertaintyScene() {
 function frictionScene() {
   return '<div class="vlab-scene vlab-friction-scene" data-scene="friction">'+
     '<div class="vlab-scene-caption">БРУСОК · ГОРИЗОНТАЛЬНАЯ ПОВЕРХНОСТЬ · ДИНАМОМЕТР</div>'+
-    '<div class="vlab-friction-track"></div><div class="vlab-friction-block vlab-drag" data-drag-object="frictionBlock" style="left:170px;top:155px"><span></span><b>брусок</b></div>'+
+    '<div class="vlab-friction-track"></div><div class="vlab-friction-block vlab-drag" data-drag-object="frictionBlock" data-drag-axis="x" style="left:170px;top:155px"><span></span><b>брусок</b></div>'+
     '<div class="vlab-friction-gauge"><small>ДИНАМОМЕТР</small><b data-readout="friction-force">0,00 Н</b><div class="vlab-gauge-scale"></div></div>'+
     '<div class="vlab-friction-controls"><label>Масса бруска с грузом: <b data-readout="friction-mass">200 г</b><input type="range" min="100" max="600" step="50" value="200" data-vlab-control="friction-mass"></label><label>Сила тяги: <b data-readout="pull-force">0,00 Н</b><input type="range" min="0" max="4" step="0.05" value="0" data-vlab-control="pull-force"></label></div>'+
     '<div class="vlab-scene-note">Меняй нагрузку и силу тяги. Перетащи брусок по поверхности, чтобы увидеть начало скольжения.</div>'+
@@ -281,14 +281,14 @@ export function mountLabSimulator(container,id,options = {}) {
   };
   const updateSpring = () => {
     const extension=state.mass/1000*9.8/20*1000;
-    const coil=q("[data-spring-coil]");
+    const coil=q("[data-spring-coil]"),hook=q('[data-dropzone="hook"]');
     if(coil)coil.style.height=(70+extension)+"px";
+    if(hook)hook.style.top=(155+extension)+"px";
     setRead("mass",state.mass?state.mass+" г":"—");
     setRead("extension",state.mass?fmt(extension/10,2)+" см":"—");
     setRead("force",state.mass?fmt(state.mass/1000*9.8,2)+" Н":"—");
-    setRead("hanging-weight",state.mass?state.mass+" г":"нет груза");
-    const weight=q(".vlab-hanging-weight");
-    if(weight){weight.style.top=(165+extension)+"px";weight.style.display=state.mass?"block":"none";}
+    const weight=q('[data-drag-object="weight"][data-mass="'+state.mass+'"]');
+    if(weight&&state.mass){weight.style.left=(hook.offsetLeft+18)+"px";weight.style.top=(hook.offsetTop+25)+"px";}
   };
   const updateArch = () => {
     setRead("dyna-value",state.submerged?"1,47 Н":"1,96 Н");
@@ -445,13 +445,22 @@ export function mountLabSimulator(container,id,options = {}) {
         if(state.submerged){obj.style.left=(beaker.offsetLeft+55)+"px";obj.style.top=(beaker.offsetTop+90)+"px";}
         updateArch();
       }
+      if(item.id==="archimedes"&&obj.dataset.dragObject==="beaker"&&state.submerged){
+        const body=q('[data-drag-object="body"]');
+        if(body){body.style.left=(obj.offsetLeft+55)+"px";body.style.top=(obj.offsetTop+90)+"px";}
+      }
       if(item.id==="spring"&&obj.dataset.dragObject==="weight"){
         const hook=q('[data-dropzone="hook"]'),tray=q('[data-dropzone="tray"]');
         if(inside(centerX,centerY,hook)){
           state.mass=Number(obj.dataset.mass||100);
+          scene.querySelectorAll('[data-drag-object="weight"]').forEach(weight=>{
+            if(weight!==obj){const home={50:525,100:595,150:665};weight.style.left=(home[Number(weight.dataset.mass)]||525)+"px";weight.style.top="286px";}
+          });
           obj.style.left=(hook.offsetLeft+18)+"px";obj.style.top=(hook.offsetTop+25)+"px";
-          const hanging=q(".vlab-hanging-weight");if(hanging)hanging.style.display="none";
-        }else if(inside(centerX,centerY,tray)){state.mass=0;}
+        }else if(inside(centerX,centerY,tray)){
+          state.mass=0;
+          const home={50:525,100:595,150:665};obj.style.left=(home[Number(obj.dataset.mass)]||525)+"px";obj.style.top="286px";
+        }
         updateSpring();
       }
       if(item.id==="motion"&&obj.dataset.dragObject==="cart"){
@@ -466,8 +475,12 @@ export function mountLabSimulator(container,id,options = {}) {
       if(item.id==="heat"&&obj.dataset.dragObject==="hotMetal"){
         const calorimeter=q('[data-drag-object="calorimeter"]');
         state.hotMetalIn=inside(centerX,centerY,calorimeter);
-        if(state.hotMetalIn){obj.style.left=(calorimeter.offsetLeft+42)+"px";obj.style.top=(calorimeter.offsetTop+42)+"px";}
+        if(state.hotMetalIn){obj.style.left=(calorimeter.offsetLeft+42)+"px";obj.style.top=(calorimeter.offsetTop+62)+"px";}
         updateHeat();
+      }
+      if(item.id==="heat"&&obj.dataset.dragObject==="calorimeter"&&state.hotMetalIn){
+        const metal=q('[data-drag-object="hotMetal"]');
+        if(metal){metal.style.left=(obj.offsetLeft+42)+"px";metal.style.top=(obj.offsetTop+62)+"px";}
       }
       if(item.id==="lever")updateLever();
       if(item.id==="lens")updateLens();
@@ -573,7 +586,7 @@ export function mountLabSimulator(container,id,options = {}) {
       result={valid:true,score:ok?3:1,value:Math.round(c)+" Дж/(кг·°C)",detail:"Qводы = cmΔt = "+Math.round(num)+" Дж. По тепловому балансу Qметалла = Qводы; cметалла ≈ "+Math.round(c)+" Дж/(кг·°C)."};
     } else if(item.id==="induction"){
       if(!state.inductionObserved){showResult("Проведи магнитом через катушку, чтобы увидеть отклонение гальванометра.",false);return;}
-      result={valid:true,score:state.inductionObserved===3?3:2,value:"Электромагнитная индукция наблюдается",detail:"При внесении и удалении магнита магнитный поток меняется, поэтому возникает индукционный ток. При неподвижном магните поток не меняется — ток исчезает."};
+      result={valid:true,score:state.inductionObserved>=2?3:2,value:"Электромагнитная индукция наблюдается",detail:"При внесении и удалении магнита магнитный поток меняется, поэтому возникает индукционный ток. При неподвижном магните поток не меняется — ток исчезает."};
       values.observations=state.inductionObserved;
     } else if(item.id==="uncertainty"){
       if(state.measurements.length!==5){showResult("Запиши пять измерений указателя.",false);return;}
