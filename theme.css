@@ -2364,6 +2364,8 @@ body[data-theme="dark"] .vlab-switch.closed{background:#1c3a33;border-color:#376
 
 
 /* Mobile-first navigation and virtual lab controls */
+.vlab-scene-frame{position:relative;flex:0 0 auto;width:760px;height:380px;overflow:hidden}
+
 .mobile-bottom-nav,.mobile-more-panel,.mobile-more-backdrop{display:none}
 .topbar-heading{position:relative;min-width:0}
 .vlab-workflow{display:flex;align-items:center;gap:8px;margin:0 0 13px;padding:8px;border:1px solid var(--line);border-radius:13px;background:var(--soft)}
