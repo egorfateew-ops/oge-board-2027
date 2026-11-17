@@ -8,7 +8,7 @@ const labNames={
 
 export async function mountThreeLab(host,id,options={}){
  if(host._threeLab&&host._threeLab.dispose)host._threeLab.dispose();
- host.innerHTML='<div class="vlab-three-shell"><div class="vlab-three-toolbar"><div><span class="eyebrow">ИНТЕРАКТИВНЫЙ 3D-СТЕНД</span><b>'+labNames[id]+'</b></div><div class="vlab-three-toolbar-actions"><button type="button" data-three-action="camera">↗ Камера</button><button type="button" data-three-action="reset">↻ Сброс</button></div></div><div class="vlab-three-stage"><div class="vlab-three-canvas"></div><div class="vlab-three-hint">Перетаскивай предметы · вращай сцену · колесо мыши — приближение</div><div class="vlab-three-readouts" data-three-readouts></div><div class="vlab-three-loading" data-three-loading>Загружаем 3D-лабораторию…</div></div><div class="vlab-three-controls" data-three-controls></div><div class="vlab-three-footer"><span>🖱️ Зажми фон и двигай мышь, чтобы повернуть камеру</span><span>На телефоне: один палец — вращение, два — масштаб</span></div></div>';
+ host.innerHTML='<div class="vlab-three-shell"><div class="vlab-three-toolbar"><div><span class="eyebrow">ИНТЕРАКТИВНЫЙ 3D-СТЕНД</span><b>'+labNames[id]+'</b></div><div class="vlab-three-toolbar-actions"><button type="button" data-three-action="camera">↗ Камера</button><button type="button" data-three-action="reset">↻ Сброс</button></div></div><div class="vlab-three-stage"><div class="vlab-three-canvas"></div><div class="vlab-three-hint">Перетаскивай приборы · фон — вращение · колесо мыши — масштаб</div><div class="vlab-three-loading" data-three-loading>Загружаем 3D-лабораторию…</div></div><div class="vlab-three-readouts" data-three-readouts></div><div class="vlab-three-status" data-three-status role="status" aria-live="polite">Стенд готов. Перемещай оборудование мышью или пальцем.</div><div class="vlab-three-controls" data-three-controls></div><div class="vlab-three-footer"><span>🖱️ Зажми фон и двигай мышь, чтобы повернуть камеру</span><span>На телефоне: один палец — вращение, два — масштаб</span></div></div>';
  const stage=host.querySelector(".vlab-three-stage");
  const canvasHost=host.querySelector(".vlab-three-canvas");
  const loading=host.querySelector("[data-three-loading]");
@@ -88,20 +88,24 @@ export async function mountThreeLab(host,id,options={}){
   const object=add(new THREE.TorusGeometry(radius,tube,12,64),material,x,y,z);
   if(rotation)object.rotation.set(rotation[0],rotation[1],rotation[2]);return object;
  };
+ const paintLabel=(canvas,text)=>{
+  const ctx=canvas.getContext("2d"),value=String(text);ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(255,255,255,.97)";ctx.strokeStyle="rgba(66,85,110,.3)";ctx.lineWidth=6;
+  ctx.beginPath();ctx.roundRect(10,10,1004,236,34);ctx.fill();ctx.stroke();
+  let fontSize=76;ctx.textAlign="center";ctx.textBaseline="middle";ctx.font="700 "+fontSize+"px Arial, sans-serif";
+  while(ctx.measureText(value).width>920&&fontSize>42){fontSize-=4;ctx.font="700 "+fontSize+"px Arial, sans-serif";}
+  ctx.fillStyle="#26384d";ctx.fillText(value,512,128,920);
+ };
  const label=(text,x,y,z,size=1.1)=>{
-  const canvas=document.createElement("canvas");canvas.width=512;canvas.height=128;
-  const ctx=canvas.getContext("2d");ctx.fillStyle="rgba(255,255,255,.92)";ctx.strokeStyle="rgba(72,91,117,.25)";ctx.lineWidth=4;
-  const rr=18;ctx.beginPath();ctx.roundRect(5,5,502,118,rr);ctx.fill();ctx.stroke();
-  ctx.fillStyle="#26384d";ctx.font="bold 38px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(text),256,65,470);
+  const canvas=document.createElement("canvas");canvas.width=1024;canvas.height=256;paintLabel(canvas,text);
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));
-  sprite.position.set(x,y,z);sprite.scale.set(size*2.3,size*.58,1);scene.add(sprite);return sprite;
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false,toneMapped:false}));
+  sprite.position.set(x,y,z);sprite.scale.set(size*2.3,size*.58,1);sprite.renderOrder=10000;sprite.frustumCulled=false;sprite.userData.isSceneLabel=true;
+  scene.add(sprite);return sprite;
  };
  const setLabel=(sprite,text)=>{
   if(!sprite)return;
-  const canvas=sprite.material.map.image,ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(255,255,255,.94)";ctx.strokeStyle="rgba(72,91,117,.25)";ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(5,5,502,118,18);ctx.fill();ctx.stroke();
-  ctx.fillStyle="#26384d";ctx.font="bold 38px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(text),256,65,470);sprite.material.map.needsUpdate=true;
+  paintLabel(sprite.material.map.image,text);sprite.material.map.needsUpdate=true;
  };
  const floor=box(11,.18,7,mat(isDark()?"#202f43":"#d9e1eb",.86),0,-.12,0);
  const table=box(9,.22,5.3,mat(isDark()?"#2c3c52":"#e6ebf2",.72),0,.08,0);
@@ -114,14 +118,14 @@ export async function mountThreeLab(host,id,options={}){
  const addPillar=(x,z,height=2.2)=>{cylinder(.08,.1,height,materials.steelDark,x,.2+height/2,z);};
  const addDigitalScale=(x,z)=>{
   box(1.5,.18,1.05,materials.dark,x,.34,z);box(1.3,.08,.92,materials.steel,x,.46,z);
-  box(.58,.12,.24,materials.black,x,.57,z-.22);addDisplay("scale","0,0 г",x,.78,z-.22);
-  box(.08,.08,.08,materials.red,x-.48,.58,z-.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.17,z+1.0,.75);
+  box(.58,.12,.24,materials.black,x,.57,z+.22);addDisplay("scale","0,0 г",x,.78,z+.43);
+  box(.08,.08,.08,materials.red,x-.48,.58,z+.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.15,z+1.05,.65);
  };
  const addBeaker=(x,z,waterLevel=.85,volumeText="40 мл")=>{
   cylinder(.55,.55,1.25,materials.glass,x,.95,z,48);
   torus(.55,.035,materials.steel,x,1.58,z);
   const water=cylinder(.49,.49,waterLevel,materials.water,x,.34+waterLevel/2,z,40);
-  display.water=addDisplay("water",volumeText,x,.8,z+.62);
+  display.water=addDisplay("water",volumeText,x,.86,z+.82);
   return {water};
  };
  const addWeight=(x,y,z,role,mass=200)=>{
@@ -129,7 +133,7 @@ export async function mountThreeLab(host,id,options={}){
   cylinder(.32,.32,.2,materials.steelDark,0,0,0,32,group);
   cylinder(.23,.23,.24,materials.blue,0,.21,0,32,group);
   torus(.13,.035,materials.steel,0,.4,0);
-  const weightLabel=label(mass+" г",x,y+.7,z,.55);group.userData.label=weightLabel;
+  const weightLabel=label(mass+" г",x,y+.7,z+.42,.55);group.userData.label=weightLabel;
   addDrag(group,role,"x");return group;
  };
  const addStand=(x,z)=>{
@@ -200,7 +204,7 @@ export async function mountThreeLab(host,id,options={}){
  function buildArchimedes(){
   addStand(-2.4,0);
   const dyna=cylinder(.22,.22,.9,materials.white,-1.3,2.8,0);torus(.2,.04,materials.steel,-1.3,3.28,0);
-  addDisplay("dyna","3,90 Н",-1.3,2.9,.25);
+  addDisplay("dyna","3,90 Н",-1.3,2.9,.52);
   const beaker=addBeaker(1.8,0,1.0,"100 мл");
   const body=new THREE.Group();body.position.set(-1.3,2.0,0);scene.add(body);
   cylinder(.28,.28,.65,materials.steel,0,0,0,32,body);torus(.16,.04,materials.steel,0,.36,0);
@@ -229,8 +233,8 @@ export async function mountThreeLab(host,id,options={}){
   setData({length:.5,time:0,count:0});
  }
  function buildHeat(){
-  const bath=addBeaker(-1.9,0,1.0,"90 °C");label("ВОДЯНАЯ БАНЯ · 90 °C",-1.9,2.0,.7,.7);
-  const calorimeter=addBeaker(2,0,.6,"100 мл");objects.calorimeter=calorimeter;
+  const bath=addBeaker(-1.9,0,1.0,"90 °C");label("ВОДЯНАЯ БАНЯ · 90 °C",-1.9,2.12,.86,.62);
+  const calorimeter=addBeaker(2,0,.6,"100 мл");objects.calorimeter=calorimeter;label("КАЛОРИМЕТР",2,2.02,.86,.5);
   const metal=cylinder(.25,.25,.7,materials.steel,0,.75,1.2,32);addDrag(metal,"hotMetal","xyz");objects.hotMetal=metal;
   setReadouts([["Вода до опыта","20 °C"],["Металл до опыта","90 °C"],["Итоговая температура","ожидает"]]);
   setData({hotMetalIn:false,mw:100,mm:100,tw:20,tm:90,tf:32.6});
@@ -238,10 +242,10 @@ export async function mountThreeLab(host,id,options={}){
  function buildOhm(){
   const board=box(6,.18,3,materials.dark,0,.34,0);
   for(const x of [-2.4,-1.2,0,1.2,2.4])cylinder(.08,.08,.12,materials.steel,x,.5,0);
-  box(.9,.42,.6,materials.blue,-2,.72,0);label("4,5 В",-2,1.15,.2,.55);
-  cylinder(.35,.35,.28,materials.white,-.4,.68,0);label("A",-0.4,1.05,.3,.5);
-  cylinder(.35,.35,.28,materials.white,1.4,.68,0);label("V",1.4,1.05,.3,.5);
-  box(1.1,.35,.55,materials.red,.2,.65,1);label("R = 5,7 Ом",.2,1.1,1,.55);
+  box(.9,.42,.6,materials.blue,-2,.72,0);label("4,5 В",-2,1.15,.48,.55);
+  cylinder(.35,.35,.28,materials.white,-.4,.68,0);label("A",-0.4,1.05,.48,.5);
+  cylinder(.35,.35,.28,materials.white,1.4,.68,0);label("V",1.4,1.05,.48,.5);
+  box(1.1,.35,.55,materials.red,.2,.65,1);label("R = 5,7 Ом",.2,1.1,1.48,.55);
   rod([-1.55,.72,0],[-.78,.72,0],.035,materials.red);rod([-.02,.72,0],[.9,.72,0],.035,materials.red);rod([1.78,.72,0],[2.4,.72,0],.035,materials.red);
   objects.switchLever=rod([.85,.72,-.9],[1.35,.72,-.9],.045,materials.red);
   addControl('<div class="vlab-three-control-row"><button type="button" data-three-action="switch">Замкнуть ключ</button><label class="vlab-three-control"><span>Реостат <b data-three-rheostat>9,3 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-three-control="rheostat"></label></div><button type="button" data-three-action="record-ohm">＋ Записать показания</button><small data-three-count>0 / 3 измерения</small>');
@@ -252,11 +256,10 @@ export async function mountThreeLab(host,id,options={}){
   for(let i=0;i<10;i++){const x=-.55+i*.12;torus(.57,.045,materials.copper,x,1.45,0,[0,Math.PI/2,0]);}
   const magnet=new THREE.Group();magnet.position.set(-2.4,1.45,0);scene.add(magnet);
   box(.65,.28,.3,materials.red,-.34,0,0,magnet);box(.65,.28,.3,materials.blue,.34,0,0,magnet);
-  label("N",-2.7,1.9,0,.45);label("S",-2.0,1.9,0,.45);
-  addDrag(magnet,"magnet","x");objects.magnet=magnet;objects.magnetLabels=[label("N",-2.7,1.9,0,.45),label("S",-2.0,1.9,0,.45)];
+  addDrag(magnet,"magnet","x");objects.magnet=magnet;objects.magnetLabels=[label("N",-2.7,1.9,.48,.45),label("S",-2.0,1.9,.48,.45)];
   cylinder(.48,.48,.18,materials.dark,2.1,1.0,0);torus(.4,.035,materials.steel,2.1,1.1,0);
   const needle=box(.04,.05,.65,materials.red,2.1,1.22,0);objects.needle=needle;
-  addDisplay("galvanometer","0",2.1,1.75,.2);
+  addDisplay("galvanometer","0",2.1,1.75,.52);
   setReadouts([["Стрелка","0"],["Наблюдений","0"],["Направление","нет тока"]]);
   setData({inductionObserved:0,inductionLog:[]});
  }
@@ -265,14 +268,14 @@ export async function mountThreeLab(host,id,options={}){
   makeRuler(-3,3,.3,.44);
   const object=new THREE.Group();object.position.set(-2,.95,0);scene.add(object);
   cylinder(.12,.12,1.1,materials.yellow,0,0,0,24,object);sphere(.18,materials.yellow,0,.6,0,object);
-  addDrag(object,"object","x");objects.object=object;
-  const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;
+  addDrag(object,"object","x");objects.object=object;label("ПРЕДМЕТ",-2,1.9,.52,.45);
+  const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;label("ЛИНЗА",0,2.08,.52,.42);
   const screen=new THREE.Group();screen.position.set(2.6,1.1,0);scene.add(screen);
   box(.12,1.4,.9,materials.white,0,0,0,screen);
   rod([-.03,-.25,.48],[-.03,.25,.48],.035,materials.red,screen);
   rod([-.03,.25,.48],[-.22,.08,.48],.03,materials.red,screen);
   rod([-.03,.25,.48],[.16,.08,.48],.03,materials.red,screen);
-  addDrag(screen,"screen","x");objects.screen=screen;
+  addDrag(screen,"screen","x");objects.screen=screen;label("ЭКРАН",2.6,2.05,.58,.42);
   setReadouts([["Предмет — линза","30 см"],["Линза — экран","39 см"],["Изображение","размытое"]]);
   setData({a:30,b:39,sharp:false});
  }
@@ -343,8 +346,8 @@ export async function mountThreeLab(host,id,options={}){
    const extension=Math.max(1,Math.min(12,(2.25-object.position.y)*10));
    data={...data,mass:100,extension:extension};rebuildSpring();
   }
-  if(object.userData.label)object.userData.label.position.set(object.position.x,object.position.y+.7,object.position.z);
-  if(id==="induction"&&object===objects.magnet&&objects.magnetLabels){objects.magnetLabels[0].position.x=object.position.x-.3;objects.magnetLabels[1].position.x=object.position.x+.35;}
+  if(object.userData.label)object.userData.label.position.set(object.position.x,object.position.y+.7,object.position.z+.42);
+  if(id==="induction"&&object===objects.magnet&&objects.magnetLabels){objects.magnetLabels[0].position.set(object.position.x-.3,object.position.y+.45,object.position.z+.48);objects.magnetLabels[1].position.set(object.position.x+.35,object.position.y+.45,object.position.z+.48);}
   if(id==="ohm"&&objects.switchLever)objects.switchLever.rotation.z=data.keyClosed?-.55:0;
   if(id==="lever"&&(object===objects.left||object===objects.right)){
    const l1=Math.max(1,Math.abs(objects.left.position.x)*10),l2=Math.max(1,Math.abs(objects.right.position.x)*10);
@@ -579,7 +582,7 @@ export async function mountThreeLab(host,id,options={}){
   renderer.domElement.removeEventListener("pointerup",onPointerUp);
   renderer.domElement.removeEventListener("pointercancel",onPointerUp);
   renderer.domElement.removeEventListener("wheel",onWheel);
-  controls.removeEventListener("input",onControl);controls.removeEventListener("click",onAction);host.removeEventListener("click",onAction);
+  controls.removeEventListener("input",onControl);host.removeEventListener("click",onAction);
   scene.traverse(object=>{if(object.geometry)object.geometry.dispose();if(object.material){const mats=Array.isArray(object.material)?object.material:[object.material];mats.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});}});
   renderer.dispose();renderer.forceContextLoss();host.innerHTML="";
  };
