@@ -545,7 +545,7 @@ const starter=[
   }
 ].filter(task=>task.subject==="Физика"&&!String(task.id).startsWith("physics-w"));
 
-let app,auth,db,user,member,tasks=[],editing=null,stopTasks=null;
+let app,auth,db,user,member,tasks=[],editing=null,stopTasks=null,autoCourseStarted=false;
 const configured=firebaseConfig.apiKey&&!firebaseConfig.apiKey.includes('YOUR_');
 const tasksCol=()=>collection(db,'rooms','oge2027','tasks'),taskDoc=id=>doc(db,'rooms','oge2027','tasks',id);
 function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),2200)}
@@ -1647,13 +1647,13 @@ function renderStats(){
 }
 function render(){renderBoard();renderDaily();renderStats();renderSubjects();if(!$('calendarPage').classList.contains('hidden'))renderCalendar();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
-function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
+function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});if(tasks.filter(t=>t.courseVersion===2).length<144&&!autoCourseStarted){autoCourseStarted=true;generatePhysicsCoursePlan(true)}},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 let newTaskStatus='todo';
 function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Физика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;if(!auth){$('loginMsg').textContent='Firebase не инициализирован. Обнови страницу; если ошибка повторится, проверь подключение к Firebase.';$('loginBtn').disabled=false;return}$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
-$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();stopFullExamTimer();fullExamSession=null;focusPause();await signOut(auth)});
+$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();stopFullExamTimer();fullExamSession=null;autoCourseStarted=false;focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:newTaskStatus,createdAt:serverTimestamp(),createdBy:user.uid,completedAt:newTaskStatus==='done'?serverTimestamp():null,completedBy:newTaskStatus==='done'?user.uid:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{
@@ -1778,11 +1778,11 @@ function buildPhysicsCourseSchedule(){
  }
  return schedule;
 }
-async function generatePhysicsCoursePlan(){
+async function generatePhysicsCoursePlan(silent=false){
  const button=$("generatePhysicsPlanBtn");
- if(!button)return;
- if(!confirm("Сформировать полный курс физики на 12 недель? В календарь добавятся 72 учебных дня для каждого ученика: уроки, практика, 12 лабораторных, контрольные и 3 полных пробника. Старые задания и отметки не удаляются."))return;
- button.disabled=true;const oldLabel=button.textContent;button.textContent="Формируем 12-недельный курс…";
+ if(!silent&&!button)return;
+ if(!silent&&!confirm("Сформировать полный курс физики на 12 недель? В календарь добавятся 72 учебных дня для каждого ученика: уроки, практика, 12 лабораторных, контрольные и 3 полных пробника. Старые задания и отметки не удаляются."))return;
+ if(button){button.disabled=true;button.textContent="Формируем 12-недельный курс…";}
  try{
   const schedule=buildPhysicsCourseSchedule();
   const people=[{name:"Егор",slug:"egor"},{name:"Даниил",slug:"daniil"}];
@@ -1801,13 +1801,14 @@ async function generatePhysicsCoursePlan(){
   }
   const first=dateFromKey(schedule[0].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
   const last=dateFromKey(schedule[schedule.length-1].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
-  toast("Курс физики добавлен: 12 недель · 72 дня · 144 задания для двух учеников ("+first+" — "+last+")");
+  toast((silent?"Полный курс физики автоматически добавлен":"Курс физики добавлен")+": 12 недель · 72 дня · 144 задания для двух учеников ("+first+" — "+last+")");
   renderCalendar();renderBoard();renderDaily();renderStats();
  }catch(err){
   console.error("Ошибка создания курса физики:",err);
+  if(silent)autoCourseStarted=false;
   toast("Не удалось сформировать курс: "+(err?.message||"ошибка Firebase"));
  }finally{
-  button.disabled=false;button.textContent=oldLabel;
+  if(button){button.disabled=false;button.textContent="＋ Сформировать полный курс";}
  }
 }
 function applyTheme(theme){
