@@ -579,7 +579,7 @@ export function mountLabSimulator(container,id,options = {}) {
         const modeButton=q("[data-vlab-action=mode-3d]");if(modeButton)modeButton.disabled=true;
         container._vlabThreeLoading=(async()=>{
           try{
-            const {mountThreeLab}=await import("./three-labs.js?v=20261117-polish1");
+            const {mountThreeLab}=await import("./three-labs.js?v=20261117-polish2");
             if(signal.aborted)return;
             container._vlabThree=await mountThreeLab(host3d,item.id,{onUpdate:syncThree});
             if(signal.aborted&&container._vlabThree?.dispose){container._vlabThree.dispose();container._vlabThree=null;}
