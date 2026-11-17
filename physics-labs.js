@@ -37,7 +37,7 @@ function densityScene() {
   return '<div class="vlab-scene vlab-density-scene" data-scene="density">'+
     '<div class="vlab-scene-caption">РАБОЧИЙ СТОЛ · КОМПЛЕКТ № 1</div>'+
     '<div class="vlab-scale-apparatus" data-dropzone="scale"><div class="vlab-scale-platform"></div><div class="vlab-scale-screen" data-readout="mass">— — —</div><small>ЭЛЕКТРОННЫЕ ВЕСЫ</small></div>'+
-    '<div class="vlab-measuring-cylinder vlab-drag" data-drag-object="menzurka" style="left:475px;top:76px"><div class="vlab-cylinder-top"></div><div class="vlab-cylinder-glass"><div class="vlab-cylinder-water" data-water></div><div class="vlab-cylinder-ticks"><i>100</i><i>80</i><i>60</i><i>40</i><i>20</i></div><div class="vlab-cylinder-value" data-readout="volume">40 мл</div></div><small>МЕНЗУРКА</small></div>'+
+    '<div class="vlab-measuring-cylinder vlab-drag" data-drag-object="menzurka" data-dropzone="cylinder" style="left:475px;top:76px"><div class="vlab-cylinder-top"></div><div class="vlab-cylinder-glass"><div class="vlab-cylinder-water" data-water></div><div class="vlab-cylinder-ticks"><i>100</i><i>80</i><i>60</i><i>40</i><i>20</i></div><div class="vlab-cylinder-value" data-readout="volume">40 мл</div></div><small>МЕНЗУРКА</small></div>'+
     '<div class="vlab-metal-sample vlab-drag" data-drag-object="sample" style="left:285px;top:225px"><span></span><b>Al</b><small>цилиндр</small></div>'+
     '<div class="vlab-scene-note">Перетащи цилиндр сначала на весы, затем опусти его в мензурку.</div>'+
     '<div class="vlab-readout-pills"><span>Масса: <b data-readout="mass-pill">не измерена</b></span><span>Объём воды: <b data-readout="volume-pill">40 мл</b></span></div>'+
@@ -60,10 +60,10 @@ function springScene() {
     '<div class="vlab-spring-anchor"></div><div class="vlab-spring-coil" data-spring-coil></div><div class="vlab-spring-hook" data-dropzone="hook"></div>'+
     '<div class="vlab-hanging-weight" data-readout="hanging-weight">нет груза</div>'+
     '<div class="vlab-ruler-vertical"><i>0</i><i>2</i><i>4</i><i>6</i><i>8</i><i>10 см</i></div>'+
-    '<div class="vlab-weight-tray" data-dropzone="tray"><span>Грузы — перетащи один на крючок</span>'+
-      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="50" style="left:20px">50 г</button>'+
-      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="100" style="left:110px">100 г</button>'+
-      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="150" style="left:200px">150 г</button></div>'+
+    '<div class="vlab-weight-tray" data-dropzone="tray"><span>Лоток для грузов · перетащи груз на крючок</span></div>'+
+      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="50" style="left:525px;top:286px">50 г</button>'+
+      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="100" style="left:595px;top:286px">100 г</button>'+
+      '<button type="button" class="vlab-weight vlab-drag" data-drag-object="weight" data-mass="150" style="left:665px;top:286px">150 г</button>'+
     '<div class="vlab-spring-readouts"><span>Масса <b data-readout="mass">—</b></span><span>Удлинение <b data-readout="extension">—</b></span><span>Сила <b data-readout="force">—</b></span></div>'+
     '<div class="vlab-scene-note">Перетащи груз на крючок. Пружина растянется, а линейка покажет удлинение.</div>'+
   '</div>';
@@ -94,7 +94,7 @@ function pendulumScene() {
   return '<div class="vlab-scene vlab-pendulum-scene" data-scene="pendulum">'+
     '<div class="vlab-scene-caption">ШТАТИВ · НИТЬ · МАЯТНИК · СЕКУНДОМЕР</div>'+
     '<div class="vlab-pendulum-support"></div><div class="vlab-pendulum-string" data-pendulum-string></div><div class="vlab-pendulum-bob vlab-drag" data-drag-object="bob" style="left:365px;top:205px"></div>'+
-    '<div class="vlab-pendulum-ruler">Длина нити: <b data-readout="pendulum-length">50 см</b></div>'+
+    '<div class="vlab-pendulum-ruler">Длина нити: <b data-readout="pendulum-length">50 см</b><input type="range" min="20" max="100" step="5" value="50" data-vlab-control="pendulum-length"></div>'+
     '<div class="vlab-pendulum-actions"><button type="button" class="btn" data-vlab-action="pendulum-start">▶ Запустить</button><button type="button" class="btn" data-vlab-action="pendulum-stop">■ Остановить</button><span data-readout="pendulum-time">0,00 с</span></div>'+
     '<div class="vlab-scene-note">Отклони шарик мышкой, отпусти и измерь время 10 полных колебаний.</div>'+
   '</div>';
@@ -242,12 +242,13 @@ function workspaceMarkup(item) {
 
 export function mountLabSimulator(container,id,options = {}) {
   const item = lab(id);
+  if (container._vlabTimer) { clearInterval(container._vlabTimer); container._vlabTimer=null; }
   if (container._vlabAbort) container._vlabAbort.abort();
   const controller = new AbortController();
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
-  let state = {massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:10,magnetInside:false,needle:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
+  let state = {massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:10,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
   const q = selector => container.querySelector(selector);
   const scene = q(".vlab-scene");
@@ -279,7 +280,7 @@ export function mountLabSimulator(container,id,options = {}) {
     if(sample){sample.classList.toggle("in-water",state.submerged);sample.classList.toggle("on-scale",state.massMeasured&&!state.submerged);}
   };
   const updateSpring = () => {
-    const extension=state.mass/1000*9.8/20*10;
+    const extension=state.mass/1000*9.8/20*1000;
     const coil=q("[data-spring-coil]");
     if(coil)coil.style.height=(70+extension)+"px";
     setRead("mass",state.mass?state.mass+" г":"—");
@@ -398,7 +399,7 @@ export function mountLabSimulator(container,id,options = {}) {
       drag={object,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,left:object.offsetLeft,top:object.offsetTop,sceneRect:rect};
       object.classList.add("dragging");
       try{object.setPointerCapture(event.pointerId)}catch(error){}
-      if(item.id==="motion"&&object.dataset.dragObject==="cart"&&!state.cartStarted){state.cartStarted=Date.now();state.cartTime=0;}
+      if(item.id==="motion"&&object.dataset.dragObject==="cart"&&!state.cartMoved){state.cartStarted=Date.now();state.cartTime=0;}
     },{signal});
     scene.addEventListener("pointermove",event=>{
       if(!drag||event.pointerId!==drag.pointerId)return;
@@ -413,7 +414,7 @@ export function mountLabSimulator(container,id,options = {}) {
         const coil=q('[data-dropzone="coil"]');
         const center=left+obj.offsetWidth/2;
         const inCoil=coil&&center>coil.offsetLeft&&center<coil.offsetLeft+coil.offsetWidth;
-        if(inCoil){state.needle=dx>=0?28:-28;state.magnetInside=true;}else{state.needle=0;state.magnetInside=false;}
+        if(inCoil){state.needle=dx>=0?28:-28;if(!state.magnetInside)state.inductionObserved=(state.inductionObserved||0)+1;state.magnetInside=true;}else{if(state.magnetInside)state.inductionObserved=(state.inductionObserved||0)+1;state.needle=0;state.magnetInside=false;}
         updateInduction();
       }
       if(item.id==="friction"&&obj.dataset.dragObject==="frictionBlock"){state.frictionPosition=left;updateFriction();}
@@ -507,13 +508,13 @@ export function mountLabSimulator(container,id,options = {}) {
       state.pendulumStarted=Date.now();
       const bob=q('[data-drag-object="bob"]');if(bob)bob.classList.add("swinging");
       const string=q("[data-pendulum-string]");if(string)string.classList.add("swinging");
-      state.pendulumTimer=setInterval(()=>{setRead("pendulum-time",fmt((Date.now()-state.pendulumStarted)/1000,2)+" с");},100);
+      state.pendulumTimer=setInterval(()=>{setRead("pendulum-time",fmt((Date.now()-state.pendulumStarted)/1000,2)+" с");},100);container._vlabTimer=state.pendulumTimer;
       return;
     }
     if(action==="pendulum-stop"){
       if(!state.pendulumStarted)return;
       state.pendulumElapsed=(Date.now()-state.pendulumStarted)/1000;
-      clearInterval(state.pendulumTimer);state.pendulumTimer=null;state.pendulumStarted=0;
+      clearInterval(state.pendulumTimer);container._vlabTimer=null;state.pendulumTimer=null;state.pendulumStarted=0;
       const bob=q('[data-drag-object="bob"]');if(bob)bob.classList.remove("swinging");
       const string=q("[data-pendulum-string]");if(string)string.classList.remove("swinging");
       updatePendulum();return;
@@ -589,12 +590,6 @@ export function mountLabSimulator(container,id,options = {}) {
     await save(result,values,{scene:item.scene,progress:saved});
   };
   update();
-  if(item.id==="induction"){
-    const magnet=q('[data-drag-object="magnet"]');
-    if(magnet){
-      magnet.addEventListener("pointerup",()=>{if(state.needle!==0){state.inductionObserved=(state.inductionObserved||0)+1;updateInduction();}}, {signal});
-    }
-  }
   if(item.id==="pendulum"){
     const bob=q('[data-drag-object="bob"]');
     if(bob)bob.addEventListener("pointerup",()=>{bob.classList.add("released");},{signal});
