@@ -1276,12 +1276,16 @@ function openTaskDetails(t){
    openLesson.classList.remove("hidden");
    openLesson.dataset.lessonId=lesson.lesson.id;
   }else{
-   const isFinal=t.courseType==="final-test";
-   $("taskDetailCourseText").textContent=isFinal?"Итоговая тренировка по всем разделам курса. Это авторская подборка для повторения, а не официальный вариант ФИПИ.":"Повтори темы недели и проверь, насколько уверенно решаешь задачи без подсказок.";
+const kind=t.courseType;
+   const isFinal=kind==="final-test";
+   $("taskDetailCourseText").textContent=kind==="lab"?"Лабораторная работа с реальными приборами. Внеси собственные измерения, проверь расчёт и сохрани отчёт.":kind==="mock-exam"?"Полный пробник ОГЭ: 22 задания, 180 минут, 39 первичных баллов.":"Повтори темы недели и проверь, насколько уверенно решаешь задачи без подсказок.";
    practiceBtn.classList.remove("hidden");
    practiceBtn.dataset.week=String(t.courseWeek);
    practiceBtn.dataset.full=String(isFinal);
-   practiceBtn.textContent=isFinal?"Итоговая тренировка · 22 вопроса":"Начать тренировку недели";
+   practiceBtn.dataset.kind=kind;
+   practiceBtn.dataset.labId=t.courseLabId||"";
+   practiceBtn.dataset.variantId=t.examVariantId||"";
+   practiceBtn.textContent=kind==="lab"?"Открыть лабораторную":kind==="mock-exam"?"Начать полный пробник · 180 минут":kind==="weekly-test"?"Начать контрольную недели":"Начать практику недели";
   }
  }
  $("taskDetailsBg").classList.add("show");
@@ -1440,7 +1444,16 @@ $('taskDetailsBg').addEventListener('click',async e=>{
   }else if(action==='edit'){closeTaskDetails();openModal(t)}
   else if(action==='delete'){if(confirm('Удалить задание?')){await deleteDoc(taskDoc(t.id));closeTaskDetails();toast('Задание удалено')}}
   else if(action==='open-lesson'){openPhysicsLesson(b.dataset.lessonId)}
-  else if(action==='practice'){startPhysicsCoursePractice(Number(b.dataset.week),b.dataset.full==='true');closeTaskDetails()}
+  else if(action==='practice'){
+   const kind=b.dataset.kind;
+   closeTaskDetails();
+   if(kind==="lab"){
+    showTab("study");
+    const card=$("labList").querySelector('[data-lab-card="'+b.dataset.labId+'"]');
+    if(card)card.scrollIntoView({behavior:"smooth",block:"center"});
+   }else if(kind==="mock-exam"){startFullExam(b.dataset.variantId)}
+   else startPhysicsCoursePractice(Number(b.dataset.week),b.dataset.full==="true");
+  }
  }catch(err){toast('Не удалось выполнить действие: '+(err?.message||err))}
 });
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
@@ -1454,6 +1467,7 @@ $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]")
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.repeat){e.preventDefault();const s=$("search");if(s&&!s.closest(".hidden"))s.focus()}});
 
 $("generatePlanBtn").addEventListener("click",generateDailyPlan);
+$("generatePhysicsPlanBtn")?.addEventListener("click",generatePhysicsCoursePlan);
 $("smartPlanItems").addEventListener("change",e=>{const input=e.target.closest("[data-plan-done]");if(input)togglePlanItem(input.dataset.planDone,input.checked)});
 $("smartPlanItems").addEventListener("click",e=>{const b=e.target.closest("[data-plan-action]");if(b)openPlanAction(b.dataset.planAction)});
 $("mistakeFilter").addEventListener("change",renderMistakes);$("mistakeSubjectFilter").addEventListener("change",renderMistakes);
@@ -1480,23 +1494,28 @@ $("finishTestBtn").addEventListener("click",()=>{if(testSession&&confirm("Зав
 
 function buildPhysicsCourseSchedule(){
  const schedule=[];
- const cursor=new Date();cursor.setDate(cursor.getDate()+1);
+ const cursor=new Date();cursor.setHours(12,0,0,0);
+ const daysUntilMonday=(8-cursor.getDay())%7||7;
+ cursor.setDate(cursor.getDate()+daysUntilMonday);
  for(let wi=0;wi<physicsWeeks.length;wi++){
-  const week=physicsWeeks[wi];
-  for(let di=0;di<5;di++){
+  const week=physicsWeeks[wi],lab=physicsLabs[wi];
+  for(let di=0;di<6;di++){
    const date=dateKey(cursor);
    let item;
    if(di<week.lessons.length){
     const lesson=week.lessons[di];
-    item={courseType:"lesson",courseLessonId:lesson.id,title:"Физика · Неделя "+(wi+1)+" · Урок "+(di+1)+": "+lesson.title,desc:"План занятия:\n1. Открой «Обучение → Физика» и перейди к этому уроку.\n2. Прочитай теорию и выпиши основные формулы.\n3. Разбери пример пошагово.\n4. Реши все задания в блоке «Практика по теме».\n5. Запиши ошибки и вопросы, которые остались.",points:12};
-   }else if(wi===physicsWeeks.length-1){
-    item={courseType:"final-test",title:"Физика · Итоговая тренировка по всему курсу",desc:"Итоговая авторская тренировка: 22 вопроса по всем пройденным разделам курса. Время — 90 минут. После завершения обязательно разбери каждую ошибку. Это тренировочная подборка, а не официальный вариант ФИПИ.",points:25};
-   }else if(di===3){
-    item={courseType:"review",title:"Физика · Неделя "+(wi+1)+" · Повторение и практика",desc:"Повтори уроки этой недели: "+week.lessons.map(l=>l.title).join("; ")+". Затем запусти тренировку недели и реши вопросы без подсказок. Отдельно выпиши формулы, которые пока приходится вспоминать.",points:15};
+    item={courseType:"lesson",courseLessonId:lesson.id,title:"Физика · Неделя "+(wi+1)+" · Урок "+(di+1)+": "+lesson.title,desc:"План занятия:\\n1. Открой «Обучение» и выбери этот урок.\\n2. Прочитай теорию и выпиши определения.\\n3. Разбери пример, повторяя каждый шаг.\\n4. Реши все вопросы практики без подсказок.\\n5. Запиши ошибки и формулы, которые нужно повторить.",points:12};
+   }else if(di===3&&week.lessons.length===3){
+    item={courseType:"practice",title:"Физика · Неделя "+(wi+1)+" · Практика и закрепление",desc:"Реши смешанный набор по всем темам недели. Сначала работай самостоятельно, затем открой разбор. Ошибки внеси в журнал и повтори соответствующий урок.",points:15};
+   }else if(di===4){
+    item={courseType:"lab",courseLabId:lab.id,title:"Физика · Неделя "+(wi+1)+" · Лабораторная: "+lab.title,desc:"Выполни настоящий опыт на оборудовании из списка лабораторной работы. Запиши показания приборов, вычисли результат, нарисуй схему установки и сформулируй вывод. Не используй придуманные измерения.",points:18};
+   }else if([3,7,11].includes(wi)){
+    const variant=physicsExamVariants[[3,7,11].indexOf(wi)];
+    item={courseType:"mock-exam",examVariantId:variant.id,title:"Физика · Неделя "+(wi+1)+" · Полный пробник ОГЭ №"+([3,7,11].indexOf(wi)+1),desc:"Полный экзаменационный режим: 22 задания, 180 минут, максимум 39 первичных баллов. Убери конспект и решай без подсказок. После завершения разбери все ошибки.",points:30};
    }else{
-    item={courseType:"weekly-test",title:"Физика · Неделя "+(wi+1)+" · Контрольная тренировка",desc:"Проверь, что усвоил за неделю. Пройди смешанную тренировку по всем урокам этой недели, не открывая конспект. После проверки разбери ошибки и вернись к соответствующему уроку.",points:18};
+    item={courseType:"weekly-test",title:"Физика · Неделя "+(wi+1)+" · Контрольная работа",desc:"Контрольная по всем темам недели. Время — 35 минут. Реши вопросы без конспекта, затем разбери каждую ошибку и повтори слабые места.",points:20};
    }
-   schedule.push({...item,date,courseWeek:wi+1,courseDay:di+1,courseLessonIds:week.lessons.map(l=>l.id)});
+   schedule.push({...item,date,courseWeek:wi+1,courseDay:di+1,courseVersion:2,courseLessonIds:week.lessons.map(l=>l.id)});
    cursor.setDate(cursor.getDate()+1);
   }
   if(wi<physicsWeeks.length-1)while(cursor.getDay()!==1)cursor.setDate(cursor.getDate()+1);
@@ -1504,17 +1523,17 @@ function buildPhysicsCourseSchedule(){
  return schedule;
 }
 async function generatePhysicsCoursePlan(){
- const button=$("seedBtn");
- if(!confirm("Добавить полный курс физики на 6 недель? Для Егора и Даниила появятся отдельные задания на 30 учебных дней. Уже выполненные задания сохранят свой статус."))return;
- button.disabled=true;const oldLabel=button.textContent;button.textContent="Формируем календарь…";
+ const button=$("generatePhysicsPlanBtn");
+ if(!button)return;
+ if(!confirm("Сформировать полный курс физики на 12 недель? В календарь добавятся 72 учебных дня для каждого ученика: уроки, практика, 12 лабораторных, контрольные и 3 полных пробника. Старые задания и отметки не удаляются."))return;
+ button.disabled=true;const oldLabel=button.textContent;button.textContent="Формируем 12-недельный курс…";
  try{
   const schedule=buildPhysicsCourseSchedule();
   const people=[{name:"Егор",slug:"egor"},{name:"Даниил",slug:"daniil"}];
   const writes=[];
   schedule.forEach(item=>people.forEach(person=>{
-   const id="physics-w"+item.courseWeek+"-d"+item.courseDay+"-"+person.slug;
-   const data={...item,id:undefined,subject:"Физика",person:person.name,daily:false};
-   delete data.id;
+   const id="physics-2027-w"+item.courseWeek+"-d"+item.courseDay+"-"+person.slug;
+   const data={...item,subject:"Физика",person:person.name,daily:false};
    writes.push({id,data});
   }));
   for(let i=0;i<writes.length;i+=8){
@@ -1526,17 +1545,15 @@ async function generatePhysicsCoursePlan(){
   }
   const first=dateFromKey(schedule[0].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
   const last=dateFromKey(schedule[schedule.length-1].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
-  toast("Курс добавлен в календарь: 6 недель · 30 дней · 60 личных заданий ("+first+" — "+last+")");
-  renderCalendar();renderBoard();renderDaily();
+  toast("Курс физики добавлен: 12 недель · 72 дня · 144 задания для двух учеников ("+first+" — "+last+")");
+  renderCalendar();renderBoard();renderDaily();renderStats();
  }catch(err){
-  console.error("Ошибка создания плана физики:",err);
-  toast("Не удалось добавить курс: "+(err?.message||"ошибка Firebase"));
+  console.error("Ошибка создания курса физики:",err);
+  toast("Не удалось сформировать курс: "+(err?.message||"ошибка Firebase"));
  }finally{
   button.disabled=false;button.textContent=oldLabel;
  }
 }
-$('seedBtn')?.addEventListener('click',generatePhysicsCoursePlan);
-
 function applyTheme(theme){
  const next=theme==="dark"?"dark":"light";
  document.body.dataset.theme=next;
