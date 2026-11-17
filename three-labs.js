@@ -116,11 +116,11 @@ export async function mountThreeLab(host,id,options={}){
   box(.58,.12,.24,materials.black,x,.57,z-.22);addDisplay("scale","0,0 г",x,.78,z-.22);
   box(.08,.08,.08,materials.red,x-.48,.58,z-.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.17,z+1.0,.75);
  };
- const addBeaker=(x,z,waterLevel=.85)=>{
+ const addBeaker=(x,z,waterLevel=.85,volumeText="40 мл")=>{
   cylinder(.55,.55,1.25,materials.glass,x,.95,z,48);
   torus(.55,.035,materials.steel,x,1.58,z);
   const water=cylinder(.49,.49,waterLevel,materials.water,x,.34+waterLevel/2,z,40);
-  display.water=addDisplay("water","40 мл",x,.8,z+.62);
+  display.water=addDisplay("water",volumeText,x,.8,z+.62);
   return {water};
  };
  const addWeight=(x,y,z,role,mass=200)=>{
@@ -200,7 +200,7 @@ export async function mountThreeLab(host,id,options={}){
   addStand(-2.4,0);
   const dyna=cylinder(.22,.22,.9,materials.white,-1.3,2.8,0);torus(.2,.04,materials.steel,-1.3,3.28,0);
   addDisplay("dyna","3,90 Н",-1.3,2.9,.25);
-  const beaker=addBeaker(1.8,0,1.0);
+  const beaker=addBeaker(1.8,0,1.0,"100 мл");
   const body=new THREE.Group();body.position.set(-1.3,2.0,0);scene.add(body);
   cylinder(.28,.28,.65,materials.steel,0,0,0,32,body);torus(.16,.04,materials.steel,0,.36,0);
   addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
@@ -228,8 +228,8 @@ export async function mountThreeLab(host,id,options={}){
   setData({length:.5,time:0,count:0});
  }
  function buildHeat(){
-  const bath=addBeaker(-1.9,0,1.0);label("ВОДЯНАЯ БАНЯ · 90 °C",-1.9,2.0,.7,.7);
-  const calorimeter=addBeaker(2,0,.6);objects.calorimeter=calorimeter;
+  const bath=addBeaker(-1.9,0,1.0,"90 °C");label("ВОДЯНАЯ БАНЯ · 90 °C",-1.9,2.0,.7,.7);
+  const calorimeter=addBeaker(2,0,.6,"100 мл");objects.calorimeter=calorimeter;
   const metal=cylinder(.25,.25,.7,materials.steel,0,.75,1.2,32);addDrag(metal,"hotMetal","xyz");objects.hotMetal=metal;
   setReadouts([["Вода до опыта","20 °C"],["Металл до опыта","90 °C"],["Итоговая температура","ожидает"]]);
   setData({hotMetalIn:false,mw:100,mm:100,tw:20,tm:90,tf:32.6});
@@ -371,7 +371,7 @@ export async function mountThreeLab(host,id,options={}){
   if(id==="density"&&object===objects.sample){
    const p=object.position;
    if(Math.hypot(p.x+2.2,p.z)<1.0){object.position.set(-2.2,.95,0);setData({massMeasured:true,mass:54},"Весы зафиксировали массу цилиндра: 54,0 г.");}
-   else if(Math.hypot(p.x-2,p.z)<1.0&&data.massMeasured){object.position.set(2,.95,0);setData({submerged:true,before:40,after:60},"Цилиндр погружён. Уровень воды поднялся с 40 до 60 мл.");}
+   else if(Math.hypot(p.x-2,p.z)<1.0&&data.massMeasured){object.position.set(2,.95,0);if(objects.water){objects.water.scale.y=1.5;objects.water.position.y=.79;}if(display.water)setLabel(display.water,"60 мл");setData({submerged:true,before:40,after:60},"Цилиндр погружён. Уровень воды поднялся с 40 до 60 мл.");}
    else if(Math.hypot(p.x-2,p.z)<1.0&&!data.massMeasured){object.position.set(0,.72,1.4);status("Сначала взвесь цилиндр на электронных весах.");}
    else status("Перетащи цилиндр на весы, затем в мензурку.");
   }else if(id==="motion"&&object===objects.cart){
@@ -381,8 +381,8 @@ export async function mountThreeLab(host,id,options={}){
    }else if(object.position.x< -2.2){object.position.x=-2.8;status("Тележка установлена на старт.");}
   }else if(id==="archimedes"&&object===objects.body){
    const submerged=object.position.x>.9&&object.position.y<1.55&&object.position.y>.45;
-   if(submerged){object.position.set(1.8,1.05,0);setData({submerged:true,air:3.9,water:3.4},"Тело погружено. Динамометр показывает 3,40 Н.");}
-   else{object.position.set(0,2,0);setData({submerged:false},"Подвесь тело в воздухе или погрузи в сосуд.");}
+   if(submerged){object.position.set(1.8,1.05,0);if(objects.bodyString)orientRod(objects.bodyString,[-1.3,2.35,0],[object.position.x,object.position.y+.35,object.position.z]);if(display.dyna)setLabel(display.dyna,"3,40 Н");setData({submerged:true,air:3.9,water:3.4},"Тело погружено. Динамометр показывает 3,40 Н.");}
+   else{object.position.set(-1.3,2.0,0);if(objects.bodyString)orientRod(objects.bodyString,[-1.3,2.35,0],[-1.3,2.36,0]);if(display.dyna)setLabel(display.dyna,"3,90 Н");setData({submerged:false},"Подвесь тело в воздухе или погрузи в сосуд.");}
   }else if(id==="lever"){
    emit("Положение грузов изменено. Сравни моменты сил.");
   }else if(id==="spring"){
