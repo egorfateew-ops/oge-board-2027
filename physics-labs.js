@@ -586,7 +586,6 @@ export function mountLabSimulator(container,id,options = {}) {
       return;
     }
     if(action==="mode-2d"){
-      if(container._vlabThree?.dispose)container._vlabThree.dispose();container._vlabThree=null;
       q(".vlab-workspace")?.classList.remove("is-3d");
       const host3d=q("[data-vlab-three-host]"),scene2d=q(".vlab-scene-scroll"),tip=q(".vlab-touch-tip");
       if(host3d)host3d.hidden=true;if(scene2d)scene2d.hidden=false;if(tip)tip.hidden=false;
