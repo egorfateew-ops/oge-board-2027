@@ -1793,11 +1793,11 @@ async function generatePhysicsCoursePlan(){
    writes.push({id,data});
   }));
   for(let i=0;i<writes.length;i+=8){
-   await Promise.all(writes.slice(i,i+8).map(async entry=>{
-    const existing=tasks.find(t=>t.id===entry.id);
-    if(existing)await updateDoc(taskDoc(entry.id),entry.data);
-    else await setDoc(taskDoc(entry.id),{...entry.data,status:"todo",createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});
-   }));
+   await Promise.all(writes.slice(i,i+8).map(entry=>runTransaction(db,async tx=>{
+    const ref=taskDoc(entry.id),snap=await tx.get(ref);
+    if(snap.exists())tx.update(ref,entry.data);
+    else tx.set(ref,{...entry.data,status:"todo",createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});
+   })));
   }
   const first=dateFromKey(schedule[0].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
   const last=dateFromKey(schedule[schedule.length-1].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
