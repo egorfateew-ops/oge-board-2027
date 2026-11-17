@@ -1994,3 +1994,11 @@ body[data-theme="dark"] .focus-clock{color:var(--accent)!important}
  .weekly-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
  .focus-widget{right:12px;bottom:12px}
 }
+
+.duel-card{border-left:4px solid #e8dced}
+.duel-card.waiting{border-left-color:#edcc73}
+.duel-card.active{border-left-color:#c6a9e4}
+.duel-card.completed{border-left-color:#9acbad}
+body[data-theme="dark"] .duel-card.waiting{border-left-color:#b99b50!important}
+body[data-theme="dark"] .duel-card.active{border-left-color:#9c82c2!important}
+body[data-theme="dark"] .duel-card.completed{border-left-color:#6aab86!important}
