@@ -1426,7 +1426,7 @@ let newTaskStatus='todo';
 function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
-$('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
+$('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;if(!auth){$('loginMsg').textContent='Firebase не инициализирован. Обнови страницу; если ошибка повторится, проверь подключение к Firebase.';$('loginBtn').disabled=false;return}$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
 $('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:newTaskStatus,createdAt:serverTimestamp(),createdBy:user.uid,completedAt:newTaskStatus==='done'?serverTimestamp():null,completedBy:newTaskStatus==='done'?user.uid:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
@@ -1561,7 +1561,7 @@ async function generatePhysicsCoursePlan(){
   button.disabled=false;button.textContent=oldLabel;
  }
 }
-$('seedBtn').addEventListener('click',generatePhysicsCoursePlan);
+$('seedBtn')?.addEventListener('click',generatePhysicsCoursePlan);
 
 function applyTheme(theme){
  const next=theme==="dark"?"dark":"light";
