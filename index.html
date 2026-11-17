@@ -783,7 +783,7 @@ function listenTestHistory(){
  if(stopTestHistory)stopTestHistory();
  stopTestHistory=onSnapshot(query(testResultsCol(),where("userId","==",user.uid)),snap=>{
   testHistory=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-  if(!$("testsPage").classList.contains("hidden")&&!testSession)renderTestHistory();if(!$("statsPage").classList.contains("hidden"))renderStats();
+  if(!$("testsPage").classList.contains("hidden")&&!testSession){renderTestHistory();renderMockExamCards()}if(!$("statsPage").classList.contains("hidden"))renderStats();
  },err=>toast("Не удалось загрузить историю тестов: "+err.message));
 }
 
@@ -1288,11 +1288,13 @@ async function finishFullExam(timeExpired=false){
  renderTestHistory();renderMockExamCards();renderStats();if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
 }
 function renderTestHistory(){
- $("testHistoryCount").textContent=testHistory.length+" "+(testHistory.length===1?"попытка":testHistory.length>1&&testHistory.length<5?"попытки":"попыток");
- $("testHistoryList").innerHTML=testHistory.length?testHistory.slice(0,12).map(t=>{
+ const history=testHistory.filter(t=>String(t.subject||"").includes("Физика"));
+ $("testHistoryCount").textContent=history.length+" "+(history.length===1?"попытка":history.length>1&&history.length<5?"попытки":"попыток");
+ $("testHistoryList").innerHTML=history.length?history.slice(0,12).map(t=>{
   const d=t.createdAt?.toDate?t.createdAt.toDate():t.createdAt?new Date(t.createdAt):null;
-  return '<div class="test-history-item"><div class="test-history-main"><b>'+esc(t.subject)+'</b><small>'+(d&&!isNaN(d)?d.toLocaleString("ru-RU",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Недавно")+' · '+t.correct+'/'+t.total+' правильных</small></div><strong class="'+(t.percent>=70?"score-good":t.percent>=40?"score-mid":"score-low")+'">'+t.percent+'%</strong></div>';
- }).join(""):'<div class="study-empty">Пока нет завершённых тестов. Первая попытка появится здесь.</div>';
+  const scoreText=t.fullMock?(Number(t.score??t.correct)||0)+"/39 баллов":t.correct+"/"+t.total+" правильных";
+  return '<div class="test-history-item"><div class="test-history-main"><b>'+esc(t.subject)+'</b><small>'+(d&&!isNaN(d)?d.toLocaleString("ru-RU",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Недавно")+' · '+scoreText+'</small></div><strong class="'+(t.fullMock?(t.score>=30?"score-good":t.score>=20?"score-mid":"score-low"):(t.percent>=70?"score-good":t.percent>=40?"score-mid":"score-low"))+'">'+t.percent+'%</strong></div>';
+ }).join(""):'<div class="study-empty">Пока нет завершённых тренировок по физике. Начни с короткого теста или полного пробника.</div>';
 }
 function updateExamModeUI(){
  const exam=$("examMode").checked,subject=$("testSubject").value,available=(testBanks[subject]||[]).length;
@@ -1325,7 +1327,7 @@ function startPhysicsCoursePractice(weekNumber,fullCourse=false){
  }
  if(!questions.length){toast("Для этой части курса пока нет практических вопросов");return}
  questions=questions.map(q=>({...q,...(q.options?{options:shuffle(q.options)}:{})}));
- const duration=fullCourse?90*60:30*60;
+ const duration=fullCourse?90*60:35*60;
  testSession={subject:"Физика",questions,answers:{},startedAt:new Date().toISOString(),duration,examMode:false,source:"physics-course",courseWeek:fullCourse?null:Number(weekNumber),courseFinal:Boolean(fullCourse),courseLabel:fullCourse?"Итоговая тренировка курса":"Практика · неделя "+weekNumber};
  testQuestionIndex=0;testSecondsLeft=duration;
  showTab("tests");
@@ -1563,7 +1565,7 @@ function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTask
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;if(!auth){$('loginMsg').textContent='Firebase не инициализирован. Обнови страницу; если ошибка повторится, проверь подключение к Firebase.';$('loginBtn').disabled=false;return}$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
-$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();focusPause();await signOut(auth)});
+$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();stopFullExamTimer();focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:newTaskStatus,createdAt:serverTimestamp(),createdBy:user.uid,completedAt:newTaskStatus==='done'?serverTimestamp():null,completedBy:newTaskStatus==='done'?user.uid:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{
@@ -1642,6 +1644,14 @@ $("focusResetBtn").addEventListener("click",()=>{$("focusSubject").disabled=fals
 focusDisplay();
 
 $("startTestBtn").addEventListener("click",startTest);
+$("mockExamCards").addEventListener("click",e=>{const b=e.target.closest("[data-start-full-exam]");if(b)startFullExam(b.dataset.startFullExam)});
+$("fullExamQuestionNav").addEventListener("click",e=>{const b=e.target.closest("[data-full-exam-jump]");if(!b||!fullExamSession)return;fullExamQuestionIndex=Number(b.dataset.fullExamJump);renderFullExamQuestion()});
+$("fullExamQuestionCard").addEventListener("click",e=>{const b=e.target.closest("[data-full-exam-option]");if(!b||!fullExamSession)return;const a=fullExamSession.answers[fullExamQuestionIndex]||{};a.value=b.dataset.fullExamOption;fullExamSession.answers[fullExamQuestionIndex]=a;renderFullExamQuestion()});
+$("fullExamQuestionCard").addEventListener("input",e=>{if(e.target.matches("[data-exam-field],[data-exam-lab-field],[data-exam-lab-final]"))captureFullExamInput(e.target)});
+$("fullExamQuestionCard").addEventListener("change",e=>{if(e.target.matches("[data-exam-field],[data-exam-lab-field],[data-exam-lab-final],[data-exam-lab-check]"))captureFullExamInput(e.target)});
+$("fullExamPrevBtn").addEventListener("click",()=>{if(fullExamSession&&fullExamQuestionIndex>0){fullExamQuestionIndex--;renderFullExamQuestion()}});
+$("fullExamNextBtn").addEventListener("click",()=>{if(!fullExamSession)return;if(fullExamQuestionIndex<fullExamSession.variant.questions.length-1){fullExamQuestionIndex++;renderFullExamQuestion()}else if(confirm("Завершить пробник и проверить ответы?"))finishFullExam(false)});
+$("fullExamFinishBtn").addEventListener("click",()=>{if(fullExamSession&&confirm("Завершить пробник и проверить все 22 задания?"))finishFullExam(false)});
 $("testQuestionNav").addEventListener("click",e=>{const b=e.target.closest("[data-test-jump]");if(!b||!testSession)return;testQuestionIndex=Number(b.dataset.testJump);renderTestQuestion()});
 $("testQuestionCard").addEventListener("click",e=>{const b=e.target.closest("[data-test-option]");if(b)saveTestAnswer(b.dataset.testOption)});
 $("testQuestionCard").addEventListener("change",e=>{if(e.target.id==="testNumericAnswer")saveTestAnswer(e.target.value.trim())});
