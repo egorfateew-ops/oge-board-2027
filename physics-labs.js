@@ -116,15 +116,15 @@ function ohmScene() {
       '<path class="circuit-wire" d="M110 75 H245 M305 75 H420 M480 75 H635 V220 H520 M430 220 H110 V75"/>'+
       '<path class="circuit-wire" d="M420 75 V130 H520 V220 M420 130 H520"/>'+
       '<path class="circuit-wire" d="M420 130 H520"/>'+
-      '<g class="circuit-device"><rect x="48" y="112" width="90" height="68" rx="10"/><path d="M78 132v28 M108 140v12"/><text x="93" y="198">Источник 6 В</text></g>'+
+      '<g class="circuit-device"><rect x="48" y="112" width="90" height="68" rx="10"/><path d="M78 132v28 M108 140v12"/><text x="93" y="198">Источник 4,5 В</text></g>'+
       '<g class="circuit-device"><circle cx="275" cy="75" r="30"/><text x="275" y="82">A</text><text x="275" y="28">Амперметр</text></g>'+
       '<g class="circuit-device"><rect x="420" y="55" width="60" height="40" rx="6"/><path d="M430 75h40"/><text x="450" y="38">Ключ</text></g>'+
-      '<g class="circuit-device"><rect x="620" y="120" width="30" height="62" rx="5"/><path d="M625 150h20"/><text x="635" y="200">R = 10 Ом</text></g>'+
+      '<g class="circuit-device"><rect x="620" y="120" width="30" height="62" rx="5"/><path d="M625 150h20"/><text x="635" y="200">R2 = 5,7 Ом</text></g>'+
       '<g class="circuit-device"><rect x="300" y="202" width="130" height="36" rx="6"/><path d="M315 220h100"/><path d="M360 195l30 48" class="circuit-slider"/><text x="365" y="275">Реостат</text></g>'+
       '<g class="circuit-device"><circle cx="470" cy="130" r="25"/><text x="470" y="137">V</text><text x="470" y="104">Вольтметр</text></g>'+
     '</svg>'+
-    '<div class="vlab-ohm-controls"><div><span>Ключ</span><button type="button" class="vlab-switch" data-vlab-action="toggle-switch" aria-pressed="false">Разомкнут</button></div><label><span>Реостат: <b data-readout="rheostat">10,0 Ом</b></span><input type="range" min="2" max="10" step="0.1" value="10" data-vlab-control="rheostat"></label></div>'+
-    '<div class="vlab-meter-row"><div class="vlab-meter"><small>АМПЕРМЕТР</small><b data-readout="current">0,00 А</b></div><div class="vlab-meter"><small>ВОЛЬТМЕТР</small><b data-readout="voltage">0,00 В</b></div><div class="vlab-meter"><small>СОПРОТИВЛЕНИЕ</small><b>10 Ом</b></div></div>'+
+    '<div class="vlab-ohm-controls"><div><span>Ключ</span><button type="button" class="vlab-switch" data-vlab-action="toggle-switch" aria-pressed="false">Разомкнут</button></div><label><span>Реостат: <b data-readout="rheostat">10,0 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-vlab-control="rheostat"></label></div>'+
+    '<div class="vlab-meter-row"><div class="vlab-meter"><small>АМПЕРМЕТР</small><b data-readout="current">0,00 А</b></div><div class="vlab-meter"><small>ВОЛЬТМЕТР</small><b data-readout="voltage">0,00 В</b></div><div class="vlab-meter"><small>СОПРОТИВЛЕНИЕ</small><b>5,7 Ом</b></div></div>'+
     '<div class="vlab-ohm-actions"><button type="button" class="btn primary" data-vlab-action="record-ohm">＋ Записать пару U и I</button><span data-readout="ohm-count">0 / 3 измерения</span></div>'+
     '<div class="vlab-ohm-table" data-readout="ohm-table">Пока нет измерений</div>'+
     '<div class="vlab-scene-note">Замкни ключ. Передвигай ползунок реостата, чтобы получить ток 0,3 А, 0,4 А и 0,5 А. После каждого значения запиши показания.</div>'+
@@ -248,7 +248,7 @@ export function mountLabSimulator(container,id,options = {}) {
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
-  let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:10,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
+  let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:9.3,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
   const q = selector => container.querySelector(selector);
   const scene = q(".vlab-scene");
@@ -324,7 +324,7 @@ export function mountLabSimulator(container,id,options = {}) {
     state.lens={a,b,expected,sharp};
   };
   const updateOhm = () => {
-    const current=state.keyClosed?6/(10+state.rheostat):0,voltage=current*10;
+    const current=state.keyClosed?4.5/(5.7+state.rheostat):0,voltage=current*5.7;
     setRead("rheostat",fmt(state.rheostat,1)+" Ом");setRead("current",fmt(current,2)+" А");setRead("voltage",fmt(voltage,2)+" В");
     const button=q('[data-vlab-action="toggle-switch"]');
     if(button){button.textContent=state.keyClosed?"Замкнут":"Разомкнут";button.classList.toggle("closed",state.keyClosed);button.setAttribute("aria-pressed",String(state.keyClosed));}
@@ -505,7 +505,7 @@ export function mountLabSimulator(container,id,options = {}) {
     if(action==="record-ohm"){
       if(!state.keyClosed){showResult("Сначала замкни ключ цепи.",false);return;}
       if(state.readings.length>=3){showResult("Уже записаны три измерения. Проверь таблицу.",false);return;}
-      const i=6/(10+state.rheostat),u=i*10;
+      const i=4.5/(5.7+state.rheostat),u=i*5.7;
       state.readings.push({i,u,r:state.rheostat});
       updateOhm();
       return;
@@ -566,8 +566,8 @@ export function mountLabSimulator(container,id,options = {}) {
       result={valid:true,score:ok?3:1,value:fmt(f,1)+" см",detail:"1/F = 1/a + 1/b, поэтому F = ab/(a+b) = "+fmt(f,1)+" см. Резкое изображение получается, когда экран находится в плоскости изображения."};
     } else if(item.id==="ohm"){
       if(state.readings.length!==3){showResult("Нужно записать ровно три пары показаний при токах 0,3 А, 0,4 А и 0,5 А.",false);return;}
-      const targets=[.3,.4,.5],matches=state.readings.filter((r,i)=>Math.abs(r.i-targets[i])<.025&&Math.abs(r.u/r.i-10)<.4).length;
-      result={valid:true,score:matches===3?3:matches===2?2:matches===1?1:0,value:matches+"/3 измерений соответствуют закону Ома",detail:"Для резистора R = 10 Ом отношение U/I должно оставаться примерно постоянным. Сравни три пары измерений в таблице."};
+      const targetsI=[.3,.4,.5],targetsU=[1.7,2.3,2.9],matches=state.readings.filter((r,i)=>Math.abs(r.i-targetsI[i])<.025&&Math.abs(r.u-targetsU[i])<=.3&&Math.abs(r.u/r.i-5.7)<.6).length;
+      result={valid:true,score:matches===3?3:matches===2?2:matches===1?1:0,value:matches+"/3 измерений соответствуют закону Ома",detail:"Для резистора R2 = 5,7 Ом отношение U/I должно оставаться примерно постоянным. В демоверсии ориентировочные пары: 0,30 А — 1,7 В; 0,40 А — 2,3 В; 0,50 А — 2,9 В. Сравни три пары измерений в таблице."};
       values.readings=state.readings;
     } else if(item.id==="motion"){
       values.distance=fieldValue("distance");values.time=fieldValue("time");
