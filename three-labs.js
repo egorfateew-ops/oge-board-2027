@@ -539,9 +539,11 @@ export async function mountThreeLab(host,id,options={}){
  }):null;
  if(themeObserver)themeObserver.observe(document.body,{attributes:true,attributeFilter:["data-theme"]});
  resize();loading.classList.add("hidden");
- const clock=new THREE.Clock();let raf=0,disposed=false;
+ const clock=new THREE.Clock();let raf=0,disposed=false,visible=true;
  const animate=()=>{
-  if(disposed)return;raf=requestAnimationFrame(animate);
+  if(disposed)return;
+  if(!visible){raf=0;return;}
+  raf=requestAnimationFrame(animate);
   const elapsed=clock.getElapsedTime();
   if(id==="pendulum"&&animationState.running){
    const t=(performance.now()-animationState.start)/1000;animationState.cycles=Math.floor(t/(animationState.period||1));
@@ -552,11 +554,17 @@ export async function mountThreeLab(host,id,options={}){
   if(id==="induction"&&objects.needle)objects.needle.rotation.z+=(0-objects.needle.rotation.z)*.04;
   renderer.render(scene,camera);
  };
+ const visibilityObserver=typeof IntersectionObserver!=="undefined"?new IntersectionObserver(entries=>{
+  visible=!!entries[0]?.isIntersecting;
+  if(visible&&!raf&&!disposed)animate();
+ }):null;
+ if(visibilityObserver)visibilityObserver.observe(host);
  animate();
  const dispose=()=>{
   if(disposed)return;disposed=true;cancelAnimationFrame(raf);
   if(observer)observer.disconnect();else window.removeEventListener("resize",resize);
- if(themeObserver)themeObserver.disconnect();
+  if(visibilityObserver)visibilityObserver.disconnect();
+  if(themeObserver)themeObserver.disconnect();
   renderer.domElement.removeEventListener("pointerdown",onPointerDown);
   renderer.domElement.removeEventListener("pointermove",onPointerMove);
   renderer.domElement.removeEventListener("pointerup",onPointerUp);
