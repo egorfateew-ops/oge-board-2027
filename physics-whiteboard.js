@@ -11,7 +11,7 @@ const makeId = () => (globalThis.crypto && crypto.randomUUID) ? crypto.randomUUI
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 
 export function compilePhysicsExpression(source) {
-  let text = String(source || "").trim().replace(/^y\s*=\s*/i, "");
+  let text = String(source || "").trim().replace(/^y\s*=\s*/i, "").replace(/(\d),(\d)/g, "$1.$2");
   if (!text || text.length > 100) throw new Error("Введи выражение длиной до 100 символов.");
   const tokens = [];
   const pattern = /\s*(\d+(?:\.\d*)?(?:e[+-]?\d+)?|\.\d+(?:e[+-]?\d+)?|[a-zA-Z]+|[+\-*/^(),])/iy;
@@ -148,7 +148,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
           '</section>',
           '<section class="wb-side-card" data-wb-graph-panel>',
             '<div class="wb-side-title"><div><span class="eyebrow">КООРДИНАТЫ</span><h3>Построить график</h3></div><span class="wb-side-icon">⌁</span></div>',
-            '<label class="wb-field-label">Функция y = f(x)<input data-wb-expression value="2*x + 1" placeholder="Например: 2*x + 1"></label>',
+            '<label class="wb-field-label">Функция y = f(x)<input data-wb-expression value="2*x + 1" placeholder="Например: 2*x + 1"></label><small class="wb-formula-hint">Поддерживаются +, −, ×, ÷, степени, скобки, sin, cos, tan, sqrt, log и ln. Углы — в радианах.</small>',
             '<div class="wb-inline-fields"><label class="wb-field-label">X от<input type="number" data-wb-xmin value="-5" step="0.5"></label><label class="wb-field-label">X до<input type="number" data-wb-xmax value="5" step="0.5"></label></div>',
             '<button type="button" class="wb-button wb-button-primary wb-full" data-wb-action="add-function">Построить функцию</button>',
             '<div class="wb-subdivider"></div>',
@@ -736,6 +736,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         w: 900, h: 650, label: "y = " + expression, expression, xMin, xMax,
         yMin: min - padding, yMax: max + padding, samples, color: currentColor
       });
+      setTool("select");
       toast("График построен. Его можно переместить инструментом выбора.");
     } catch (error) { toast(error.message || "Не удалось построить график."); }
   }
@@ -766,11 +767,13 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     });
     pointDraft.length = 0;
     renderPointDraft();
+    setTool("select");
     toast("График по измерениям добавлен на доску.");
   }
   function addDiagram(kind) {
     const count = elements.filter(item => item.type === "diagram").length;
     addObject({ type: "diagram", kind, x: 180 + count * 35, y: 180 + count * 28, w: 560, h: 360 });
+    setTool("select");
     toast("Физическая схема добавлена. Перемести её в нужное место.");
   }
   function addTextAt(point) {
