@@ -836,7 +836,7 @@ function renderVirtualLabCatalog(){
 function renderVirtualLabs(){
  renderVirtualLabCatalog();
  const workspace=$("virtualLabWorkspace");if(!workspace)return;
- mountLabSimulator(workspace,activeVirtualLabId,{saved:labProgress[activeVirtualLabId]||{},onSave:saveVirtualLabReport});
+ if(workspace.dataset.labId!==activeVirtualLabId)mountLabSimulator(workspace,activeVirtualLabId,{saved:labProgress[activeVirtualLabId]||{},onSave:saveVirtualLabReport});
 }
 function openVirtualLab(id){
  const aliases={block:"lever"};
