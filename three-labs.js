@@ -198,7 +198,8 @@ export async function mountThreeLab(host,id,options={}){
   const dyna=cylinder(.22,.22,.9,materials.white,-1.3,2.8,0);torus(.2,.04,materials.steel,-1.3,3.28,0);
   addDisplay("dyna","3,90 Н",-1.3,2.9,.25);
   const beaker=addBeaker(1.8,0,1.0);
-  const body=cylinder(.28,.28,.65,materials.steel,0,2.0,0,32);torus(.16,.04,materials.steel,0,2.36,0);addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
+  const body=cylinder(.28,.28,.65,materials.steel,-1.3,2.0,0,32);torus(.16,.04,materials.steel,-1.3,2.36,0);addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
+  objects.bodyString=cylinder(.02,.02,1,materials.steel,-1.3,2.45,0,10);orientRod(objects.bodyString,[-1.3,2.35,0],[-1.3,2.36,0]);
   setReadouts([["Вес в воздухе","3,90 Н"],["Вес в воде","ожидает"],["Сила Архимеда","—"]]);
   setData({submerged:false,air:3.9,water:3.4});
  }
@@ -235,6 +236,7 @@ export async function mountThreeLab(host,id,options={}){
   cylinder(.35,.35,.28,materials.white,-.4,.68,0);label("A",-0.4,1.05,.3,.5);
   cylinder(.35,.35,.28,materials.white,1.4,.68,0);label("V",1.4,1.05,.3,.5);
   box(1.1,.35,.55,materials.red,.2,.65,1);label("R = 5,7 Ом",.2,1.1,1,.55);
+  rod([-1.55,.72,0],[-.78,.72,0],.035,materials.red);rod([-.02,.72,0],[.9,.72,0],.035,materials.red);rod([1.78,.72,0],[2.4,.72,0],.035,materials.red);
   objects.switchLever=rod([.85,.72,-.9],[1.35,.72,-.9],.045,materials.red);
   addControl('<div class="vlab-three-control-row"><button type="button" data-three-action="switch">Замкнуть ключ</button><label class="vlab-three-control"><span>Реостат <b data-three-rheostat>9,3 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-three-control="rheostat"></label></div><button type="button" data-three-action="record-ohm">＋ Записать показания</button><small data-three-count>0 / 3 измерения</small>');
   setReadouts([["Ключ","разомкнут"],["Ток","0,00 А"],["Напряжение","0,00 В"],["Измерений","0 / 3"]]);
@@ -257,9 +259,14 @@ export async function mountThreeLab(host,id,options={}){
   makeRuler(-3,3,.3,.44);
   const object=cylinder(.12,.12,1.1,materials.yellow,-2,.95,0,24);sphere(.18,materials.yellow,-2,1.55,0);addDrag(object,"object","x");objects.object=object;
   const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;
-  const screen=box(.12,1.4,.9,materials.white,2,1.1,0);addDrag(screen,"screen","x");objects.screen=screen;
-  setReadouts([["Предмет — линза","30 см"],["Линза — экран","30 см"],["Изображение","резкое"]]);
-  setData({a:30,b:30,sharp:true});
+  const screen=new THREE.Group();screen.position.set(2.6,1.1,0);scene.add(screen);
+  box(.12,1.4,.9,materials.white,0,0,0,screen);
+  rod([-.03,-.25,.48],[-.03,.25,.48],.035,materials.red,screen);
+  rod([-.03,.25,.48],[-.22,.08,.48],.03,materials.red,screen);
+  rod([-.03,.25,.48],[.16,.08,.48],.03,materials.red,screen);
+  addDrag(screen,"screen","x");objects.screen=screen;
+  setReadouts([["Предмет — линза","30 см"],["Линза — экран","39 см"],["Изображение","размытое"]]);
+  setData({a:30,b:39,sharp:false});
  }
  function buildUncertainty(){
   box(6,.12,.6,materials.white,0,.38,0);
@@ -322,6 +329,7 @@ export async function mountThreeLab(host,id,options={}){
   if(axis.includes("z"))object.position.z=THREE.MathUtils.clamp(point.z,-1.8,1.8);
  };
  const updateDuringDrag=(object)=>{
+  if(id==="archimedes"&&object===objects.body&&objects.bodyString){orientRod(objects.bodyString,[-1.3,2.35,0],[object.position.x,object.position.y+.35,object.position.z]);}
   if(id==="spring"&&object===objects.weight){
    const extension=Math.max(1,Math.min(12,(2.25-object.position.y)*10));
    data={...data,mass:100,extension:extension};rebuildSpring();
