@@ -941,7 +941,7 @@ function renderDailyPlan(){
   $("smartPlanSummary").textContent="План ещё не составлен.";
   root.innerHTML='<div class="study-empty">Нажми «Составить план». Я подберу задания по твоим срокам, урокам и ошибкам.</div>';
  }else{
-  const done=new Set(dailyPlan.doneIds||[]),items=dailyPlan.items||[];
+  const done=new Set(dailyPlan.doneIds||[]),items=(dailyPlan.items||[]).filter(x=>x.subject==="Физика");
   const completed=items.filter(x=>done.has(x.id)).length;
   $("smartPlanSummary").textContent=completed+" из "+items.length+" шагов выполнено · "+new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
   root.innerHTML=items.length?items.map((item,i)=>'<div class="smart-plan-item '+(done.has(item.id)?"is-done":"")+'"><label class="smart-plan-check"><input type="checkbox" data-plan-done="'+esc(item.id)+'" '+(done.has(item.id)?"checked":"")+'><span></span></label><div class="smart-plan-copy"><small>ШАГ '+(i+1)+' · '+esc(item.subject||"Подготовка")+'</small><b>'+esc(item.title)+'</b><p>'+esc(item.detail||"")+'</p></div><button type="button" class="btn" data-plan-action="'+esc(item.id)+'">'+(item.kind==="test"?"Тест":item.kind==="lesson"?"Урок":item.kind==="mistake"?"Ошибки":"Задание")+'</button></div>').join(""):'<div class="study-empty">На сегодня всё. Можно отдохнуть или добавить задание на доску.</div>';
@@ -997,7 +997,7 @@ function listenDuels(){
 function renderDuels(){
  const root=$("duelList");if(!root)return;
  const physicsDuels=duels.filter(d=>d.subject==="Физика");
- $("duelCountLabel").textContent=physicsDuels.length+" дуал"+(duels.length%10===1&&duels.length%100!==11?"ь":duels.length%10>=2&&duels.length%10<=4&&!(duels.length%100>=12&&duels.length%100<=14)?"и":"ей");
+ $("duelCountLabel").textContent=physicsDuels.length+" дуал"+(physicsDuels.length%10===1&&physicsDuels.length%100!==11?"ь":physicsDuels.length%10>=2&&physicsDuels.length%10<=4&&!(physicsDuels.length%100>=12&&physicsDuels.length%100<=14)?"и":"ей");
  root.innerHTML=physicsDuels.length?physicsDuels.map(d=>{
   const opponent=member.id==="egor"?"Даниил":"Егор",my=d.scores?.[member.id],otherId=member.id==="egor"?"daniil":"egor",other=d.scores?.[otherId];
   let status="",action="";
@@ -1493,7 +1493,7 @@ function renderBoard(){
 }
 
 function renderDaily(){
- const arr=tasks.filter(t=>t.subject==="Физика"&&(t.daily||t.date===today())),done=arr.filter(t=>t.status==="done").length;
+ const arr=tasks.filter(t=>isPhysicsTask(t)&&(t.daily||t.date===today())),done=arr.filter(t=>t.status==="done").length;
  $("todayCount").textContent=done+" / "+arr.length;
  $("dateLabel").textContent=new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
  $("dailyList").innerHTML=arr.length?arr.map(t=>'<div class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==="done"?"checked":"")+'><button type="button" class="dailyitem-open" data-daily-open="'+esc(t.id)+'"><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></button><span class="points">+'+(Number(t.points)||0)+' XP</span></div>').join(""):'<div class="empty">На сегодня заданий пока нет</div>';
@@ -1566,7 +1566,7 @@ function render(){renderBoard();renderDaily();renderStats();renderSubjects();if(
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
 function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 let newTaskStatus='todo';
-function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
+function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Физика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;if(!auth){$('loginMsg').textContent='Firebase не инициализирован. Обнови страницу; если ошибка повторится, проверь подключение к Firebase.';$('loginBtn').disabled=false;return}$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
