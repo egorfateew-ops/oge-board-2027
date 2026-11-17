@@ -11,18 +11,27 @@ const makeId = () => (globalThis.crypto && crypto.randomUUID) ? crypto.randomUUI
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 
 export function compilePhysicsExpression(source) {
-  let text = String(source || "").trim().replace(/^y\s*=\s*/i, "").replace(/(\d),(\d)/g, "$1.$2");
+  let text = String(source || "").trim().replace(/^y\s*=\s*/i, "").replace(/(\d),(\d)/g, "$1.$2").replace(/[×·]/g, "*").replace(/[÷]/g, "/").replace(/[−–]/g, "-");
   if (!text || text.length > 100) throw new Error("Введи выражение длиной до 100 символов.");
-  const tokens = [];
+  const rawTokens = [];
   const pattern = /\s*(\d+(?:\.\d*)?(?:e[+-]?\d+)?|\.\d+(?:e[+-]?\d+)?|[a-zA-Z]+|[+\-*/^(),])/iy;
   let pos = 0;
   while (pos < text.length) {
     pattern.lastIndex = pos;
     const match = pattern.exec(text);
     if (!match) throw new Error("Не удалось разобрать выражение около: " + text.slice(pos, pos + 12));
-    tokens.push(match[1]);
+    rawTokens.push(match[1]);
     pos = pattern.lastIndex;
   }
+  const functionNames = new Set(["sin","cos","tan","sqrt","abs","log","ln","exp","asin","acos","atan"]);
+  const tokens = [];
+  rawTokens.forEach(token => {
+    const previous = tokens[tokens.length - 1];
+    const previousEndsValue = previous && (/^(?:\d|x$|pi$|e$)/i.test(previous) || previous === ")");
+    const nextStartsValue = token === "(" || /^(?:x|pi|e)$/i.test(token) || functionNames.has(token.toLowerCase());
+    if (previousEndsValue && nextStartsValue) tokens.push("*");
+    tokens.push(token);
+  });
   let index = 0;
   const peek = () => tokens[index];
   const take = () => tokens[index++];
