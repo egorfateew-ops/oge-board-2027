@@ -2032,3 +2032,320 @@ body[data-theme="dark"] .workspace .panel .btn:not(.primary){
 body[data-theme="dark"] .workspace .panel .sub,
 body[data-theme="dark"] .workspace .panel small{color:var(--muted)}
 body[data-theme="dark"] .workspace .panel .eyebrow{color:var(--accent)}
+
+
+/* Virtual physics laboratory */
+.vlab-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:14px;padding:22px 25px;background:linear-gradient(115deg,#f0efff 0%,#f8f7ff 52%,#eaf6f2 100%);border-color:#e7e4f8}
+.vlab-hero h2{margin:4px 0 6px;font-size:25px;letter-spacing:-.04em}
+.vlab-hero p{max-width:760px;margin:0;color:var(--muted);font-size:12px}
+.vlab-hero-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.vlab-hero-tags span,.vlab-time{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#ffffffb8;color:var(--muted);font-size:10px;font-weight:750}
+.vlab-hero-mark{display:grid;place-items:center;flex:0 0 76px;width:76px;height:76px;border-radius:24px;background:#ffffffa8;color:#7668c7;font-size:36px}
+.vlab-page-layout{display:grid;grid-template-columns:255px minmax(0,1fr);gap:14px;align-items:start}
+.vlab-catalog-panel{position:sticky;top:14px;padding:12px;min-width:0}
+.vlab-catalog-heading{display:flex;align-items:center;justify-content:space-between;padding:5px 5px 12px;border-bottom:1px solid var(--line)}
+.vlab-catalog-heading b{display:block;font-size:13px}.vlab-catalog-heading small{display:block;color:var(--muted);font-size:10px}
+.vlab-catalog-heading>span{padding:5px 8px;border-radius:999px;background:var(--accentSoft);color:var(--accent);font-size:10px;font-weight:800}
+.vlab-catalog{display:grid;gap:5px;max-height:calc(100vh - 210px);overflow:auto;padding-top:9px}
+.vlab-catalog-item{display:grid;grid-template-columns:27px minmax(0,1fr) 16px;align-items:center;gap:9px;width:100%;padding:10px 8px;border:1px solid transparent;border-radius:12px;background:transparent;text-align:left;color:var(--text);transition:background .16s,border-color .16s}
+.vlab-catalog-item:hover{background:var(--soft2)}
+.vlab-catalog-item.active{background:var(--accentSoft);border-color:#dfdcff}
+.vlab-catalog-number{display:grid;place-items:center;width:27px;height:27px;border-radius:9px;background:var(--soft2);color:var(--muted);font-size:10px;font-weight:850}
+.vlab-catalog-item.active .vlab-catalog-number{background:var(--accent);color:#fff}
+.vlab-catalog-copy{display:grid;gap:3px;min-width:0}
+.vlab-catalog-copy b{font-size:11px;line-height:1.35}
+.vlab-catalog-copy small{color:var(--muted);font-size:9px}
+.vlab-catalog-status{color:var(--faint);font-size:9px;font-weight:700}
+.vlab-catalog-status.done{color:var(--green)}
+.vlab-catalog-arrow{color:var(--faint);font-size:14px}
+.vlab-workspace{min-width:0;padding:17px}
+.vlab-workspace-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:14px}
+.vlab-workspace-head h2{margin:3px 0 5px;font-size:21px;letter-spacing:-.035em}
+.vlab-workspace-head p{max-width:740px;margin:0;color:var(--muted);font-size:11px}
+.vlab-workspace-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.vlab-workspace-actions .btn{white-space:nowrap}
+.vlab-scene-scroll{width:100%;overflow-x:auto;padding-bottom:4px}
+.vlab-scene{position:relative;min-width:760px;height:380px;overflow:hidden;border:1px solid #dfe4ed;border-radius:17px;background:linear-gradient(145deg,#f8fafc 0%,#edf2f7 100%);user-select:none;touch-action:pan-y}
+.vlab-scene:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#c7d0dc 1px,transparent 1px);background-size:18px 18px;opacity:.28;pointer-events:none}
+.vlab-scene-caption{position:absolute;top:13px;left:17px;z-index:2;color:#8a94a5;font-size:9px;font-weight:850;letter-spacing:.12em}
+.vlab-scene-note{position:absolute;left:16px;right:16px;bottom:12px;z-index:10;padding:9px 12px;border:1px solid #e1e5ed;border-radius:10px;background:#ffffffdf;color:#647086;font-size:10px;pointer-events:none}
+.vlab-drag{position:absolute;z-index:5;cursor:grab;touch-action:none;user-select:none}
+.vlab-drag.dragging{z-index:30;cursor:grabbing;filter:drop-shadow(0 9px 10px #26344b38)}
+.vlab-readout-pills{position:absolute;left:16px;right:16px;bottom:55px;display:flex;flex-wrap:wrap;gap:7px;z-index:8}
+.vlab-readout-pills span{padding:6px 9px;border:1px solid #dce3ed;border-radius:999px;background:#ffffffdc;color:#647086;font-size:10px}
+.vlab-readout-pills b{color:#28354a}
+.vlab-lower-grid{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:12px;margin-top:13px}
+.vlab-procedure,.vlab-report-panel{min-width:0;padding:14px;border:1px solid var(--line);border-radius:15px;background:var(--soft)}
+.vlab-procedure h3,.vlab-report-heading h3{margin:3px 0 8px;font-size:14px}
+.vlab-procedure ol{display:grid;gap:9px;margin:12px 0 14px;padding:0;list-style:none}
+.vlab-procedure li{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start;color:var(--muted);font-size:10px;line-height:1.5}
+.vlab-procedure li>span{display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--accentSoft);color:var(--accent);font-size:9px;font-weight:850}
+.vlab-safety{padding:10px;border:1px solid #f0e5c8;border-radius:10px;background:#fff9ec}
+.vlab-safety b{font-size:10px;color:#9a762d}.vlab-safety p{margin:3px 0 0;color:#8a7855;font-size:9px;line-height:1.5}
+.vlab-report-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+.vlab-report-heading p{margin:0;color:var(--muted);font-size:10px}
+.vlab-formula{display:grid;gap:4px;max-width:48%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);text-align:right}
+.vlab-formula small{color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.vlab-formula b{font-size:10px;line-height:1.4}
+.vlab-fields-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vlab-field{display:grid;gap:4px;min-width:0;color:var(--muted);font-size:9px;font-weight:700}
+.vlab-field>div{display:flex;align-items:center;gap:6px}
+.vlab-field .field{width:100%;min-width:0;height:35px;padding:0 9px;font-size:11px}
+.vlab-field small{flex:0 0 auto;color:var(--faint);font-size:9px}
+.vlab-report-checks{display:flex;flex-wrap:wrap;gap:8px 13px;margin:12px 0;color:var(--muted);font-size:9px}
+.vlab-report-checks label{display:flex;align-items:center;gap:5px}
+.vlab-report-checks input{accent-color:var(--accent)}
+.vlab-calculate{width:100%;min-height:38px}
+.vlab-result{margin-top:10px;padding:10px 11px;border:1px dashed var(--line2);border-radius:11px;color:var(--muted);font-size:10px;line-height:1.5}
+.vlab-result-state.good{border-left:3px solid var(--green);padding-left:9px;color:var(--text)}
+.vlab-result-state.bad{border-left:3px solid var(--red);padding-left:9px;color:var(--red)}
+.vlab-result-state p{margin:5px 0;color:var(--muted)}
+.vlab-result-state small{color:var(--faint)}
+.vlab-report-hint{padding:10px;border-radius:10px;background:var(--surface);color:var(--muted);font-size:10px}
+.vlab-report-hint+.vlab-report-checks{margin-top:12px}
+
+/* Density station */
+.vlab-scale-apparatus{position:absolute;left:76px;top:185px;width:190px;height:105px;border:1px solid #aeb8c7;border-radius:13px;background:linear-gradient(#eef2f7,#cbd3df);box-shadow:0 8px 15px #34445a1a}
+.vlab-scale-platform{position:absolute;top:-10px;left:15px;right:15px;height:13px;border:1px solid #9ca9b8;border-radius:5px;background:linear-gradient(#fff,#c9d2df)}
+.vlab-scale-screen{position:absolute;top:27px;left:24px;right:24px;padding:8px;border:1px solid #8fa59c;border-radius:7px;background:#d9f1df;color:#236246;text-align:center;font:800 19px ui-monospace,monospace;letter-spacing:.04em}
+.vlab-scale-apparatus>small{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#64748b;font-size:8px;font-weight:850;letter-spacing:.1em}
+.vlab-measuring-cylinder{width:118px;height:232px}
+.vlab-cylinder-top{position:absolute;top:0;left:16px;width:88px;height:12px;border:2px solid #8ba1b4;border-radius:50%;background:#ffffffb8}
+.vlab-cylinder-glass{position:absolute;top:6px;bottom:18px;left:25px;right:25px;overflow:hidden;border:2px solid #91a7b9;border-top:0;border-radius:0 0 13px 13px;background:#ffffff4d;box-shadow:inset 5px 0 8px #fff8}
+.vlab-cylinder-water{position:absolute;left:0;right:0;bottom:0;height:62px;background:linear-gradient(#9fd9e7a8,#75b9d3b8);border-top:2px solid #72b5d1;transition:height .35s}
+.vlab-cylinder-ticks{position:absolute;top:24px;left:5px;right:3px;display:grid;gap:17px;color:#72889a;font-size:8px;text-align:right;pointer-events:none}
+.vlab-cylinder-value{position:absolute;left:0;right:0;bottom:6px;color:#2d687f;text-align:center;font-size:10px;font-weight:850}
+.vlab-measuring-cylinder>small{position:absolute;bottom:0;left:0;right:0;color:#708398;text-align:center;font-size:8px;font-weight:850;letter-spacing:.1em}
+.vlab-metal-sample{display:grid;place-items:center;width:46px;height:67px;border:1px solid #7e8998;border-radius:8px;background:linear-gradient(90deg,#8894a5,#e4e9ef 38%,#9aa6b7 72%,#778394);box-shadow:0 5px 10px #25334b30;color:#3c4858}
+.vlab-metal-sample span{width:100%;height:5px;margin-top:-4px;border-radius:50%;background:#dbe1e8;border:1px solid #8894a5}
+.vlab-metal-sample b{font-size:13px}.vlab-metal-sample small{font-size:8px}
+.vlab-metal-sample.in-water{opacity:.8}.vlab-metal-sample.on-scale{box-shadow:0 2px 4px #26334a24}
+
+/* Motion track */
+.vlab-track-line{position:absolute;left:75px;right:75px;top:205px;height:7px;border-radius:8px;background:linear-gradient(#aeb9c8,#7d8ca1);box-shadow:0 5px 8px #33445a1a}
+.vlab-track-mark{position:absolute;top:170px;height:45px;padding-top:0;color:#7c8798;font-size:9px;font-weight:850;letter-spacing:.1em}
+.vlab-track-mark:after{content:"";display:block;width:2px;height:42px;margin:5px auto 0;background:#98a5b6}
+.vlab-track-mark.start{left:88px}.vlab-track-mark.finish{left:625px}
+.vlab-track-ruler{position:absolute;left:75px;right:75px;top:230px;display:flex;justify-content:space-between;color:#8a95a5;font-size:9px}
+.vlab-cart{width:70px;height:45px}
+.vlab-cart-body{position:absolute;left:5px;right:5px;top:6px;height:25px;border:1px solid #7e91a8;border-radius:8px 8px 4px 4px;background:linear-gradient(#b7d5ed,#739fc8)}
+.vlab-cart i{position:absolute;top:27px;width:13px;height:13px;border:2px solid #66778e;border-radius:50%;background:#fff}
+.vlab-cart i:nth-of-type(1){left:12px}.vlab-cart i:nth-of-type(2){right:12px}
+.vlab-cart small{position:absolute;top:43px;left:0;right:0;color:#7b8797;text-align:center;font-size:8px}
+.vlab-motion-timer{position:absolute;right:65px;top:75px;display:grid;gap:4px;width:155px;padding:14px;border:1px solid #d9e0ea;border-radius:14px;background:#ffffffc9;text-align:center}
+.vlab-motion-timer span,.vlab-motion-timer small{color:#7b8797;font-size:9px}
+.vlab-motion-timer b{color:#29394f;font:800 22px ui-monospace,monospace}
+
+/* Spring station */
+.vlab-stand{position:absolute;left:135px;top:70px;width:150px;height:240px}
+.vlab-stand-pole{position:absolute;left:25px;top:0;width:9px;height:215px;border-radius:8px;background:linear-gradient(90deg,#8b98a9,#d8e0e8,#8b98a9)}
+.vlab-stand-arm{position:absolute;left:25px;top:9px;width:175px;height:10px;border-radius:8px;background:linear-gradient(#d8e0e8,#8594a8)}
+.vlab-stand-foot{position:absolute;left:-5px;bottom:10px;width:70px;height:12px;border-radius:50%;background:#7c8ca1;box-shadow:0 3px 4px #27364b25}
+.vlab-spring-anchor{position:absolute;left:350px;top:75px;width:50px;height:10px;border-radius:5px;background:#8d9aac}
+.vlab-spring-coil{position:absolute;left:369px;top:85px;width:16px;height:70px;border-left:2px solid #718197;border-right:2px solid #718197;background:repeating-linear-gradient(180deg,transparent 0 5px,#7c8b9d 5px 7px,transparent 7px 12px);transition:height .3s}
+.vlab-spring-hook{position:absolute;left:352px;top:155px;width:50px;height:55px;border:2px dashed #8e9daf;border-top:0;border-radius:0 0 20px 20px}
+.vlab-hanging-weight{position:absolute;left:355px;top:170px;display:none;width:45px;height:40px;border:1px solid #8d9aab;border-radius:7px;background:linear-gradient(90deg,#8996a7,#e1e6ec,#8996a7);color:#38465b;text-align:center;font-size:9px;padding-top:12px}
+.vlab-ruler-vertical{position:absolute;left:425px;top:100px;display:grid;gap:17px;color:#8793a3;font-size:9px}
+.vlab-weight-tray{position:absolute;left:510px;top:272px;width:245px;height:65px;border:1px dashed #aab5c4;border-radius:12px;background:#ffffff85}
+.vlab-weight-tray span{position:absolute;left:8px;right:8px;top:-18px;color:#8a95a5;font-size:8px;text-align:center}
+.vlab-weight{z-index:8;width:55px;height:36px;border:1px solid #9aa8b9;border-radius:8px;background:linear-gradient(135deg,#dfe5ed,#aab6c5);color:#3c4a5d;font-size:10px;font-weight:850;box-shadow:0 4px 8px #24334a20}
+.vlab-spring-readouts{position:absolute;left:30px;right:30px;bottom:58px;display:flex;justify-content:center;gap:12px}
+.vlab-spring-readouts span{padding:7px 10px;border:1px solid #dce3ed;border-radius:10px;background:#ffffffd9;color:#758196;font-size:10px}
+.vlab-spring-readouts b{color:#29384d}
+
+/* Archimedes station */
+.vlab-dynamometer{position:absolute;left:105px;top:80px;width:110px;height:230px;text-align:center}
+.vlab-dyna-top{width:34px;height:20px;margin:0 auto;border:3px solid #8493a7;border-bottom:0;border-radius:15px 15px 0 0}
+.vlab-dyna-glass{position:relative;width:64px;height:170px;margin:0 auto;border:2px solid #8fa0b4;border-radius:10px;background:#ffffff91}
+.vlab-dyna-glass>span{position:absolute;top:8px;left:0;right:0;color:#37516b;font:800 15px ui-monospace,monospace}
+.vlab-dyna-scale{position:absolute;top:45px;left:8px;width:23px;height:92px;background:repeating-linear-gradient(180deg,transparent 0 8px,#91a1b4 8px 9px)}
+.vlab-dyna-spring{position:absolute;top:43px;left:40px;width:12px;height:80px;border-left:2px solid #7e8ea3;border-right:2px solid #7e8ea3;background:repeating-linear-gradient(180deg,transparent 0 5px,#7e8ea3 5px 7px,transparent 7px 11px)}
+.vlab-dynamometer>small{display:block;margin-top:6px;color:#8793a3;font-size:8px;font-weight:850}
+.vlab-beaker{width:145px;height:165px;border:2px solid #8da4b8;border-top:0;border-radius:0 0 20px 20px;background:#ffffff58;box-shadow:inset 8px 0 12px #fff8}
+.vlab-beaker-rim{position:absolute;top:-7px;left:-4px;right:-4px;height:12px;border:2px solid #8da4b8;border-radius:50%;background:#ffffffa6}
+.vlab-beaker-water{position:absolute;left:2px;right:2px;bottom:2px;height:85px;border-radius:0 0 16px 16px;background:linear-gradient(#a7dbe9a6,#6fb5d0b8);border-top:2px solid #6db4ce}
+.vlab-beaker-markings{position:absolute;right:7px;top:30px;color:#477a91;font-size:8px;line-height:2.2;text-align:right}
+.vlab-beaker>small{position:absolute;left:0;right:0;bottom:-18px;color:#7e8da0;text-align:center;font-size:8px;font-weight:800}
+.vlab-hanging-body{display:grid;place-items:center;width:55px;height:75px;border:1px solid #7d8b9e;border-radius:8px;background:linear-gradient(90deg,#8b99a9,#e2e7ed,#8794a5);color:#35445a}
+.vlab-hanging-body span{width:100%;height:6px;border-radius:50%;background:#dfe5ec}
+.vlab-hanging-body b{font-size:9px}
+
+/* Lever station */
+.vlab-lever-beam{position:absolute;left:120px;top:174px;width:520px;height:10px;border:1px solid #8392a7;border-radius:8px;background:linear-gradient(#dfe6ee,#8493a7);transform-origin:50% 50%;transition:transform .25s}
+.vlab-lever-pivot{position:absolute;left:363px;top:180px;width:34px;height:65px;background:linear-gradient(90deg,#8795a8,#d6dee8,#8795a8);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.vlab-lever-weight{display:grid;place-items:center;width:50px;height:62px;border:1px solid #8c9aac;border-radius:8px 8px 12px 12px;background:linear-gradient(90deg,#8895a7,#e2e7ed,#8895a7);color:#3b485b;box-shadow:0 4px 8px #27364b20}
+.vlab-lever-weight:before{content:"";position:absolute;top:-12px;width:2px;height:13px;background:#8997a9}
+.vlab-lever-weight b{font-size:10px}.vlab-lever-weight small{font-size:8px}
+.vlab-lever-scale{position:absolute;left:105px;right:105px;top:245px;display:flex;justify-content:space-between;color:#8b96a5;font-size:8px}
+.vlab-balance-indicator{position:absolute;left:0;right:0;top:95px;color:#258664;text-align:center;font-size:12px;font-weight:850}
+
+/* Pendulum */
+.vlab-pendulum-support{position:absolute;left:350px;top:75px;width:70px;height:9px;border-radius:7px;background:#8292a7}
+.vlab-pendulum-string{position:absolute;left:384px;top:83px;width:2px;height:62px;background:#7d8da2;transform-origin:top center}
+.vlab-pendulum-string.swinging{animation:vlabPendulum .9s ease-in-out infinite alternate}
+.vlab-pendulum-bob{width:30px;height:30px;border:2px solid #7e8da2;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#8a9cb2 65%,#5e6f87);box-shadow:0 5px 8px #24334a2b}
+.vlab-pendulum-bob.swinging{animation:vlabBob .9s ease-in-out infinite alternate}
+@keyframes vlabPendulum{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes vlabBob{from{transform:translateX(-35px)}to{transform:translateX(35px)}}
+.vlab-pendulum-ruler{position:absolute;left:30px;top:80px;display:grid;gap:8px;color:#7d899b;font-size:10px}
+.vlab-pendulum-ruler input{width:180px}
+.vlab-pendulum-actions{position:absolute;right:50px;top:80px;display:flex;align-items:center;gap:8px}
+.vlab-pendulum-actions span{padding:8px 10px;border-radius:9px;background:#fff;color:#33445a;font:800 14px ui-monospace,monospace}
+
+/* Heat station */
+.vlab-hot-bath{position:absolute;left:95px;top:135px;width:140px;height:155px;border:2px solid #9ba9b8;border-top:0;border-radius:0 0 18px 18px;background:#ffffff66}
+.vlab-hot-water{position:absolute;left:2px;right:2px;bottom:2px;height:100px;border-radius:0 0 14px 14px;background:linear-gradient(#f6d49d,#eaa66b)}
+.vlab-hot-bath small{position:absolute;left:0;right:0;bottom:40px;color:#8b5c36;text-align:center;font-size:9px;font-weight:850}
+.vlab-calorimeter{width:155px;height:160px;border:2px solid #a2afbd;border-radius:10px 10px 17px 17px;background:#ffffff8c;box-shadow:inset 7px 0 10px #fff8}
+.vlab-calorimeter-lid{position:absolute;left:-5px;right:-5px;top:-7px;height:13px;border:2px solid #8294a8;border-radius:50%;background:#e4eaf0}
+.vlab-calorimeter-water{position:absolute;left:4px;right:4px;bottom:4px;height:65px;border-radius:0 0 12px 12px;background:#a5dce8a6}
+.vlab-calorimeter-thermometer{position:absolute;top:30px;left:0;right:0;color:#28677f;text-align:center;font:800 14px ui-monospace,monospace}
+.vlab-calorimeter>small{position:absolute;left:0;right:0;bottom:-18px;color:#7d899a;text-align:center;font-size:8px;font-weight:850}
+.vlab-hot-metal{display:grid;place-items:center;width:52px;height:70px;border:1px solid #8a8e9a;border-radius:8px;background:linear-gradient(90deg,#a7a9b2,#f4d6b1,#a7a9b2);color:#6b4d35}
+.vlab-hot-metal b{font-size:12px}.vlab-hot-metal small{font-size:8px}
+
+/* Electric circuit */
+.vlab-circuit-svg{position:absolute;left:20px;top:35px;width:calc(100% - 40px);height:245px;overflow:visible}
+.circuit-wire{fill:none;stroke:#64758b;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.circuit-device rect,.circuit-device circle{fill:#ffffff;stroke:#7e8ea4;stroke-width:2}
+.circuit-device path{stroke:#61738b;stroke-width:3;fill:none}
+.circuit-device text{fill:#52647b;font-size:13px;font-weight:750;text-anchor:middle}
+.circuit-slider{stroke:#8b6dc6!important;stroke-width:4!important}
+.vlab-ohm-controls{position:absolute;left:28px;right:28px;bottom:82px;display:flex;align-items:center;gap:24px}
+.vlab-ohm-controls>div,.vlab-ohm-controls label{display:grid;gap:6px;color:#718096;font-size:10px}
+.vlab-ohm-controls label{flex:1}
+.vlab-ohm-controls input{width:100%;accent-color:#6b61db}
+.vlab-switch{padding:8px 13px;border:1px solid #d8dee8;border-radius:9px;background:#fff;color:#66748a;font-size:10px;font-weight:800}
+.vlab-switch.closed{border-color:#9bd3b7;background:#e9f8ef;color:#21845b}
+.vlab-meter-row{position:absolute;left:28px;right:28px;top:12px;display:flex;justify-content:flex-end;gap:8px}
+.vlab-meter{display:grid;gap:2px;min-width:95px;padding:6px 9px;border:1px solid #cfd9e5;border-radius:9px;background:#ffffffdc;text-align:center}
+.vlab-meter small{color:#8994a4;font-size:7px;font-weight:850;letter-spacing:.08em}
+.vlab-meter b{color:#285c4c;font:800 13px ui-monospace,monospace}
+.vlab-ohm-actions{position:absolute;left:28px;bottom:47px;display:flex;align-items:center;gap:10px}
+.vlab-ohm-actions span{color:#78869a;font-size:9px}
+.vlab-ohm-table{position:absolute;right:28px;bottom:40px;min-width:280px;color:#65748a;font-size:9px}
+.vlab-ohm-table table{width:100%;border-collapse:collapse;background:#ffffffdf;border-radius:8px;overflow:hidden}
+.vlab-ohm-table th,.vlab-ohm-table td{padding:4px 7px;border-bottom:1px solid #e4e9ef;text-align:center}
+.vlab-ohm-table th{color:#68778c;font-size:8px}
+
+/* Induction */
+.vlab-induction-coil{position:absolute;left:290px;top:125px;width:150px;height:95px;border:10px solid #8e9caf;border-left-width:17px;border-right-width:17px;border-radius:22px;background:#ffffff42;box-shadow:inset 0 0 0 3px #d5dce6}
+.vlab-induction-coil i{position:absolute;top:0;bottom:0;width:5px;border-radius:5px;background:#b9a3d8}
+.vlab-induction-coil i:nth-child(1){left:17px}.vlab-induction-coil i:nth-child(2){left:43px}.vlab-induction-coil i:nth-child(3){right:43px}.vlab-induction-coil i:nth-child(4){right:17px}
+.vlab-induction-coil small{position:absolute;left:0;right:0;bottom:-28px;color:#758398;text-align:center;font-size:8px;font-weight:850}
+.vlab-magnet{display:flex;width:105px;height:38px;border:1px solid #8e99a9;border-radius:7px;overflow:hidden;box-shadow:0 5px 10px #28374b22}
+.vlab-magnet span{display:grid;place-items:center;width:50%;color:#fff;font-size:12px;font-weight:900}
+.vlab-magnet span:first-child{background:#d36b70}.vlab-magnet span:last-child{background:#5e7eb7}
+.vlab-galvanometer{position:absolute;right:60px;top:85px;display:grid;justify-items:center;gap:8px}
+.vlab-galvanometer-face{position:relative;width:135px;height:75px;border:2px solid #8292a6;border-radius:75px 75px 12px 12px;background:linear-gradient(#fff,#e8edf3);overflow:hidden}
+.vlab-galvanometer-face span{position:absolute;top:39px;color:#77869a;font-size:9px}.vlab-galvanometer-face span:first-child{left:12px}.vlab-galvanometer-face span:nth-child(2){left:63px}.vlab-galvanometer-face span:nth-child(3){right:12px}
+.vlab-galvanometer-face i{position:absolute;left:66px;bottom:8px;width:3px;height:50px;border-radius:3px;background:#d45c63;transform-origin:bottom center;transform:rotate(0deg);transition:transform .15s}
+.vlab-galvanometer>small{color:#8290a2;font-size:8px;font-weight:850}
+.vlab-galvanometer>b{color:#61738b;font-size:9px}
+
+/* Lens */
+.vlab-optical-rail{position:absolute;left:65px;right:65px;top:245px;height:10px;border-radius:8px;background:linear-gradient(#aeb9c8,#73839a);box-shadow:0 5px 8px #24334a20}
+.vlab-candle{width:40px;height:100px}
+.vlab-candle span{position:absolute;left:16px;top:0;width:8px;height:60px;border-radius:5px;background:linear-gradient(90deg,#c58c4f,#f2d49c,#c58c4f)}
+.vlab-candle:before{content:"";position:absolute;left:12px;top:-17px;width:16px;height:20px;border-radius:70% 30% 60% 40%;background:radial-gradient(circle at 50% 70%,#fff4b2,#f2a64e 55%,#e8784e)}
+.vlab-candle b{position:absolute;left:-13px;right:-13px;top:68px;color:#748398;text-align:center;font-size:8px}
+.vlab-lens{width:32px;height:155px}
+.vlab-lens i{position:absolute;left:4px;top:0;width:24px;height:130px;border:2px solid #78a5bd;border-radius:50% 50% 50% 50% / 12% 12% 12% 12%;background:linear-gradient(90deg,#c5e9f2a8,#ffffff70,#9bd1e1a8);box-shadow:0 0 12px #91c4d333}
+.vlab-lens small{position:absolute;left:-12px;right:-12px;top:135px;color:#718196;text-align:center;font-size:8px}
+.vlab-screen{width:42px;height:155px}
+.vlab-screen:before{content:"";position:absolute;left:16px;top:0;width:8px;height:130px;border:1px solid #8294a8;background:#ffffffd9}
+.vlab-screen-image{position:absolute;left:18px;top:42px;width:5px;height:36px;background:#d86d75;filter:blur(4px);opacity:.45;transition:filter .2s,opacity .2s}
+.vlab-screen small{position:absolute;left:-12px;right:-12px;top:135px;color:#718196;text-align:center;font-size:8px}
+.vlab-optical-scale{position:absolute;left:65px;right:65px;top:265px;display:flex;justify-content:space-between;color:#8793a4;font-size:8px}
+
+/* Measurement uncertainty */
+.vlab-ruler-board{position:absolute;left:80px;top:105px;width:610px;height:155px;border:1px solid #b8c5d2;border-radius:12px;background:#ffffffa6}
+.vlab-ruler-strip{position:absolute;left:15px;right:15px;top:60px;height:40px;border-top:2px solid #65778d;background:repeating-linear-gradient(90deg,transparent 0 9px,#9aa9b8 9px 10px,transparent 10px 19px)}
+.vlab-ruler-strip i{position:relative;top:-22px;color:#78879b;font-size:9px;font-style:normal}
+.vlab-ruler-object{position:absolute;left:15px;top:25px;width:300px;height:26px;border:1px solid #7f91a7;border-radius:5px;background:linear-gradient(#c3d0df,#91a4ba)}
+.vlab-ruler-marker{width:22px;height:90px}
+.vlab-ruler-marker span{position:absolute;left:9px;top:0;width:3px;height:70px;background:#d45e67}
+.vlab-ruler-marker b{position:absolute;left:-25px;top:72px;width:75px;color:#4e637b;text-align:center;font-size:9px}
+.vlab-uncertainty-actions{position:absolute;left:30px;right:30px;bottom:62px;display:flex;align-items:center;gap:10px}
+.vlab-uncertainty-actions span{color:#748197;font-size:10px}
+.vlab-measure-list{position:absolute;right:30px;bottom:54px;display:flex;gap:7px;color:#65758a;font-size:9px}
+.vlab-measure-list span{padding:5px 7px;border:1px solid #dce3ed;border-radius:7px;background:#ffffffd9}
+
+/* Friction */
+.vlab-friction-track{position:absolute;left:80px;right:75px;top:210px;height:12px;border-radius:10px;background:repeating-linear-gradient(90deg,#9ba8b8 0 12px,#c4ced9 12px 17px);box-shadow:0 7px 10px #26364a20}
+.vlab-friction-block{display:grid;place-items:center;width:75px;height:65px;border:1px solid #8e9bad;border-radius:8px;background:linear-gradient(135deg,#d8e0e9,#a4b1c1);color:#43536a;box-shadow:0 5px 9px #29394f25}
+.vlab-friction-block b{font-size:10px}.vlab-friction-block span{width:100%;height:4px;background:#7d8b9e}
+.vlab-friction-block.sliding{border-color:#68a98d;box-shadow:0 0 0 4px #69b18c20}
+.vlab-friction-gauge{position:absolute;right:65px;top:75px;width:150px;padding:13px;border:1px solid #d5dce6;border-radius:13px;background:#ffffffcf;text-align:center}
+.vlab-friction-gauge small{display:block;color:#8793a4;font-size:8px;font-weight:850}
+.vlab-friction-gauge b{display:block;margin:7px 0;color:#2f5c4d;font:800 21px ui-monospace,monospace}
+.vlab-gauge-scale{height:7px;border-radius:6px;background:linear-gradient(90deg,#a6d6b8,#edcc83,#dc8989)}
+.vlab-friction-controls{position:absolute;left:28px;right:245px;bottom:62px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vlab-friction-controls label{display:grid;gap:5px;color:#718096;font-size:9px}
+.vlab-friction-controls input{width:100%;accent-color:#7064d8}
+.vlab-friction-controls b{color:#35465b}
+
+body[data-theme="dark"] .vlab-hero{background:linear-gradient(115deg,#1a2440,#172b36);border-color:var(--line)}
+body[data-theme="dark"] .vlab-hero-mark{background:#25334c;color:#b7adff}
+body[data-theme="dark"] .vlab-hero-tags span{background:#1b2940;color:var(--muted)}
+body[data-theme="dark"] .vlab-catalog-item.active{background:#28264e;border-color:#49447f}
+body[data-theme="dark"] .vlab-catalog-number{background:#202e45;color:#aab6c9}
+body[data-theme="dark"] .vlab-catalog-item.active .vlab-catalog-number{background:var(--accent);color:#fff}
+body[data-theme="dark"] .vlab-scene{border-color:#35465d;background:linear-gradient(145deg,#1c2a40,#152236)}
+body[data-theme="dark"] .vlab-scene:before{background-image:radial-gradient(#60738a 1px,transparent 1px);opacity:.16}
+body[data-theme="dark"] .vlab-scene-note{border-color:#394b62;background:#1c2b40ed;color:#b4bfd0}
+body[data-theme="dark"] .vlab-readout-pills span,
+body[data-theme="dark"] .vlab-motion-timer,
+body[data-theme="dark"] .vlab-pendulum-actions span,
+body[data-theme="dark"] .vlab-meter,
+body[data-theme="dark"] .vlab-ohm-table table,
+body[data-theme="dark"] .vlab-galvanometer-face,
+body[data-theme="dark"] .vlab-ruler-board,
+body[data-theme="dark"] .vlab-friction-gauge{background:#202f45;color:#d5ddec;border-color:#42536a}
+body[data-theme="dark"] .vlab-readout-pills b,
+body[data-theme="dark"] .vlab-motion-timer b,
+body[data-theme="dark"] .vlab-pendulum-actions span,
+body[data-theme="dark"] .vlab-meter b{color:#d6e4f2}
+body[data-theme="dark"] .vlab-procedure,
+body[data-theme="dark"] .vlab-report-panel{background:var(--soft);border-color:var(--line)}
+body[data-theme="dark"] .vlab-formula{background:var(--surface);border-color:var(--line)}
+body[data-theme="dark"] .vlab-safety{background:#302b20;border-color:#65563b}
+body[data-theme="dark"] .vlab-safety b{color:#e3c47c}
+body[data-theme="dark"] .vlab-safety p{color:#c6b58f}
+body[data-theme="dark"] .vlab-report-hint{background:var(--surface)}
+body[data-theme="dark"] .vlab-ohm-table th,body[data-theme="dark"] .vlab-ohm-table td{border-color:#3b4b60;color:#c6d0df}
+body[data-theme="dark"] .vlab-switch{background:#202f45;border-color:#45566e;color:#cbd5e3}
+body[data-theme="dark"] .vlab-switch.closed{background:#1c3a33;border-color:#376b56;color:#a7e0c0}
+
+@media(max-width:1100px){
+ .vlab-page-layout{grid-template-columns:220px minmax(0,1fr)}
+ .vlab-lower-grid{grid-template-columns:1fr}
+ .vlab-catalog-panel{top:8px}
+}
+@media(max-width:760px){
+ .vlab-hero{padding:17px;align-items:flex-start}
+ .vlab-hero h2{font-size:21px}
+ .vlab-hero-mark{width:52px;height:52px;flex-basis:52px;border-radius:17px;font-size:26px}
+ .vlab-page-layout{grid-template-columns:1fr}
+ .vlab-catalog-panel{position:static}
+ .vlab-catalog{grid-template-columns:repeat(2,minmax(0,1fr));max-height:300px}
+ .vlab-workspace{padding:12px}
+ .vlab-workspace-head{display:grid}
+ .vlab-workspace-actions{justify-content:space-between}
+ .vlab-fields-grid{grid-template-columns:1fr}
+ .vlab-report-heading{display:grid}
+ .vlab-formula{max-width:none;text-align:left}
+ .vlab-ohm-table{left:28px;right:28px;bottom:8px;min-width:0}
+ .vlab-ohm-actions{bottom:50px}
+ .vlab-ohm-controls{bottom:90px}
+ .vlab-meter-row{top:6px;left:10px;right:10px}
+ .vlab-meter{min-width:76px;padding:5px}
+ .vlab-circuit-svg{top:42px}
+}
+@media(max-width:460px){
+ .vlab-catalog{grid-template-columns:1fr}
+ .vlab-hero-mark{display:none}
+ .vlab-workspace-head h2{font-size:18px}
+ .vlab-report-checks{display:grid}
+ .vlab-workspace-actions{flex-wrap:wrap}
+}
