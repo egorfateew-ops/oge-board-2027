@@ -653,9 +653,11 @@ export function mountLabSimulator(container,id,options = {}) {
       put("mw",100);put("mm",100);put("tw",20);put("tm",90);if(state.hotMetalIn)put("tf",32.6);
     }else if(item.id==="ohm"){
       state.keyClosed=!!payload.keyClosed;state.rheostat=Number(payload.rheostat||9.3);state.readings=Array.isArray(payload.readings)?payload.readings.slice():[];
+      updateOhm();
     }else if(item.id==="induction"){
       state.inductionLog=Array.isArray(payload.inductionLog)?payload.inductionLog.slice():[];
       state.inductionObserved=Number(payload.inductionObserved||state.inductionLog.length||0);
+      updateInduction();
     }else if(item.id==="lens"){
       state.lens={a:Number(payload.a||30),b:Number(payload.b||30),sharp:!!payload.sharp};put("a",state.lens.a);put("b",state.lens.b);
     }else if(item.id==="uncertainty"){
