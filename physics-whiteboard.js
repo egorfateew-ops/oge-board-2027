@@ -188,6 +188,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   let currentWidth = 4;
   let gridVisible = true;
   let dirty = false;
+  let localUpdatedAt = 0;
   let editRevision = 0;
   let saveTimer = null;
   let stopSnapshot = null;
@@ -233,6 +234,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   function markDirty() {
     dirty = true;
     editRevision += 1;
+    localUpdatedAt = Date.now();
     saveLocalNow();
     setStatus("Есть изменения", "pending");
     if (saveTimer) clearTimeout(saveTimer);
@@ -291,7 +293,8 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       updatedByName: member ? member.name : "Ученик",
       updatedAt: serverTimestamp ? serverTimestamp() : Date.now()
     };
-    rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: Date.now() });
+    localUpdatedAt = Date.now();
+    rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: localUpdatedAt });
     setStatus("Сохраняю…", "pending");
     try {
       if (runTransaction) {
@@ -319,6 +322,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
           elements = mergedResult || elements;
           deletedIds = new Set(payload.deletedIds);
           dirty = false;
+          localUpdatedAt = Date.now();
           resetHistory();
           render();
           setStatus("Сохранено", "ok");
@@ -369,12 +373,20 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       }
       const data = snap.data();
       lastRemoteUpdate = Date.now();
-      if (data.updatedBy === user.uid && !dirty) {
-        setStatus("Сохранено · синхронно", "ok");
-        return;
-      }
       const remoteElements = Array.isArray(data.elements) ? data.elements : [];
       const remoteDeleted = Array.isArray(data.deletedIds) ? data.deletedIds : [];
+      const remoteUpdatedAt = data.updatedAt && typeof data.updatedAt.toMillis === "function" ? data.updatedAt.toMillis() : Number(data.updatedAt || 0);
+      if (!dirty && localUpdatedAt > remoteUpdatedAt) {
+        dirty = true;
+        editRevision += 1;
+        elements = mergeElements(remoteElements, remoteDeleted);
+        deletedIds = new Set([...remoteDeleted, ...deletedIds]);
+        if (saveTimer) clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => saveToCloud(boardId), 250);
+        render();
+        setStatus("Восстанавливаю локальные изменения…", "pending");
+        return;
+      }
       if (dirty) {
         elements = mergeElements(remoteElements, remoteDeleted);
         deletedIds = new Set([...remoteDeleted, ...deletedIds]);
@@ -387,7 +399,8 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         title = data.title || BOARD_NAMES[boardId].title;
         titleInput.value = title;
         resetHistory();
-        rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], updatedAt: Date.now() });
+        localUpdatedAt = remoteUpdatedAt;
+        rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], updatedAt: remoteUpdatedAt });
         render();
       }
       setStatus("Синхронизировано", "ok");
@@ -400,6 +413,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     activeBoard = boardId;
     selectedId = null;
     const local = readLocal(boardId);
+    localUpdatedAt = local ? Number(local.updatedAt || 0) : 0;
     elements = local ? local.elements : [];
     deletedIds = new Set(local && Array.isArray(local.deletedIds) ? local.deletedIds : []);
     title = local && local.title ? local.title : BOARD_NAMES[boardId].title;
@@ -532,11 +546,10 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       label("СИЛЫ, ДЕЙСТВУЮЩИЕ НА ТЕЛО", 28, 38, 18);
       context.fillStyle = "#dfe8f5"; context.strokeStyle = "#5c6c82"; context.lineWidth = 3;
       context.fillRect(220, 155, 120, 80); context.strokeRect(220, 155, 120, 80);
-      drawArrow(context, 280, 195, 280, 70, "#dc5a5a", 6);
-      drawArrow(context, 280, 195, 280, 310, "#4b8be8", 6);
-      drawArrow(context, 280, 235, 280, 330, "#4b8be8", 5);
-      drawArrow(context, 280, 155, 280, 70, "#dc5a5a", 5);
-      label("N", 296, 85, 22); label("Fтяж", 296, 325, 20); label("Тело", 235, 205, 18);
+      drawArrow(context, 280, 155, 280, 72, "#dc5a5a", 6);
+      drawArrow(context, 280, 235, 280, 315, "#4b8be8", 6);
+      drawArrow(context, 340, 195, 455, 195, "#d69a35", 5);
+      label("N", 298, 88, 22); label("Fтяж", 298, 330, 20); label("Fтр", 390, 180, 20); label("Тело", 235, 205, 18);
       line(140, 275, 420, 275, "#8996a9", 3);
       label("Опора", 420, 294, 16);
     } else if (item.kind === "circuit") {
@@ -891,12 +904,6 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   root.addEventListener("change", event => {
     if (event.target.matches("[data-wb-board]")) switchBoard(event.target.value);
     if (event.target.matches("[data-wb-grid]")) { gridVisible = event.target.checked; render(); }
-  });
-  root.addEventListener("keydown", event => {
-    const tag = event.target && event.target.tagName;
-    const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(tag);
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !typing) { event.preventDefault(); undo(); }
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y" && !typing) { event.preventDefault(); redo(); }
   });
   const handleGlobalKeydown = event => {
     if (disposed || document.body.dataset.currentTab !== "whiteboard") return;
