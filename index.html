@@ -204,9 +204,6 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <div class="subject-chips" role="group" aria-label="Фильтр по предметам">
     <button type="button" class="filter-icon-button" id="filterToggle" aria-label="Дополнительные фильтры" title="Дополнительные фильтры"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 7v0M15 17v0"/><circle cx="9" cy="7" r="2.3"/><circle cx="15" cy="17" r="2.3"/></svg></button>
     <button type="button" class="subject-chip physics-chip" data-subject-chip="Физика"><i></i>Физика</button>
-    <button type="button" class="subject-chip math-chip" data-subject-chip="Математика"><i></i>Математика</button>
-    <button type="button" class="subject-chip russian-chip" data-subject-chip="Русский язык"><i></i>Русский</button>
-    <button type="button" class="subject-chip informatics-chip" data-subject-chip="Информатика"><i></i>Информатика</button>
    </div>
    <div class="board-view-switch" role="group" aria-label="Вид заданий">
     <button type="button" class="view-mode-button" data-view-mode="table"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg><span>Таблица</span></button>
@@ -216,7 +213,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   </div>
   <div class="board-extra-filters hidden" id="boardExtraFilters">
    <label>Ответственный<select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select></label>
-   <label>Предмет<select class="field" id="subjectFilter"><option value="all">Физика</option><option>Физика</option></select></label>
+   <label>Предмет<select class="field" id="subjectFilter"><option value="all">Физика</option></select></label>
    <button type="button" class="filter-reset" id="clearFiltersBtn">Сбросить фильтры</button>
   </div>
   <main class="board" id="taskBoard" data-view="board">
@@ -255,7 +252,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">19 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 19 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
-  <div class="study-shortcuts"><button type="button" data-tab="subjects">Все предметы →</button><button type="button" data-tab="knowledge">Карта знаний →</button></div><div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
+  <div class="study-shortcuts"><button type="button" data-tab="subjects">Темы физики →</button><button type="button" data-tab="knowledge">Карта знаний →</button></div><div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
   <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">РЕАЛЬНЫЕ ЭКСПЕРИМЕНТЫ</span><h2>Лабораторные работы</h2><p>Проводи опыты на настоящем оборудовании, вводи собственные измерения и получай расчёт и проверку отчёта.</p></div></div><div id="labList" class="lab-grid"></div></section>
 
  </section>
@@ -267,7 +264,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   <div id="subjectsCatalog" class="subject-grid"></div>
   <details class="panel reference-details" id="referenceDetails"><summary><span><b>Справочник формул и правил</b><small>Формулы и правила полного курса физики</small></span><span class="reference-chevron">⌄</span></summary><div class="reference-content"><div class="reference-tools"><input id="referenceSearch" class="field" type="search" placeholder="Найти формулу, правило или тему…"><select id="referenceSubject" class="field"><option value="all">Физика</option><option>Физика</option></select></div><div id="referenceResults" class="reference-results"><div class="study-empty">Открой справочник, чтобы посмотреть формулы и правила.</div></div></div></details>
   <div id="subjectDetail" class="hidden">
-   <div class="subject-detail-toolbar"><button class="btn" id="backSubjects">← Все предметы</button><button class="btn primary" id="subjectTasksBtn">Задания по предмету</button></div>
+   <div class="subject-detail-toolbar"><button class="btn" id="backSubjects">← К курсу физики</button><button class="btn primary" id="subjectTasksBtn">Задания по предмету</button></div>
    <div id="subjectDetailContent"></div>
   </div>
  </section>
@@ -323,7 +320,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
     <div class="tests-hint" id="testsHint">Выбери предмет и нажми «Начать». После теста увидишь балл и разбор ошибок.</div>
     <button class="btn primary" id="startTestBtn">Начать тестирование →</button>
    </div>
-   <div class="panel tests-history"><div class="tests-history-head"><div><span class="eyebrow">ТВОИ РЕЗУЛЬТАТЫ</span><h3>История тестов</h3></div><span id="testHistoryCount" class="tests-history-count">0 попыток</span></div><div id="testHistoryList" class="tests-history-list"><div class="study-empty">Загружаем историю…</div></div></div>
+   <div class="panel tests-history"><div class="tests-history-head"><div><span class="eyebrow">ТВОИ РЕЗУЛЬТАТЫ</span><h3>История попыток</h3></div><span id="testHistoryCount" class="tests-history-count">0 попыток</span></div><div id="testHistoryList" class="tests-history-list"><div class="study-empty">Загружаем историю…</div></div></div>
   </div>
   <div id="testRun" class="hidden">
    <div class="panel test-run-head"><div><span class="eyebrow" id="testRunSubject"></span><h2 id="testRunTitle">Тренировочный вариант</h2><p id="testRunProgress">Вопрос 1 из 10</p></div><div class="test-timer" id="testTimer">20:00</div></div>
@@ -1026,7 +1023,7 @@ function renderDailyPlan(){
   $("smartPlanSummary").textContent="План ещё не составлен.";
   root.innerHTML='<div class="study-empty">Нажми «Составить план». Я подберу задания по твоим срокам, урокам и ошибкам.</div>';
  }else{
-  const done=new Set(dailyPlan.doneIds||[]),items=(dailyPlan.items||[]).filter(x=>x.subject==="Физика");
+  const done=new Set(dailyPlan.doneIds||[]),items=(dailyPlan.items||[]).filter(x=>x.subject==="Физика"&&!String(x.refId||"").startsWith("physics-w"));
   const completed=items.filter(x=>done.has(x.id)).length;
   $("smartPlanSummary").textContent=completed+" из "+items.length+" шагов выполнено · "+new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
   root.innerHTML=items.length?items.map((item,i)=>'<div class="smart-plan-item '+(done.has(item.id)?"is-done":"")+'"><label class="smart-plan-check"><input type="checkbox" data-plan-done="'+esc(item.id)+'" '+(done.has(item.id)?"checked":"")+'><span></span></label><div class="smart-plan-copy"><small>ШАГ '+(i+1)+' · '+esc(item.subject||"Подготовка")+'</small><b>'+esc(item.title)+'</b><p>'+esc(item.detail||"")+'</p></div><button type="button" class="btn" data-plan-action="'+esc(item.id)+'">'+(item.kind==="test"?"Тест":item.kind==="lesson"?"Урок":item.kind==="mistake"?"Ошибки":"Задание")+'</button></div>').join(""):'<div class="study-empty">На сегодня всё. Можно отдохнуть или добавить задание на доску.</div>';
