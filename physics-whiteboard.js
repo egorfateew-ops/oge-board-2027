@@ -194,6 +194,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   let disposed = false;
   let drawing = null;
   let dragState = null;
+  let selectedId = null;
   let erasing = false;
   let eraserChanged = false;
   let lastRemoteUpdate = 0;
@@ -349,15 +350,21 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     stopSnapshot = onSnapshot(ref, snap => {
       if (disposed || activeBoard !== boardId) return;
       if (!snap.exists()) {
-        setDoc(ref, {
-          boardId,
-          title: BOARD_NAMES[boardId].title,
-          elements: [],
-          deletedIds: [],
-          updatedBy: user.uid,
-          updatedByName: member ? member.name : "Ученик",
-          updatedAt: serverTimestamp ? serverTimestamp() : Date.now()
-        }, { merge: true }).catch(error => setStatus("Нет синхронизации", "offline"));
+        if (elements.length || deletedIds.size) {
+          dirty = true;
+          editRevision += 1;
+          saveToCloud(boardId);
+        } else {
+          setDoc(ref, {
+            boardId,
+            title: title || BOARD_NAMES[boardId].title,
+            elements: [],
+            deletedIds: [],
+            updatedBy: user.uid,
+            updatedByName: member ? member.name : "Ученик",
+            updatedAt: serverTimestamp ? serverTimestamp() : Date.now()
+          }, { merge: true }).catch(error => setStatus("Нет синхронизации", "offline"));
+        }
         return;
       }
       const data = snap.data();
@@ -391,6 +398,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   }
   function loadBoard(boardId) {
     activeBoard = boardId;
+    selectedId = null;
     const local = readLocal(boardId);
     elements = local ? local.elements : [];
     deletedIds = new Set(local && Array.isArray(local.deletedIds) ? local.deletedIds : []);
@@ -615,8 +623,8 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     drawGrid(ctx);
     elements.forEach(item => drawElement(ctx, item));
     if (drawing) drawElement(ctx, drawing);
-    if (dragState && dragState.id) {
-      const selected = elements.find(item => item.id === dragState.id);
+    if (selectedId) {
+      const selected = elements.find(item => item.id === selectedId);
       if (selected) renderSelection(ctx, selected);
     }
     q("[data-wb-element-count]").textContent = elements.length + " " + (elements.length === 1 ? "объект" : elements.length < 5 ? "объекта" : "объектов");
@@ -664,6 +672,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     const target = hitTest(point, 28);
     if (!target) return false;
     elements = elements.filter(item => item.id !== target.id);
+    if (selectedId === target.id) selectedId = null;
     deletedIds.add(target.id);
     eraserChanged = true;
     render();
@@ -767,6 +776,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   function clearBoard() {
     if (!elements.length) return;
     if (!window.confirm("Очистить все объекты на этой доске?")) return;
+    selectedId = null;
     commit([]);
     toast("Доска очищена. Изменение сохранится автоматически.");
   }
@@ -789,9 +799,11 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     } else if (currentTool === "select") {
       const target = hitTest(point, 22);
       if (target) {
+        selectedId = target.id;
         dragState = { id: target.id, start: point, original: clone(target), initialElements: clone(elements), moved: false };
         render();
       } else {
+        selectedId = null;
         dragState = null; render();
       }
     } else if (currentTool === "graph") {
@@ -886,21 +898,22 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !typing) { event.preventDefault(); undo(); }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y" && !typing) { event.preventDefault(); redo(); }
   });
-  window.addEventListener("keydown", event => {
+  const handleGlobalKeydown = event => {
     if (disposed || document.body.dataset.currentTab !== "whiteboard") return;
     const tag = event.target && event.target.tagName;
     if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); undo(); }
     else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y") { event.preventDefault(); redo(); }
     else if (event.key === "Delete" || event.key === "Backspace") {
-      if (dragState && dragState.id) {
-        const next = elements.filter(item => item.id !== dragState.id);
-        dragState = null; commit(next);
+      if (selectedId) {
+        const next = elements.filter(item => item.id !== selectedId);
+        selectedId = null; dragState = null; commit(next);
       }
     } else if (event.key.toLowerCase() === "p") setTool("pen");
     else if (event.key.toLowerCase() === "e") setTool("eraser");
     else if (event.key.toLowerCase() === "t") setTool("text");
-  });
+  };
+  window.addEventListener("keydown", handleGlobalKeydown);
 
   boardSelect.value = activeBoard;
   q("[data-wb-grid]").checked = gridVisible;
@@ -914,7 +927,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       if (saveTimer) clearTimeout(saveTimer);
       if (dirty) saveToCloud(activeBoard);
       if (stopSnapshot) stopSnapshot();
-      window.removeEventListener("keydown", () => {});
+      window.removeEventListener("keydown", handleGlobalKeydown);
     }
   };
 }
