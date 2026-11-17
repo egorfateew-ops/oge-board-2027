@@ -2002,3 +2002,9 @@ body[data-theme="dark"] .focus-clock{color:var(--accent)!important}
 body[data-theme="dark"] .duel-card.waiting{border-left-color:#b99b50!important}
 body[data-theme="dark"] .duel-card.active{border-left-color:#9c82c2!important}
 body[data-theme="dark"] .duel-card.completed{border-left-color:#6aab86!important}
+
+@media(max-width:1280px) and (min-width:851px){
+ .header.topbar{grid-template-columns:minmax(190px,1fr) minmax(220px,1fr);gap:12px}
+ .topbar-search{grid-column:2;grid-row:1;justify-self:end}
+ .header.topbar .actions{grid-column:1/-1;grid-row:2;justify-content:flex-end}
+}
