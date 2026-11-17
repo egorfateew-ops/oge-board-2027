@@ -263,7 +263,8 @@ export function mountLabSimulator(container,id,options = {}) {
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
-  let journalRows = [];
+  let journalRows = Array.isArray(saved.journal) ? saved.journal : [];
+  if(!journalRows.length){try{const cached=JSON.parse(localStorage.getItem("oge-lab-journal-"+item.id)||"[]");if(Array.isArray(cached))journalRows=cached;}catch(error){}}
   let lastResult = null;
   let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:9.3,magnetInside:false,needle:0,inductionObserved:0,inductionLog:[],measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
@@ -379,6 +380,7 @@ export function mountLabSimulator(container,id,options = {}) {
         table.innerHTML='<table class="vlab-journal-table"><thead><tr><th>№</th><th>Опыт</th>'+columns.map(v=>'<th>'+esc(v)+'</th>').join("")+'</tr></thead><tbody>'+journalRows.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.label)+'</td>'+columns.map(key=>'<td>'+esc(v.values[key]??"—")+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
       }
     }
+    try{localStorage.setItem("oge-lab-journal-"+item.id,JSON.stringify(journalRows));}catch(error){}
     renderJournalGraph();
   };
   const updateWorkflow = () => {
@@ -395,7 +397,7 @@ export function mountLabSimulator(container,id,options = {}) {
     journalRows.push(...fresh);renderJournal();updateWorkflow();
     showResult("В журнал добавлено измерений: "+fresh.length+". Результаты можно выгрузить в CSV или PDF.",true);
   };
-  const clearJournal = () => {journalRows=[];lastResult=null;renderJournal();updateWorkflow();};
+  const clearJournal = () => {journalRows=[];lastResult=null;try{localStorage.removeItem("oge-lab-journal-"+item.id);}catch(error){}renderJournal();updateWorkflow();};
   const exportJournalCsv = () => {
     if(!journalRows.length)addMeasurement();
     if(!journalRows.length)return;
