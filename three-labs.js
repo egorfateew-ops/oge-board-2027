@@ -119,7 +119,7 @@ export async function mountThreeLab(host,id,options={}){
  const addDigitalScale=(x,z)=>{
   box(1.5,.18,1.05,materials.dark,x,.34,z);box(1.3,.08,.92,materials.steel,x,.46,z);
   box(.58,.12,.24,materials.black,x,.57,z+.22);addDisplay("scale","0,0 г",x,.78,z+.43);
-  box(.08,.08,.08,materials.red,x-.48,.58,z+.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.15,z+1.05,.65);
+  box(.08,.08,.08,materials.red,x-.48,.58,z+.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.76,z+1.12,.65);
  };
  const addBeaker=(x,z,waterLevel=.85,volumeText="40 мл")=>{
   cylinder(.55,.55,1.25,materials.glass,x,.95,z,48);
