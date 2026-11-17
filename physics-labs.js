@@ -279,19 +279,19 @@ export function mountLabSimulator(container,id,options = {}) {
     if(sample){sample.classList.toggle("in-water",state.submerged);sample.classList.toggle("on-scale",state.massMeasured&&!state.submerged);}
   };
   const updateSpring = () => {
-    const extension=state.mass/1000*9.8/20*1000;
+    const extension=state.mass/1000*10/20*1000;
     const coil=q("[data-spring-coil]"),hook=q('[data-dropzone="hook"]');
     if(coil)coil.style.height=(70+extension)+"px";
     if(hook)hook.style.top=(155+extension)+"px";
     setRead("mass",state.mass?state.mass+" г":"—");
     setRead("extension",state.mass?fmt(extension/10,2)+" см":"—");
-    setRead("force",state.mass?fmt(state.mass/1000*9.8,2)+" Н":"—");
+    setRead("force",state.mass?fmt(state.mass/1000*10,2)+" Н":"—");
     const weight=q('[data-drag-object="weight"][data-mass="'+state.mass+'"]');
     if(weight&&state.mass){weight.style.left=(hook.offsetLeft+18)+"px";weight.style.top=(hook.offsetTop+25)+"px";}
   };
   const updateArch = () => {
-    setRead("dyna-value",state.submerged?"3,41 Н":"3,90 Н");
-    setRead("water-force",state.submerged?"3,41 Н":"ожидает погружения");
+    setRead("dyna-value",state.submerged?"3,40 Н":"3,90 Н");
+    setRead("water-force",state.submerged?"3,40 Н":"ожидает погружения");
     const body=q('[data-drag-object="body"]');
     if(body)body.classList.toggle("in-water",state.submerged);
   };
@@ -343,7 +343,7 @@ export function mountLabSimulator(container,id,options = {}) {
   const updatePendulum = () => {
     const slider=q('[data-vlab-control="pendulum-length"]');
     const length=slider?Number(slider.value):50;
-    const period=2*Math.PI*Math.sqrt((length/100)/9.81);
+    const period=2*Math.PI*Math.sqrt((length/100)/10);
     setRead("pendulum-length",length+" см");
     if(!state.pendulumStarted)setRead("pendulum-time",state.pendulumElapsed?fmt(state.pendulumElapsed,2)+" с":"0,00 с");
     const string=q("[data-pendulum-string]"),bob=q('[data-drag-object="bob"]');
@@ -366,7 +366,7 @@ export function mountLabSimulator(container,id,options = {}) {
   const updateFriction = () => {
     const massInput=q('[data-vlab-control="friction-mass"]'),pullInput=q('[data-vlab-control="pull-force"]');
     const mass=massInput?Number(massInput.value):200,pull=pullInput?Number(pullInput.value):0;
-    const force=.25*(mass/1000)*9.81;
+    const force=.25*(mass/1000)*10;
     setRead("friction-mass",mass+" г");setRead("pull-force",fmt(pull,2)+" Н");setRead("friction-force",fmt(force,2)+" Н");
     state.friction={mass:mass/1000,pull,force,sliding:pull>=force};
     const block=q('[data-drag-object="frictionBlock"]');
@@ -546,12 +546,12 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="spring"){
       values.mass=fieldValue("mass");values.extension=fieldValue("extension");
       if(!state.mass||!(values.mass>0&&values.extension>0)){showResult("Подвесь груз и внеси массу с удлинением по шкале.",false);return;}
-      const k=(values.mass/1000*9.81)/(values.extension/100),ok=Math.abs(k-20)<2;
+      const k=(values.mass/1000*10)/(values.extension/100),ok=Math.abs(k-20)<2;
       result={valid:true,score:ok?3:1,value:fmt(k,1)+" Н/м",detail:"F = mg = "+fmt(values.mass/1000*9.81,2)+" Н. k = F/Δl = "+fmt(k,1)+" Н/м. Сравни значение с жёсткостью пружины в установке."};
     } else if(item.id==="archimedes"){
       values.air=fieldValue("air");values.water=fieldValue("water");
       if(!state.submerged||!(values.air>values.water&&values.water>=0)){showResult("Погрузи тело в воду и запиши два показания динамометра.",false);return;}
-      const fa=values.air-values.water,ok=Math.abs(fa-.49)<.08;
+      const fa=values.air-values.water,ok=Math.abs(fa-.5)<.08;
       result={valid:true,score:ok?3:1,value:fmt(fa,2)+" Н",detail:"FА = Fвозд − Fв воде = "+fmt(values.air,2)+" − "+fmt(values.water,2)+" = "+fmt(fa,2)+" Н. Выталкивающая сила направлена вверх."};
     } else if(item.id==="lever"){
       values.m1=fieldValue("m1");values.l1=fieldValue("l1");values.m2=fieldValue("m2");values.l2=fieldValue("l2");
