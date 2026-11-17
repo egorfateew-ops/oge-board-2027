@@ -522,7 +522,7 @@ export function mountLabSimulator(container,id,options = {}) {
   const transferReadings = () => {
     const put=(key,value)=>{
       const input=q('[data-vlab-field="'+key+'"]');
-      if(input&&value!==undefined&&value!==null&&Number.isFinite(Number(value)))input.value=String(Number(value).toFixed(3)).replace(/\.?0+$/,"");
+      if(input&&value!==undefined&&value!==null&&Number.isFinite(Number(value)))input.value=String(Number(Number(value).toFixed(3)));
     };
     let transferred=0;
     if(item.id==="density"){
