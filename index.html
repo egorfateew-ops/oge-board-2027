@@ -1753,7 +1753,7 @@ function buildPhysicsCourseSchedule(){
  const daysUntilMonday=(8-cursor.getDay())%7||7;
  cursor.setDate(cursor.getDate()+daysUntilMonday);
  for(let wi=0;wi<physicsWeeks.length;wi++){
-  const week=physicsWeeks[wi],lab=physicsLabs[wi];
+  const week=physicsWeeks[wi],labOrder=["density","motion","spring","archimedes","lever","pendulum","heat","ohm","induction","lens","uncertainty","friction"],lab=physicsLabById[labOrder[wi]];
   for(let di=0;di<6;di++){
    const date=dateKey(cursor);
    let item;
