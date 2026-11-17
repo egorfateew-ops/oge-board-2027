@@ -704,20 +704,55 @@ async function checkPractice(index){
  try{await setDoc(doc(db,'rooms','oge2027','progress',user.uid),{practiceResults:next,updatedAt:serverTimestamp()},{merge:true});practiceResults=next;if(!correct)await recordMistake({subject:"Физика",topic:l.title,topicId:l.id,prompt:q.prompt,given:value,answer:q.answer,explain:q.explain,type:q.type,options:q.options||[],tolerance:q.tolerance,unit:q.unit,source:"physics-practice"});renderStudyContent();toast(correct?'Верно! Отличная работа':'Пока неверно — прочитай объяснение и попробуй ещё раз')}catch(e){toast('Не удалось сохранить результат: '+e.message)}
 }
 function renderLabs(){
- $('labList').innerHTML=physicsLabs.map(l=>'<article class="lab-card" data-lab-card="'+l.id+'"><div class="lab-top"><div><span class="eyebrow">'+esc(l.kit)+'</span><h3>'+esc(l.title)+'</h3></div><span class="lab-icon">⚗</span></div><p>'+esc(l.objective)+'</p><div class="lab-scheme">'+esc(l.scheme)+'</div><div class="lab-controls">'+l.controls.map(c=>'<label class="lab-control"><span>'+esc(c.label)+'</span><b data-lab-value="'+c.key+'">'+c.value+' '+esc(c.unit)+'</b><input type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'" data-lab="'+l.id+'" data-key="'+c.key+'"></label>').join('')+'</div><div class="lab-result" data-lab-result="'+l.id+'"></div><div class="sub">Формула: <b>'+esc(l.formula)+'</b></div></article>').join('');
- physicsLabs.forEach(l=>updateLab(l.id));
+ $("labList").innerHTML=physicsLabs.map(l=>{
+  const fields=l.fields.map(f=>'<label class="lab-measure-field"><span>'+esc(f.label)+'</span><div><input class="field" type="number" step="any" inputmode="decimal" data-lab-field="'+esc(f.key)+'" placeholder="Введи измерение"><small>'+esc(f.unit)+'</small></div></label>').join("");
+  const equipment=l.equipment.map(x=>"<li>"+esc(x)+"</li>").join("");
+  const steps=l.steps.map(x=>"<li>"+esc(x)+"</li>").join("");
+  return '<article class="panel lab-card" data-lab-card="'+esc(l.id)+'">'+
+   '<div class="lab-top"><div><span class="eyebrow">'+esc(l.kit)+'</span><h3>'+esc(l.title)+'</h3></div><span class="lab-icon">⚗</span></div>'+
+   '<p>'+esc(l.objective)+'</p>'+
+   '<div class="lab-section"><b>Оборудование</b><ul>'+equipment+'</ul></div>'+
+   '<div class="lab-section"><b>Порядок выполнения</b><ol>'+steps+'</ol></div>'+
+   '<div class="lab-safety"><b>Безопасность</b><p>'+esc(l.safety)+'</p></div>'+
+   '<div class="lab-measurements"><div class="lab-measurements-head"><b>Твои реальные измерения</b><small>Не подставляй примерные цифры — внеси показания с приборов.</small></div><div class="lab-measure-grid">'+fields+'</div></div>'+
+   '<div class="lab-checklist"><b>Проверь оформление отчёта</b>'+
+    '<label><input type="checkbox" data-lab-check="scheme"> Нарисовал схему установки</label>'+
+    '<label><input type="checkbox" data-lab-check="uncertainty"> Указал единицы и погрешность измерений</label>'+
+    '<label><input type="checkbox" data-lab-check="conclusion"> Сформулировал вывод по результатам опыта</label>'+
+   '</div>'+
+   '<div class="lab-formula"><span>Формула</span><b>'+esc(l.formula)+'</b></div>'+
+   '<button type="button" class="btn primary lab-run-button" data-lab-run="'+esc(l.id)+'">Проверить измерения и сохранить отчёт</button>'+
+   '<div class="lab-result" data-lab-result="'+esc(l.id)+'"><span>Результат появится после ввода измерений.</span></div>'+
+  '</article>';
+ }).join("");
 }
-function updateLab(id){
- const lab=physicsLabs.find(x=>x.id===id);if(!lab)return;
- const root=$('labList').querySelector('[data-lab-card="'+id+'"]');if(!root)return;
- const v={};lab.controls.forEach(c=>{const el=root.querySelector('[data-key="'+c.key+'"]');v[c.key]=Number(el.value);root.querySelector('[data-lab-value="'+c.key+'"]').textContent=v[c.key]+' '+c.unit});
- let title='',detail='',value='';
- if(id==='density'){const rho=(v.mass/1000)/(v.volume/1000000);title='Плотность';value=rho.toLocaleString('ru-RU',{maximumFractionDigits:0})+' кг/м³';detail='ρ = '+(v.mass/1000)+' / '+(v.volume/1000000).toFixed(6)+' = '+value+'. Сравни полученное значение с плотностью известных веществ.'}
- if(id==='spring'){const force=v.mass/1000*9.8,k=force/(v.extension/100);title='Жёсткость пружины';value=k.toLocaleString('ru-RU',{maximumFractionDigits:1})+' Н/м';detail='F = mg = '+force.toFixed(2)+' Н; Δl = '+(v.extension/100)+' м; k = F / Δl = '+value+'.'}
- if(id==='ohm'){const current=v.voltage/v.resistance,p=v.voltage*current;title='Сила тока и мощность';value='I = '+current.toLocaleString('ru-RU',{maximumFractionDigits:3})+' А';detail='I = U/R = '+v.voltage+'/'+v.resistance+' = '+value+'. Мощность P = UI = '+p.toLocaleString('ru-RU',{maximumFractionDigits:2})+' Вт.'}
- if(id==='lens'){const f=v.object*v.image/(v.object+v.image),d=100/f;title='Фокусное расстояние';value=f.toLocaleString('ru-RU',{maximumFractionDigits:2})+' см';detail='F = ab/(a+b) = '+v.object+'·'+v.image+'/('+v.object+'+'+v.image+') = '+value+'. Оптическая сила ≈ '+d.toFixed(2)+' дптр.'}
- if(id==='lever'){const left=v.massLeft*v.armLeft,right=v.massRight*v.armRight;title='Моменты сил';value=left===right?'Равновесие':'Неравновесие';detail='Слева: '+left+' г·см. Справа: '+right+' г·см. '+(left===right?'Моменты равны — рычаг в равновесии.':left>right?'Левая сторона перевешивает.':'Правая сторона перевешивает.')}
- root.querySelector('[data-lab-result="'+id+'"]').innerHTML='<span>'+title+'</span><strong>'+value+'</strong><p>'+detail+'</p>';
+async function runLab(id){
+ const lab=physicsLabById[id],root=$("labList").querySelector('[data-lab-card="'+id+'"]');
+ if(!lab||!root)return;
+ const values={};
+ for(const field of lab.fields){
+  const input=root.querySelector('[data-lab-field="'+field.key+'"]');
+  if(!input||input.value.trim()===""){root.querySelector('[data-lab-result="'+id+'"]').innerHTML='<span class="lab-error">Заполни все поля реальными измерениями.</span>';return}
+  values[field.key]=Number(input.value.replace(",","."));
+  if(!Number.isFinite(values[field.key])){root.querySelector('[data-lab-result="'+id+'"]').innerHTML='<span class="lab-error">Проверь введённые числа.</span>';return}
+ }
+ const result=lab.calculate(values);
+ const checks={
+  scheme:root.querySelector('[data-lab-check="scheme"]').checked,
+  uncertainty:root.querySelector('[data-lab-check="uncertainty"]').checked,
+  conclusion:root.querySelector('[data-lab-check="conclusion"]').checked
+ };
+ const completed=Object.values(checks).filter(Boolean).length;
+ const target=root.querySelector('[data-lab-result="'+id+'"]');
+ if(!result.valid){target.innerHTML='<span class="lab-error">'+esc(result.error||"Проверь измерения.")+'</span>';return}
+ target.innerHTML='<div class="lab-result-value"><span>Результат расчёта</span><strong>'+esc(result.value)+'</strong></div><p>'+esc(result.detail)+'</p><div class="lab-report-status"><b>Оформление отчёта: '+completed+'/3</b><span>'+(completed===3?"Все пункты отмечены.":"Дополни схему, погрешность и вывод в тетради.")+'</span></div><small>Измерения сохранены только после нажатия кнопки. Сайт проверяет расчёт, но не может подтвердить, что измерения действительно сняты с оборудования.</small>';
+ try{
+  await addDoc(collection(db,"rooms","oge2027","labReports"),{
+   labId:id,labTitle:lab.title,values,result:{value:result.value,detail:result.detail,numeric:result.numeric,unit:result.unit},
+   checks,checkCount:completed,userId:user.uid,userName:member.name,createdAt:serverTimestamp()
+  });
+  toast("Отчёт лабораторной сохранён");
+ }catch(err){toast("Расчёт готов, но отчёт не удалось сохранить: "+err.message)}
 }
 
 $("subjectsCatalog").addEventListener("click",e=>{const b=e.target.closest("[data-open-subject]");if(b)openSubject(b.dataset.openSubject)});
@@ -739,7 +774,7 @@ $("calendarAddBtn").addEventListener("click",()=>{openModal(null,false);$("due")
 $('studyWeeks').addEventListener('click',e=>{const item=e.target.closest('[data-week]');if(!item)return;studyWeekIndex=Number(item.dataset.week);studyLessonIndex=0;renderStudyWeeks();renderStudyLessons();renderStudyContent()});
 $('studyLessons').addEventListener('click',e=>{const item=e.target.closest('[data-lesson]');if(!item)return;studyLessonIndex=Number(item.dataset.lesson);renderStudyLessons();renderStudyContent()});
 $('studyContent').addEventListener('click',e=>{const b=e.target.closest('[data-practice-check]');if(b)checkPractice(Number(b.dataset.practiceCheck))});
-$('labList').addEventListener('input',e=>{const input=e.target.closest('[data-lab]');if(input)updateLab(input.dataset.lab)});
+$('labList').addEventListener('click',e=>{const button=e.target.closest('[data-lab-run]');if(button)runLab(button.dataset.labRun)});
 function moveStudy(delta){let wi=studyWeekIndex,li=studyLessonIndex+delta;if(li<0){wi--;if(wi<0)return;li=physicsWeeks[wi].lessons.length-1}else if(li>=physicsWeeks[wi].lessons.length){wi++;if(wi>=physicsWeeks.length)return;li=0}studyWeekIndex=wi;studyLessonIndex=li;renderStudyWeeks();renderStudyLessons();renderStudyContent()}
 function renderStudy(){renderStudyWeeks();renderStudyLessons();renderStudyContent();renderLabs();updateStudyProgress()}
 function listenProgress(){if(stopProgress)stopProgress();stopProgress=onSnapshot(doc(db,'rooms','oge2027','progress',user.uid),snap=>{completedLessons=new Set(snap.exists()?(snap.data().completedLessons||[]):[]);completedTopics=new Set(snap.exists()?(snap.data().completedTopics||[]):[]);practiceResults=snap.exists()?(snap.data().practiceResults||{}):{};topicPracticeResults=snap.exists()?(snap.data().topicPracticeResults||{}):{};studyNotes=snap.exists()?(snap.data().studyNotes||{}):{};updateStudyProgress();renderStudyLessons();renderStudyContent();if(activeSubjectName)renderSubjectDetail();if(!$("knowledgePage").classList.contains("hidden"))renderKnowledgeMap();if(!$("statsPage").classList.contains("hidden"))renderStats()},err=>toast('Ошибка загрузки прогресса: '+err.message))}
