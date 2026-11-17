@@ -171,9 +171,9 @@ export async function mountThreeLab(host,id,options={}){
   box(7,.18,.8,materials.dark,0,.37,0);box(6.7,.035,.55,materials.steel,0,.49,0);
   for(let i=0;i<=10;i++){const x=-3.1+i*.62;box(.025,.09,.58,materials.black,x,.55,0);}
   box(.12,.55,.8,materials.green,-3.2,.7,0);box(.12,.55,.8,materials.red,3.2,.7,0);
-  const cart=new THREE.Group();cart.position.set(-2.8,.75,0);scene.add(cart);
+  const cart=new THREE.Group();cart.position.set(-2.8,.62,0);scene.add(cart);
   box(.95,.2,.48,materials.blue,0,.12,0,cart);box(.35,.23,.38,materials.white,.05,.34,0,cart);
-  for(const x of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,x,0,0,cart).rotation.x=Math.PI/2;
+  for(const x of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,x,0,0,cart).rotation.y=Math.PI/2;
   addDrag(cart,"cart","x");objects.cart=cart;
   setReadouts([["Путь","0,00 м"],["Время","0,00 с"],["Скорость","—"]]);
   setData({cartMoved:false,cartTime:0,distance:1});
@@ -201,7 +201,9 @@ export async function mountThreeLab(host,id,options={}){
   const dyna=cylinder(.22,.22,.9,materials.white,-1.3,2.8,0);torus(.2,.04,materials.steel,-1.3,3.28,0);
   addDisplay("dyna","3,90 Н",-1.3,2.9,.25);
   const beaker=addBeaker(1.8,0,1.0);
-  const body=cylinder(.28,.28,.65,materials.steel,-1.3,2.0,0,32);torus(.16,.04,materials.steel,-1.3,2.36,0);addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
+  const body=new THREE.Group();body.position.set(-1.3,2.0,0);scene.add(body);
+  cylinder(.28,.28,.65,materials.steel,0,0,0,32,body);torus(.16,.04,materials.steel,0,.36,0);
+  addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
   objects.bodyString=cylinder(.02,.02,1,materials.steel,-1.3,2.45,0,10);orientRod(objects.bodyString,[-1.3,2.35,0],[-1.3,2.36,0]);
   setReadouts([["Вес в воздухе","3,90 Н"],["Вес в воде","ожидает"],["Сила Архимеда","—"]]);
   setData({submerged:false,air:3.9,water:3.4});
@@ -260,7 +262,9 @@ export async function mountThreeLab(host,id,options={}){
  function buildLens(){
   box(7,.1,.25,materials.dark,0,.35,0);
   makeRuler(-3,3,.3,.44);
-  const object=cylinder(.12,.12,1.1,materials.yellow,-2,.95,0,24);sphere(.18,materials.yellow,-2,1.55,0);addDrag(object,"object","x");objects.object=object;
+  const object=new THREE.Group();object.position.set(-2,.95,0);scene.add(object);
+  cylinder(.12,.12,1.1,materials.yellow,0,0,0,24,object);sphere(.18,materials.yellow,0,.6,0,object);
+  addDrag(object,"object","x");objects.object=object;
   const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;
   const screen=new THREE.Group();screen.position.set(2.6,1.1,0);scene.add(screen);
   box(.12,1.4,.9,materials.white,0,0,0,screen);
@@ -274,7 +278,8 @@ export async function mountThreeLab(host,id,options={}){
  function buildUncertainty(){
   box(6,.12,.6,materials.white,0,.38,0);
   makeRuler(-2.5,2.5,0,.47);
-  const marker=box(.12,.85,.16,materials.red,0,.95,0);sphere(.12,materials.red,0,1.42,0);addDrag(marker,"marker","x");objects.marker=marker;
+  const marker=new THREE.Group();marker.position.set(0,.95,0);scene.add(marker);
+  box(.12,.85,.16,materials.red,0,0,0,marker);sphere(.12,materials.red,0,.47,0,marker);addDrag(marker,"marker","x");objects.marker=marker;
   measurements=[];
   addControl('<button type="button" data-three-action="record-measurement">＋ Записать измерение</button><small data-three-count>0 / 5 измерений</small>');
   setReadouts([["Показание","2,5 см"],["Серия","0 / 5"],["Среднее","—"]]);
