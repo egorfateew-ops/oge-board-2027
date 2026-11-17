@@ -68,6 +68,10 @@ export async function mountThreeLab(host,id,options={}){
   const object=cylinder(r,r,delta.length(),material,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,12,parent);
   object.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());return object;
  };
+ function orientRod(mesh,a,b){
+  const start=new THREE.Vector3(a[0],a[1],a[2]),end=new THREE.Vector3(b[0],b[1],b[2]),delta=end.clone().sub(start);
+  mesh.position.copy(start.add(end).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.clone().normalize());mesh.scale.y=delta.length();
+ }
  const torus=(radius,tube,material,x,y,z,rotation=null)=>{
   const object=add(new THREE.TorusGeometry(radius,tube,12,64),material,x,y,z);
   if(rotation)object.rotation.set(rotation[0],rotation[1],rotation[2]);return object;
@@ -203,7 +207,7 @@ export async function mountThreeLab(host,id,options={}){
   addStand(-1.8,0);
   const pivot=new THREE.Vector3(-.7,3.7,0);objects.pivot=pivot;
   const bob=sphere(.34,materials.blueSoft,.1,2.45,0);addDrag(bob,"bob","xyz");objects.bob=bob;
-  const string=rod([pivot.x,pivot.y,pivot.z],[bob.position.x,bob.position.y,bob.position.z],.025,materials.steel);objects.string=string;
+  const string=cylinder(.025,.025,1,materials.steel,pivot.x,(pivot.y+bob.position.y)/2,0,10);objects.string=string;orientRod(string,[pivot.x,pivot.y,pivot.z],[bob.position.x,bob.position.y,0]);
   animationState.length=50;animationState.period=2*Math.PI*Math.sqrt(.5/10);
   addControl('<label class="vlab-three-control"><span>Длина нити <b data-three-length>50 см</b></span><input type="range" min="20" max="100" step="5" value="50" data-three-control="length"></label><div class="vlab-three-control-actions"><button type="button" data-three-action="pendulum-start">▶ Запустить</button><button type="button" data-three-action="pendulum-stop">■ Остановить</button></div>');
   setReadouts([["Длина","50 см"],["Время","0,00 с"],["Колебаний","0"]]);
@@ -263,7 +267,7 @@ export async function mountThreeLab(host,id,options={}){
   rod([-.7,1.05,0],[-1.4,1.05,0],.045,materials.steel);cylinder(.2,.2,.25,materials.dark,-1.55,1.05,0);
   addControl('<label class="vlab-three-control"><span>Масса бруска <b data-three-mass>200 г</b></span><input type="range" min="100" max="600" step="50" value="200" data-three-control="mass"></label><label class="vlab-three-control"><span>Сила тяги <b data-three-pull>0,00 Н</b></span><input type="range" min="0" max="4" step="0.05" value="0" data-three-control="pull"></label>');
   setReadouts([["Масса","200 г"],["Сила тяги","0,00 Н"],["Сила трения","0,50 Н"],["Состояние","покой"]]);
-  data={mass:.2,pull:0,force:.5,sliding:false};renderReadouts();
+  data={mass:.2,pull:0,force:0,sliding:false};renderReadouts();
  }
  const builders={density:buildDensity,motion:buildMotion,spring:buildSpring,archimedes:buildArchimedes,lever:buildLever,pendulum:buildPendulum,heat:buildHeat,ohm:buildOhm,induction:buildInduction,lens:buildLens,uncertainty:buildUncertainty,friction:buildFriction};
  if(builders[id])builders[id]();else buildDensity();
@@ -468,16 +472,13 @@ export async function mountThreeLab(host,id,options={}){
   const L=animationState.length/100*2.5,period=animationState.period||2*Math.PI*Math.sqrt((animationState.length/100)/10);
   const amplitude=animationState.amplitude||.28,angle=animationState.running?amplitude*Math.cos(2*Math.PI*t/period):amplitude;
   objects.bob.position.set(objects.pivot.x+Math.sin(angle)*L,objects.pivot.y-Math.cos(angle)*L,0);
-  if(objects.string){
-   scene.remove(objects.string);objects.string.geometry.dispose();
-  }
-  objects.string=rod([objects.pivot.x,objects.pivot.y,objects.pivot.z],[objects.bob.position.x,objects.bob.position.y,objects.bob.position.z],.025,materials.steel);
+  orientRod(objects.string,[objects.pivot.x,objects.pivot.y,objects.pivot.z],[objects.bob.position.x,objects.bob.position.y,objects.bob.position.z]);
  };
  const onAction=event=>{
   const button=event.target.closest("[data-three-action]");if(!button)return;
   const action=button.dataset.threeAction;
   if(action==="camera"){theta=Math.PI*.25;phi=1.02;radius=10;updateCamera();return;}
-  if(action==="reset"){if(options.onReset)options.onReset();else status("Чтобы полностью сбросить опыт, нажми «Сбросить опыт» над стендом.");return;}
+  if(action==="reset"){mountThreeLab(host,id,options);return;}
   if(action==="retry"){mountThreeLab(host,id,options);return;}
   if(action==="pendulum-start"&&id==="pendulum"){
    if(animationState.running)return;
@@ -501,7 +502,6 @@ export async function mountThreeLab(host,id,options={}){
   }
  };
  controls.addEventListener("input",onControl);
- controls.addEventListener("click",onAction);
  host.addEventListener("click",onAction);
  const resize=()=>{
   const width=Math.max(280,canvasHost.clientWidth||host.clientWidth||700),height=Math.max(300,stage.clientHeight||480);
