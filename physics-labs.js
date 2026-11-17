@@ -575,13 +575,18 @@ export function mountLabSimulator(container,id,options = {}) {
       if(host3d)host3d.hidden=false;if(scene2d)scene2d.hidden=true;if(tip)tip.hidden=true;
       q("[data-vlab-action=mode-3d]")?.classList.add("active");q("[data-vlab-action=mode-3d]")?.setAttribute("aria-pressed","true");
       q("[data-vlab-action=mode-2d]")?.classList.remove("active");q("[data-vlab-action=mode-2d]")?.setAttribute("aria-pressed","false");
-      if(!container._vlabThree){
-        try{
-          const {mountThreeLab}=await import("./three-labs.js");
-          if(signal.aborted)return;
-          container._vlabThree=await mountThreeLab(host3d,item.id,{onUpdate:syncThree});
-          if(signal.aborted&&container._vlabThree?.dispose){container._vlabThree.dispose();container._vlabThree=null;}
-        }catch(error){showResult("Не удалось запустить 3D-лабораторию: "+esc(error?.message||error),false);}
+      if(!container._vlabThree&&!container._vlabThreeLoading){
+        const modeButton=q("[data-vlab-action=mode-3d]");if(modeButton)modeButton.disabled=true;
+        container._vlabThreeLoading=(async()=>{
+          try{
+            const {mountThreeLab}=await import("./three-labs.js");
+            if(signal.aborted)return;
+            container._vlabThree=await mountThreeLab(host3d,item.id,{onUpdate:syncThree});
+            if(signal.aborted&&container._vlabThree?.dispose){container._vlabThree.dispose();container._vlabThree=null;}
+          }catch(error){showResult("Не удалось запустить 3D-лабораторию: "+esc(error?.message||error),false);}
+          finally{container._vlabThreeLoading=null;if(modeButton&&!signal.aborted)modeButton.disabled=false;}
+        })();
+        await container._vlabThreeLoading;
       }
       return;
     }
