@@ -19,6 +19,7 @@ export async function mountThreeLab(host,id,options={}){
   THREE=await import(THREE_URL);
  }catch(error){
   loading.innerHTML='<b>Не удалось загрузить 3D-движок.</b><span>Проверь подключение к интернету и нажми «Повторить».</span><button type="button" data-three-action="retry">Повторить</button>';
+  const retry=loading.querySelector("[data-three-action=retry]");retry?.addEventListener("click",()=>mountThreeLab(host,id,options),{once:true});
   host._threeLab={dispose:()=>{host.innerHTML=""}};
   return host._threeLab;
  }
@@ -37,7 +38,12 @@ export async function mountThreeLab(host,id,options={}){
   camera.lookAt(target);
  };
  updateCamera();
- const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});
+ let renderer;
+ try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});}
+ catch(error){
+  loading.innerHTML='<b>На этом устройстве не удалось запустить WebGL.</b><span>Открой лабораторную в браузере с аппаратным ускорением или используй режим 2D.</span>';
+  host._threeLab={dispose:()=>{host.innerHTML=""}};return host._threeLab;
+ }
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -162,7 +168,7 @@ export async function mountThreeLab(host,id,options={}){
   box(.12,.55,.8,materials.green,-3.2,.7,0);box(.12,.55,.8,materials.red,3.2,.7,0);
   const cart=new THREE.Group();cart.position.set(-2.8,.75,0);scene.add(cart);
   box(.95,.2,.48,materials.blue,0,.12,0,cart);box(.35,.23,.38,materials.white,.05,.34,0,cart);
-  for(const x of [-.3,.3])torus(.13,.055,materials.rubber,x,0,0,[Math.PI/2,0,0]).position.set(x,0,0);
+  for(const x of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,x,0,0,cart).rotation.x=Math.PI/2;
   addDrag(cart,"cart","x");objects.cart=cart;
   setReadouts([["Путь","0,00 м"],["Время","0,00 с"],["Скорость","—"]]);
   setData({cartMoved:false,cartTime:0,distance:1});
@@ -227,6 +233,7 @@ export async function mountThreeLab(host,id,options={}){
   cylinder(.35,.35,.28,materials.white,-.4,.68,0);label("A",-0.4,1.05,.3,.5);
   cylinder(.35,.35,.28,materials.white,1.4,.68,0);label("V",1.4,1.05,.3,.5);
   box(1.1,.35,.55,materials.red,.2,.65,1);label("R = 5,7 Ом",.2,1.1,1,.55);
+  objects.switchLever=rod([.85,.72,-.9],[1.35,.72,-.9],.045,materials.red);
   addControl('<div class="vlab-three-control-row"><button type="button" data-three-action="switch">Замкнуть ключ</button><label class="vlab-three-control"><span>Реостат <b data-three-rheostat>9,3 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-three-control="rheostat"></label></div><button type="button" data-three-action="record-ohm">＋ Записать показания</button><small data-three-count>0 / 3 измерения</small>');
   setReadouts([["Ключ","разомкнут"],["Ток","0,00 А"],["Напряжение","0,00 В"],["Измерений","0 / 3"]]);
   data={keyClosed:false,rheostat:9.3,readings:[]};renderReadouts();
@@ -236,7 +243,7 @@ export async function mountThreeLab(host,id,options={}){
   const magnet=new THREE.Group();magnet.position.set(-2.4,1.45,0);scene.add(magnet);
   box(.65,.28,.3,materials.red,-.34,0,0,magnet);box(.65,.28,.3,materials.blue,.34,0,0,magnet);
   label("N",-2.7,1.9,0,.45);label("S",-2.0,1.9,0,.45);
-  addDrag(magnet,"magnet","x");objects.magnet=magnet;
+  addDrag(magnet,"magnet","x");objects.magnet=magnet;objects.magnetLabels=[label("N",-2.7,1.9,0,.45),label("S",-2.0,1.9,0,.45)];
   cylinder(.48,.48,.18,materials.dark,2.1,1.0,0);torus(.4,.035,materials.steel,2.1,1.1,0);
   const needle=box(.04,.05,.65,materials.red,2.1,1.22,0);objects.needle=needle;
   addDisplay("galvanometer","0",2.1,1.75,.2);
@@ -271,6 +278,7 @@ export async function mountThreeLab(host,id,options={}){
  }
  const builders={density:buildDensity,motion:buildMotion,spring:buildSpring,archimedes:buildArchimedes,lever:buildLever,pendulum:buildPendulum,heat:buildHeat,ohm:buildOhm,induction:buildInduction,lens:buildLens,uncertainty:buildUncertainty,friction:buildFriction};
  if(builders[id])builders[id]();else buildDensity();
+ if(options.onUpdate)options.onUpdate({...data});
  const updateMeters=()=>{
   if(id==="density"){
    setReadouts([["Масса",data.massMeasured?"54,0 г":"не измерена"],["Объём",data.submerged?"60 мл":"40 мл"],["Плотность",data.submerged&&data.massMeasured?"2,70 г/см³":"—"]]);
@@ -316,6 +324,9 @@ export async function mountThreeLab(host,id,options={}){
    const extension=Math.max(1,Math.min(12,(2.25-object.position.y)*10));
    data={...data,mass:100,extension:extension};rebuildSpring();
   }
+  if(object.userData.label)object.userData.label.position.set(object.position.x,object.position.y+.7,object.position.z);
+  if(id==="induction"&&object===objects.magnet&&objects.magnetLabels){objects.magnetLabels[0].position.x=object.position.x-.3;objects.magnetLabels[1].position.x=object.position.x+.35;}
+  if(id==="ohm"&&objects.switchLever)objects.switchLever.rotation.z=data.keyClosed?-.55:0;
   if(id==="lever"&&(object===objects.left||object===objects.right)){
    const l1=Math.max(1,Math.abs(objects.left.position.x)*10),l2=Math.max(1,Math.abs(objects.right.position.x)*10);
    data={...data,m1:200,l1:l1,m2:200,l2:l2};
@@ -489,7 +500,7 @@ export async function mountThreeLab(host,id,options={}){
    const cycles=Math.max(1,Math.floor(elapsed/(animationState.period||1)));
    animationState.running=false;data={...data,time:elapsed,count:cycles};emit("Измерение остановлено. Колебаний: "+cycles+".");
   }else if(action==="switch"&&id==="ohm"){
-   data={...data,keyClosed:!data.keyClosed};button.textContent=data.keyClosed?"Разомкнуть ключ":"Замкнуть ключ";emit();
+   data={...data,keyClosed:!data.keyClosed};if(objects.switchLever)objects.switchLever.rotation.z=data.keyClosed?-.55:0;button.textContent=data.keyClosed?"Разомкнуть ключ":"Замкнуть ключ";emit();
   }else if(action==="record-ohm"&&id==="ohm"){
    if(!data.keyClosed){status("Сначала замкни ключ.");return;}
    if(ohmReadings.length>=3){status("Уже записаны три измерения.");return;}
