@@ -748,7 +748,7 @@ function showTab(tab){
   x.style.setProperty("display",visible?"flex":"none","important");
  });
  document.querySelectorAll(".subtab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
- const subTabs=$("subTabs");if(subTabs)subTabs.classList.remove("hidden");
+ const subTabs=$("subTabs");if(subTabs)subTabs.classList.toggle("hidden",tab==="labs");
  const hero=document.querySelector(".hero");if(hero)hero.classList.toggle("hidden",tab!=="board");
  ["board","daily","stats","study","labs","subjects","calendar","tests","knowledge","mistakes","duels","settings"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
  if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
