@@ -17,11 +17,14 @@ export async function mountThreeLab(host,id,options={}){
  let THREE;
  try{
   THREE=await import(THREE_URL);
- }catch(error){
-  loading.innerHTML='<b>Не удалось загрузить 3D-движок.</b><span>Проверь подключение к интернету и нажми «Повторить».</span><button type="button" data-three-action="retry">Повторить</button>';
-  const retry=loading.querySelector("[data-three-action=retry]");retry?.addEventListener("click",()=>mountThreeLab(host,id,options),{once:true});
-  host._threeLab={dispose:()=>{host.innerHTML=""}};
-  return host._threeLab;
+ }catch(firstError){
+  try{THREE=await import("https://unpkg.com/three@0.180.0/build/three.module.js");}
+  catch(error){
+   loading.innerHTML='<b>Не удалось загрузить 3D-движок.</b><span>Проверь подключение к интернету и нажми «Повторить».</span><button type="button" data-three-action="retry">Повторить</button>';
+   const retry=loading.querySelector("[data-three-action=retry]");retry?.addEventListener("click",()=>mountThreeLab(host,id,options),{once:true});
+   host._threeLab={dispose:()=>{host.innerHTML=""}};
+   return host._threeLab;
+  }
  }
  if(!host.isConnected){host.innerHTML="";return {dispose:()=>{}};}
  const scene=new THREE.Scene();
