@@ -131,7 +131,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
   </div>
   <div class="board-extra-filters hidden" id="boardExtraFilters">
    <label>Ответственный<select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select></label>
-   <label>Предмет<select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select></label>
+   <label>Предмет<select class="field" id="subjectFilter"><option value="all">Физика</option><option>Физика</option></select></label>
    <button type="button" class="filter-reset" id="clearFiltersBtn">Сбросить фильтры</button>
   </div>
   <main class="board" id="taskBoard" data-view="board">
@@ -171,16 +171,16 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">19 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 19 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
   <div class="study-shortcuts"><button type="button" data-tab="subjects">Все предметы →</button><button type="button" data-tab="knowledge">Карта знаний →</button></div><div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
-  <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
+  <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">РЕАЛЬНЫЕ ЭКСПЕРИМЕНТЫ</span><h2>Лабораторные работы</h2><p>Проводи опыты на настоящем оборудовании, вводи собственные измерения и получай расчёт и проверку отчёта.</p></div></div><div id="labList" class="lab-grid"></div></section>
 
  </section>
  <section id="subjectsPage" class="hidden">
   <div class="panel subject-intro">
-   <div><span class="eyebrow">УЧЕБНАЯ ПРОГРАММА</span><h2>Предметы</h2><p>Выбирай предмет, открывай темы и веди собственные конспекты. Прогресс и заметки сохраняются в личном профиле.</p></div>
+   <div><span class="eyebrow">ЕДИНЫЙ ПРЕДМЕТ</span><h2>Курс физики</h2><p>Только физика: последовательная программа от базовых величин до сложных экзаменационных задач.</p></div>
    <a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Документы ФИПИ ↗</a>
   </div>
   <div id="subjectsCatalog" class="subject-grid"></div>
-  <details class="panel reference-details" id="referenceDetails"><summary><span><b>Справочник формул и правил</b><small>Краткие материалы по четырём предметам</small></span><span class="reference-chevron">⌄</span></summary><div class="reference-content"><div class="reference-tools"><input id="referenceSearch" class="field" type="search" placeholder="Найти формулу, правило или тему…"><select id="referenceSubject" class="field"><option value="all">Все предметы</option><option>Физика</option><option>Математика</option><option>Русский язык</option><option>Информатика</option></select></div><div id="referenceResults" class="reference-results"><div class="study-empty">Открой справочник, чтобы посмотреть формулы и правила.</div></div></div></details>
+  <details class="panel reference-details" id="referenceDetails"><summary><span><b>Справочник формул и правил</b><small>Формулы и правила полного курса физики</small></span><span class="reference-chevron">⌄</span></summary><div class="reference-content"><div class="reference-tools"><input id="referenceSearch" class="field" type="search" placeholder="Найти формулу, правило или тему…"><select id="referenceSubject" class="field"><option value="all">Физика</option><option>Физика</option></select></div><div id="referenceResults" class="reference-results"><div class="study-empty">Открой справочник, чтобы посмотреть формулы и правила.</div></div></div></details>
   <div id="subjectDetail" class="hidden">
    <div class="subject-detail-toolbar"><button class="btn" id="backSubjects">← Все предметы</button><button class="btn primary" id="subjectTasksBtn">Задания по предмету</button></div>
    <div id="subjectDetailContent"></div>
@@ -188,7 +188,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
  <section id="calendarPage" class="hidden">
   <div class="panel calendar-intro">
-   <div><span class="eyebrow">ПЛАНИРОВАНИЕ</span><h2>Календарь подготовки</h2><p>Здесь собраны задания с установленными сроками. Выбери день, чтобы посмотреть план или добавить новую задачу.</p></div>
+   <div><span class="eyebrow">12 НЕДЕЛЬ · 72 УЧЕБНЫХ ДНЯ</span><h2>Календарь курса физики</h2><p>Три урока в неделю, практический день, настоящая лабораторная и контрольная. Полные пробники — после 4-й, 8-й и 12-й недели.</p><button class="btn primary" id="generatePhysicsPlanBtn">＋ Сформировать полный курс</button></div>
    <div class="calendar-nav"><button class="btn" id="calPrev" aria-label="Предыдущий месяц">←</button><strong id="calendarMonthLabel"></strong><button class="btn" id="calNext" aria-label="Следующий месяц">→</button><button class="btn" id="calToday">Сегодня</button></div>
   </div>
   <div class="calendar-layout">
@@ -199,22 +199,34 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
 
  <section id="knowledgePage" class="hidden">
-  <div class="page-intro"><div><h2>Карта знаний</h2><p>Отмечай пройденные темы и смотри, что стоит повторить.</p></div><span class="page-note" id="knowledgeSummary">0 из 36 тем</span></div>
+  <div class="page-intro"><div><h2>Карта знаний по физике</h2><p>Отмечай освоенные темы и находи пробелы перед контрольными.</p></div><span class="page-note" id="knowledgeSummary">0 из 36 тем</span></div>
   <div id="knowledgeMap" class="knowledge-map"></div>
  </section>
  <section id="mistakesPage" class="hidden">
   <div class="page-intro"><div><h2>Журнал ошибок</h2><p>Сюда автоматически попадают неверные ответы из тестов и практики.</p></div><span class="page-note" id="mistakeSummary">0 ошибок</span></div>
-  <div class="panel mistakes-toolbar"><select id="mistakeFilter" class="field"><option value="open">Неразобранные</option><option value="all">Все ошибки</option><option value="resolved">Разобранные</option></select><select id="mistakeSubjectFilter" class="field"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Физика</option></select></div>
+  <div class="panel mistakes-toolbar"><select id="mistakeFilter" class="field"><option value="open">Неразобранные</option><option value="all">Все ошибки</option><option value="resolved">Разобранные</option></select><select id="mistakeSubjectFilter" class="field"><option value="all">Физика</option><option>Физика</option></select></div>
   <div id="mistakeList" class="mistake-list"><div class="study-empty">Пока ошибок нет. Неверные ответы будут появляться здесь.</div></div>
  </section>
  <section id="duelsPage" class="hidden">
   <div class="panel duel-hero"><div><span class="eyebrow">ЕГОР ПРОТИВ ДАНИИЛА</span><h2>Учебные дуэли</h2><p>Получите одинаковый набор вопросов, решите его и сравните результат. Побеждает точность, а не скорость кликов.</p></div><div class="duel-mark">⚔</div></div>
-  <div class="panel duel-create"><div><h3>Новая дуэль</h3><p class="sub">Выбери предмет и количество вопросов. Второй ученик увидит вызов и сможет его принять.</p></div><div class="duel-create-fields"><label>Предмет<select id="duelSubject" class="field"><option>Физика</option><option>Математика</option><option>Русский язык</option><option>Информатика</option></select></label><label>Вопросов<select id="duelCount" class="field"><option value="5">5 вопросов</option><option value="10">10 вопросов</option></select></label><button class="btn primary" id="createDuelBtn">Бросить вызов</button></div></div>
+  <div class="panel duel-create"><div><h3>Новая дуэль</h3><p class="sub">Выбери предмет и количество вопросов. Второй ученик увидит вызов и сможет его принять.</p></div><div class="duel-create-fields"><label>Предмет<select id="duelSubject" class="field"><option>Физика</option></select></label><label>Вопросов<select id="duelCount" class="field"><option value="5">5 вопросов</option><option value="10">10 вопросов</option></select></label><button class="btn primary" id="createDuelBtn">Бросить вызов</button></div></div>
   <div class="duel-list-head"><h3>Наши дуэли</h3><span class="sub" id="duelCountLabel">0 дуэлей</span></div><div id="duelList" class="duel-list"><div class="study-empty">Пока дуэлей нет. Создай первую.</div></div>
  </section>
  <section id="testsPage" class="hidden">
-  <div class="panel tests-hero"><div><span class="eyebrow">ТРЕНИРОВКА ЭКЗАМЕНА</span><h2>Тестирование ОГЭ</h2><p>Собери случайный вариант, пройди его на время и разбери ответы после завершения.</p></div><div class="tests-hero-stat"><b>11</b><span>предметов</span></div></div>
-  <div id="testsSetup" class="tests-setup">
+  <div class="panel tests-hero"><div><span class="eyebrow">ОГЭ · ФИЗИКА · 2027</span><h2>Тренировки и пробники</h2><p>Три полных авторских варианта: 22 задания, 180 минут, 39 первичных баллов. Плюс тематические контрольные.</p></div><div class="tests-hero-stat"><b>39</b><span>баллов</span></div></div>
+  <section class="panel mock-exams">
+   <div class="mock-exams-head"><div><span class="eyebrow">ПОЛНЫЙ ЭКЗАМЕН</span><h3>Пробные варианты ОГЭ</h3><p>Реальный таймер на 180 минут, структура 2027 года и проверка по первичным баллам.</p></div><div class="mock-exam-meta"><b>22</b><small>задания</small><b>180</b><small>минут</small></div></div>
+   <div id="mockExamCards" class="mock-exam-cards"></div>
+   <p class="mock-exam-note">Задания 1–16 проверяются автоматически. В заданиях 17–22 сайт оценивает числовые ответы, ключевые элементы и чек-лист; это учебная автопроверка, а не заключение эксперта.</p>
+  </section>
+  <div id="fullExamRun" class="hidden">
+   <div class="panel full-exam-head"><div><span class="eyebrow" id="fullExamVariantLabel">ПРОБНЫЙ ЭКЗАМЕН</span><h2 id="fullExamTitle">Пробник по физике</h2><p id="fullExamProgress">Задание 1 из 22</p></div><div class="full-exam-clock" id="fullExamTimer">180:00</div></div>
+   <div class="test-progress"><div id="fullExamProgressFill"></div></div>
+   <div class="test-layout"><aside class="panel test-question-nav"><b>Задания</b><div id="fullExamQuestionNav"></div><small id="fullExamAnswered">Отвечено: 0 / 22</small></aside><article class="panel test-question-card full-exam-question" id="fullExamQuestionCard"></article></div>
+   <div class="test-bottom-actions"><button class="btn" id="fullExamPrevBtn">← Назад</button><span id="fullExamPointsLabel">Максимум: 39 баллов</span><button class="btn primary" id="fullExamNextBtn">Следующее →</button><button class="btn danger" id="fullExamFinishBtn">Завершить экзамен</button></div>
+  </div>
+  <div id="fullExamResult" class="hidden"></div>
+ <div id="testsSetup" class="tests-setup">
    <div class="panel tests-config">
     <span class="eyebrow">НОВЫЙ ТЕСТ</span><h3>Выбери параметры</h3>
     <div class="tests-fields">
@@ -250,7 +262,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <button type="button" id="focusToggle" class="focus-toggle"><span>⏱</span><span>Фокус</span><b id="focusTimerLabel">25:00</b></button>
    <div id="focusPanel" class="panel focus-panel hidden">
     <div class="focus-panel-head"><div><span class="eyebrow">УЧЕБНАЯ СЕССИЯ</span><h3>Время сосредоточиться</h3></div><button type="button" class="focus-close" id="focusClose">×</button></div>
-    <label>Предмет<select id="focusSubject" class="field"><option>Физика</option><option>Математика</option><option>Русский язык</option><option>Информатика</option></select></label>
+    <label>Предмет<select id="focusSubject" class="field"><option>Физика</option></select></label>
     <label>Длительность<select id="focusMinutes" class="field"><option value="15">15 минут</option><option value="25" selected>25 минут</option><option value="45">45 минут</option></select></label>
     <div class="focus-clock" id="focusClock">25:00</div>
     <div class="focus-actions"><button type="button" class="btn primary" id="focusStartBtn">Начать</button><button type="button" class="btn" id="focusPauseBtn">Пауза</button><button type="button" class="btn" id="focusResetBtn">Сбросить</button></div>
@@ -260,7 +272,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 </div></div></div></div>
 <div class="modalbg" id="modalBg"><div class="panel modal"><h2 id="modalTitle">Новое задание</h2><form id="taskForm"><div class="formgrid">
  <div class="formrow full"><label for="title">Название задания *</label><input class="field" id="title" required maxlength="120" placeholder="Например: решить вариант № 3"></div>
- <div class="formrow"><label for="subject">Предмет</label><select class="field" id="subject"><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select></div>
+ <div class="formrow"><label for="subject">Предмет</label><select class="field" id="subject"><option>Физика</option></select></div>
  <div class="formrow"><label for="person">Кто выполняет</label><select class="field" id="person"><option>Егор</option><option>Даниил</option><option>Вместе</option></select></div>
  <div class="formrow"><label for="due">Срок</label><input class="field" id="due" type="date"></div>
  <div class="formrow"><label for="points">Баллы XP</label><input class="field" id="points" type="number" min="1" max="100" value="10"></div>
@@ -291,13 +303,15 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 <div id="toast" class="toast"></div>
 <script type="module">
 import {firebaseConfig,members} from './config.js';
-import {physicsWeeks} from './physics.js';
-import {physicsPractice,physicsLabs} from './physics-practice.js';
+import {physicsWeeks,physicsPracticeExtraMerged,physicsLabs,physicsLabById} from './physics-course.js';
+import {physicsPractice as basePhysicsPractice} from './physics-practice.js';
+import {physicsExamVariants,physicsExamScoring} from './physics-exams.js';
 import {testBanks} from './tests.js';
 import {courseLessons} from './courses.js';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,runTransaction,serverTimestamp,setDoc,query,where} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+const physicsPractice={...basePhysicsPractice,...physicsPracticeExtraMerged};
 const $=id=>document.getElementById(id),today=()=>new Date().toLocaleDateString('sv-SE');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const starter=[
@@ -447,7 +461,7 @@ const starter=[
     "status": "todo",
     "date": "2026-11-22"
   }
-];
+].filter(task=>task.subject==="Физика");
 
 let app,auth,db,user,member,tasks=[],editing=null,stopTasks=null;
 const configured=firebaseConfig.apiKey&&!firebaseConfig.apiKey.includes('YOUR_');
@@ -470,81 +484,7 @@ let dailyPlan=null,stopDailyPlan=null,studySessions=[],stopStudySessions=null;
 let focusRemaining=25*60,focusTotal=25*60,focusInterval=null,focusStartedAt=null;
 
 const subjectCatalog=[
- {name:"Математика",icon:"∑",description:"Алгебра, геометрия, вычисления и задачи на рассуждение.",topics:[
-  {id:"math-numbers",title:"Числа и вычисления",description:"Дроби, проценты, степени, корни, числовые выражения и преобразования."},
-  {id:"math-algebra",title:"Алгебраические выражения",description:"Формулы сокращённого умножения, преобразование выражений и разложение на множители."},
-  {id:"math-equations",title:"Уравнения и неравенства",description:"Линейные и квадратные уравнения, системы, неравенства и текстовые задачи."},
-  {id:"math-functions",title:"Функции и графики",description:"Координатная плоскость, чтение графиков, свойства функций и зависимости."},
-  {id:"math-geometry",title:"Геометрия",description:"Треугольники, четырёхугольники, окружность, площади, периметры и доказательства."},
-  {id:"math-probability",title:"Вероятность и статистика",description:"Средние значения, таблицы, диаграммы, случайные события и вероятность."}
- ]},
- {name:"Русский язык",icon:"А",description:"Орфография, пунктуация, грамматика и работа с текстом.",topics:[
-  {id:"rus-spelling",title:"Орфография",description:"Правописание корней, приставок, суффиксов, окончаний и НЕ/НИ."},
-  {id:"rus-punctuation",title:"Пунктуация",description:"Знаки препинания в простом и сложном предложении, однородные члены и обращения."},
-  {id:"rus-morphemes",title:"Морфемика и словообразование",description:"Морфемный разбор, способы образования слов и состав слова."},
-  {id:"rus-syntax",title:"Синтаксис и грамматика",description:"Части речи, словосочетания, виды предложений и синтаксический разбор."},
-  {id:"rus-text",title:"Текст и средства выразительности",description:"Тема, идея, проблема, средства связи предложений и выразительные средства."},
-  {id:"rus-writing",title:"Изложение и сочинение",description:"Понимание исходного текста, аргументация, композиция и проверка работы."}
- ]},
- {name:"Информатика",icon:"</>",description:"Алгоритмы, логика, кодирование и работа с информацией.",topics:[
-  {id:"inf-info",title:"Информация и кодирование",description:"Количество информации, единицы измерения, кодирование текста и изображений."},
-  {id:"inf-logic",title:"Логика",description:"Логические операции, таблицы истинности и построение логических выражений."},
-  {id:"inf-algorithms",title:"Алгоритмы и исполнители",description:"Последовательность команд, ветвления, циклы и анализ алгоритмов."},
-  {id:"inf-tables",title:"Электронные таблицы",description:"Формулы, ссылки, сортировка, фильтрация и анализ табличных данных."},
-  {id:"inf-models",title:"Моделирование и системы счисления",description:"Информационные модели, двоичная запись чисел и перевод между системами счисления."},
-  {id:"inf-networks",title:"Компьютерные сети и безопасность",description:"Адресация, передача данных, интернет-сервисы и цифровая безопасность."}
- ]},
- {name:"Английский язык",icon:"EN",description:"Грамматика, лексика, чтение и понимание контекста.",topics:[
-  {id:"eng-tenses",title:"Времена глагола",description:"Present, Past и Future: формы, маркеры времени и выбор нужной конструкции."},
-  {id:"eng-grammar",title:"Грамматические конструкции",description:"Артикли, местоимения, степени сравнения, модальные глаголы и пассивный залог."},
-  {id:"eng-prepositions",title:"Предлоги и устойчивые выражения",description:"Предлоги времени и места, фразовые глаголы и типичные сочетания."},
-  {id:"eng-vocabulary",title:"Лексика по темам",description:"Семья, школа, досуг, путешествия, здоровье, технологии и окружающий мир."},
-  {id:"eng-reading",title:"Чтение и понимание текста",description:"Поиск главной мысли, деталей, соответствий и смысла незнакомых слов."},
-  {id:"eng-writing",title:"Письменная речь",description:"Структура личного письма, ответы на вопросы и проверка языковых ошибок."}
- ]},
- {name:"Физика",icon:"⚛",description:"18 подробных уроков, формулы, разобранные задачи и виртуальные лаборатории.",topics:[]},
- {name:"Обществознание",icon:"§",description:"Человек, общество, экономика, социальные отношения, политика и право.",topics:[
-  {id:"soc-human",title:"Человек и общество",description:"Личность, деятельность, потребности, общество и его основные сферы."},
-  {id:"soc-economy",title:"Экономика",description:"Рынок, спрос и предложение, предпринимательство, деньги и семейный бюджет."},
-  {id:"soc-social",title:"Социальная сфера",description:"Социальные группы, семья, нормы, конфликты и социальная мобильность."},
-  {id:"soc-politics",title:"Политика и власть",description:"Государство, политические режимы, выборы, партии и гражданское участие."},
-  {id:"soc-law",title:"Право и государство",description:"Правоотношения, Конституция, права и обязанности, отрасли права."}
- ]},
- {name:"История",icon:"⌛",description:"Хронология, исторические процессы, карты, личности и культура.",topics:[
-  {id:"hist-ancient",title:"Древняя Русь и образование государства",description:"Восточные славяне, первые князья, принятие христианства и развитие Руси."},
-  {id:"hist-medieval",title:"Русские земли и объединение государства",description:"Раздробленность, ордынская зависимость, возвышение Москвы и объединение земель."},
-  {id:"hist-empire",title:"Россия в Новое время",description:"Реформы, войны, развитие государства, общества и культуры."},
-  {id:"hist-modern",title:"Россия в XX–XXI веках",description:"Революции, СССР, Великая Отечественная война, послевоенное развитие и современность."},
-  {id:"hist-maps",title:"Исторические карты и источники",description:"Работа с картами, документами, датами, причинно-следственными связями."}
- ]},
- {name:"Биология",icon:"BIO",description:"Клетка, организм, человек, экосистемы и закономерности живого.",topics:[
-  {id:"bio-science",title:"Биология как наука",description:"Методы исследования, уровни организации живого и признаки организмов."},
-  {id:"bio-cell",title:"Клетка и организм",description:"Строение клетки, органоиды, ткани, органы и системы органов."},
-  {id:"bio-plants",title:"Растения, грибы и бактерии",description:"Строение, жизнедеятельность, размножение и значение организмов."},
-  {id:"bio-human",title:"Человек и его здоровье",description:"Системы органов, регуляция, гигиена и профилактика заболеваний."},
-  {id:"bio-ecology",title:"Экология и эволюция",description:"Экосистемы, пищевые цепи, естественный отбор и приспособленность."}
- ]},
- {name:"География",icon:"GEO",description:"Карты, природные процессы, население и хозяйство России.",topics:[
-  {id:"geo-map",title:"Географические карты",description:"Масштаб, координаты, условные знаки, направления и измерения по карте."},
-  {id:"geo-nature",title:"Природа Земли",description:"Литосфера, атмосфера, гидросфера, климат и природные зоны."},
-  {id:"geo-population",title:"Население и города",description:"Численность, размещение, миграции, урбанизация и демографические показатели."},
-  {id:"geo-russia",title:"География России",description:"Рельеф, климат, природные ресурсы, регионы и население страны."},
-  {id:"geo-economy",title:"Хозяйство и мировое хозяйство",description:"Отрасли экономики, транспорт, энергетика и международные связи."}
- ]},
- {name:"Химия",icon:"H₂",description:"Вещества, реакции, периодический закон и расчётные задачи.",topics:[
-  {id:"chem-atom",title:"Атомы и периодический закон",description:"Строение атома, периодическая таблица и свойства химических элементов."},
-  {id:"chem-bonds",title:"Химическая связь и вещества",description:"Типы связей, валентность, степени окисления и формулы веществ."},
-  {id:"chem-reactions",title:"Химические реакции",description:"Признаки реакций, уравнения, коэффициенты и типы химических превращений."},
-  {id:"chem-classes",title:"Классы неорганических соединений",description:"Оксиды, кислоты, основания и соли: свойства и взаимосвязи."},
-  {id:"chem-calculations",title:"Расчётные задачи",description:"Количество вещества, молярная масса, массовая доля и расчёты по уравнению."}
- ]},
- {name:"Литература",icon:"№",description:"Теория литературы, анализ произведений и аргументация.",topics:[
-  {id:"lit-genres",title:"Роды и жанры литературы",description:"Эпос, лирика, драма, жанровые особенности и композиция произведения."},
-  {id:"lit-devices",title:"Средства художественной выразительности",description:"Тропы, фигуры речи, звукопись и роль художественной детали."},
-  {id:"lit-analysis",title:"Анализ произведения",description:"Тема, идея, конфликт, образ героя, авторская позиция и композиция."},
-  {id:"lit-context",title:"Литературные направления и контекст",description:"Историко-литературный контекст, особенности эпох и авторского стиля."},
-  {id:"lit-writing",title:"Развёрнутый ответ",description:"Тезис, доказательства текстом, логика рассуждения и грамотное оформление."}
- ]}
+ {name:"Физика",icon:"⚛",description:"Полный курс ОГЭ: 12 недель, 37 уроков, контрольные и лабораторные работы.",topics:[]}
 ];
 function subjectTopics(name){
  if(name==="Физика")return physicsWeeks.flatMap((w,wi)=>w.lessons.map((l,li)=>({id:l.id,title:l.title,description:l.goal,weekTitle:w.title,lesson:l,weekIndex:wi,lessonIndex:li})));
