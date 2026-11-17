@@ -281,7 +281,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
  <section id="calendarPage" class="hidden">
   <div class="panel calendar-intro">
-   <div><span class="eyebrow">12 НЕДЕЛЬ · 72 УЧЕБНЫХ ДНЯ</span><h2>Календарь курса физики</h2><p>Курс автоматически добавится в календарь при первом входе: три или четыре урока в неделю, практика, настоящая лабораторная и контрольная. Шесть учебных дней в неделю, воскресенье — отдых. Полные пробники — после 4-й, 8-й и 12-й недели. Кнопка ниже позволяет пересобрать расписание.</p><button class="btn primary" id="generatePhysicsPlanBtn">＋ Сформировать полный курс</button></div>
+   <div><span class="eyebrow">12 НЕДЕЛЬ · 72 УЧЕБНЫХ ДНЯ</span><h2>Календарь курса физики</h2><p>Курс автоматически добавится в календарь при первом входе: три или четыре урока в неделю, практика, интерактивная лабораторная в отдельном разделе и контрольная. Шесть учебных дней в неделю, воскресенье — отдых. Полные пробники — после 4-й, 8-й и 12-й недели. Кнопка ниже позволяет пересобрать расписание.</p><button class="btn primary" id="generatePhysicsPlanBtn">＋ Сформировать полный курс</button></div>
    <div class="calendar-nav"><button class="btn" id="calPrev" aria-label="Предыдущий месяц">←</button><strong id="calendarMonthLabel"></strong><button class="btn" id="calNext" aria-label="Следующий месяц">→</button><button class="btn" id="calToday">Сегодня</button></div>
   </div>
   <div class="calendar-layout">
@@ -1760,7 +1760,7 @@ function buildPhysicsCourseSchedule(){
    }else if(di===3&&week.lessons.length===3){
     item={courseType:"practice",title:"Физика · Неделя "+(wi+1)+" · Практика и закрепление",desc:"Реши смешанный набор по всем темам недели. Сначала работай самостоятельно, затем открой разбор. Ошибки внеси в журнал и повтори соответствующий урок.",points:15};
    }else if(di===4){
-    item={courseType:"lab",courseLabId:lab.id,title:"Физика · Неделя "+(wi+1)+" · Лабораторная: "+lab.title,desc:"Выполни настоящий опыт на оборудовании из списка лабораторной работы. Запиши показания приборов, вычисли результат, нарисуй схему установки и сформулируй вывод. Не используй придуманные измерения.",points:18};
+    item={courseType:"lab",courseLabId:lab.id,title:"Физика · Неделя "+(wi+1)+" · Лабораторная: "+lab.title,desc:"Открой раздел «Лабораторные» и проведи интерактивный эксперимент: перемещай приборы, сними показания, запиши их в протокол, вычисли результат и сформулируй вывод. Если есть школьное оборудование, повтори опыт физически.",points:18};
    }else if([3,7,11].includes(wi)){
     const variant=physicsExamVariants[[3,7,11].indexOf(wi)];
     item={courseType:"mock-exam",examVariantId:variant.id,title:"Физика · Неделя "+(wi+1)+" · Полный пробник ОГЭ №"+([3,7,11].indexOf(wi)+1),desc:"Полный экзаменационный режим: 22 задания, 180 минут, максимум 39 первичных баллов. Убери конспект и решай без подсказок. После завершения разбери все ошибки.",points:30};
