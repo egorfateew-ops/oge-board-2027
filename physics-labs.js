@@ -235,7 +235,9 @@ function instructionsMarkup(item) {
 }
 function workspaceMarkup(item) {
   return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
+    '<div class="vlab-workflow" aria-label="Этапы лабораторной работы"><span class="active"><i>01</i> Опыт</span><span><i>02</i> Измерения</span><span><i>03</i> Вывод</span></div>'+
     '<div class="vlab-scene-scroll">'+sceneMarkup(item.id)+'</div>'+
+    '<p class="vlab-touch-tip">Перетаскивай оборудование пальцем или мышью. На узком экране рабочий стол можно сдвигать по горизонтали.</p>'+
     '<div class="vlab-lower-grid">'+instructionsMarkup(item)+reportMarkup(item.id)+'</div>';
 }
 
