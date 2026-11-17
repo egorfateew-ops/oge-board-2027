@@ -1021,7 +1021,7 @@ function renderDailyPlan(){
  const root=$("smartPlanItems");if(!root)return;
  if(!dailyPlan){
   $("smartPlanSummary").textContent="План ещё не составлен.";
-  root.innerHTML='<div class="study-empty">Нажми «Составить план». Я подберу задания по твоим срокам, урокам и ошибкам.</div>';
+  root.innerHTML='<div class="study-empty">Нажми «Составить план». Я подберу уроки физики, лабораторные и повторение ошибок.</div>';
  }else{
   const done=new Set(dailyPlan.doneIds||[]),items=(dailyPlan.items||[]).filter(x=>x.subject==="Физика"&&!String(x.refId||"").startsWith("physics-w"));
   const completed=items.filter(x=>done.has(x.id)).length;
@@ -1617,11 +1617,11 @@ function currentStudyStreak(){
 }
 function renderAchievements(){
  const root=$("achievementList");if(!root)return;
- const doneTasks=tasks.filter(t=>t.status==="done"&&(t.person===member.name||t.person==="Вместе")).length;
- const streak=currentStudyStreak(),sessions=studySessions.length,perfect=testHistory.some(t=>Number(t.percent)===100);
+ const doneTasks=tasks.filter(t=>isPhysicsTask(t)&&t.status==="done"&&(t.person===member.name||t.person==="Вместе")).length;
+ const streak=currentStudyStreak(),sessions=studySessions.length,physicsTests=testHistory.filter(t=>String(t.subject||"").includes("Физика")),perfect=physicsTests.some(t=>Number(t.percent)===100);
  const badges=[
-  {icon:"🚀",title:"Первый шаг",desc:"Выполни первое задание или тест.",ok:doneTasks>0||testHistory.length>0,progress:Math.min(1,doneTasks+testHistory.length),target:1},
-  {icon:"🧠",title:"Пять тренировок",desc:"Заверши пять тестов.",ok:testHistory.length>=5,progress:testHistory.length,target:5},
+  {icon:"🚀",title:"Первый шаг",desc:"Выполни первое задание или тест по физике.",ok:doneTasks>0||physicsTests.length>0,progress:Math.min(1,doneTasks+physicsTests.length),target:1},
+  {icon:"🧠",title:"Пять тренировок",desc:"Заверши пять тестов по физике.",ok:physicsTests.length>=5,progress:physicsTests.length,target:5},
   {icon:"💯",title:"Идеальный вариант",desc:"Получи 100% за тест.",ok:perfect,progress:perfect?1:0,target:1},
   {icon:"⏱",title:"Фокус-мастер",desc:"Заверши пять учебных сессий.",ok:sessions>=5,progress:sessions,target:5},
   {icon:"⚛",title:"Физика освоена",desc:"Пройди все уроки курса физики.",ok:completedLessons.size>=totalLessons(),progress:completedLessons.size,target:totalLessons()},
