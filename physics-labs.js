@@ -538,14 +538,14 @@ export function mountLabSimulator(container,id,options = {}) {
     }else if(item.id==="motion"&&state.cartMoved&&state.cartTime>0){
       put("distance",1);put("time",state.cartTime);transferred=2;
     }else if(item.id==="spring"&&state.mass>0){
-      put("mass",state.mass);put("extension",state.mass/20);transferred=2;
+      put("mass",state.mass);put("extension",state.springExtension||state.mass/20);transferred=2;
     }else if(item.id==="archimedes"&&state.submerged){
       put("air",3.9);put("water",3.4);transferred=2;
     }else if(item.id==="lever"&&state.lever){
       put("m1",state.lever.m1);put("l1",state.lever.l1);put("m2",state.lever.m2);put("l2",state.lever.l2);transferred=4;
     }else if(item.id==="pendulum"&&state.pendulumElapsed>0){
       const slider=q('[data-vlab-control="pendulum-length"]');
-      put("length",(slider?Number(slider.value):50)/100);put("time",state.pendulumElapsed);put("count",10);transferred=3;
+      put("length",state.pendulumLength||(slider?Number(slider.value):50)/100);put("time",state.pendulumElapsed);put("count",state.pendulumCount||10);transferred=3;
     }else if(item.id==="heat"&&state.hotMetalIn){
       put("mw",100);put("mm",100);put("tw",20);put("tm",90);put("tf",32.6);transferred=5;
     }else if(item.id==="lens"&&state.lens){
@@ -639,15 +639,15 @@ export function mountLabSimulator(container,id,options = {}) {
       state.cartMoved=!!payload.cartMoved;state.cartTime=Number(payload.cartTime||payload.time||0);
       put("distance",1);if(state.cartMoved)put("time",state.cartTime);
     }else if(item.id==="spring"){
-      state.mass=Number(payload.mass||100);put("mass",state.mass);put("extension",Number(payload.extension||5));
+      state.mass=Number(payload.mass||100);state.springExtension=Number(payload.extension||5);put("mass",state.mass);put("extension",state.springExtension);
     }else if(item.id==="archimedes"){
       state.submerged=!!payload.submerged;put("air",3.9);if(state.submerged)put("water",3.4);
     }else if(item.id==="lever"){
       state.lever={m1:Number(payload.m1||200),l1:Number(payload.l1||20),m2:Number(payload.m2||200),l2:Number(payload.l2||20)};
       put("m1",state.lever.m1);put("l1",state.lever.l1);put("m2",state.lever.m2);put("l2",state.lever.l2);
     }else if(item.id==="pendulum"){
-      state.pendulumElapsed=Number(payload.time||0);
-      put("length",Number(payload.length||.5));put("time",state.pendulumElapsed);put("count",Number(payload.count||0));
+      state.pendulumElapsed=Number(payload.time||0);state.pendulumLength=Number(payload.length||.5);state.pendulumCount=Number(payload.count||0);
+      put("length",state.pendulumLength);put("time",state.pendulumElapsed);put("count",state.pendulumCount);
     }else if(item.id==="heat"){
       state.hotMetalIn=!!payload.hotMetalIn;
       put("mw",100);put("mm",100);put("tw",20);put("tm",90);if(state.hotMetalIn)put("tf",32.6);
