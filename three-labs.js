@@ -25,8 +25,10 @@ export async function mountThreeLab(host,id,options={}){
  }
  if(!host.isConnected){host.innerHTML="";return {dispose:()=>{}};}
  const scene=new THREE.Scene();
- scene.background=new THREE.Color("#eaf0f7");
- scene.fog=new THREE.Fog("#eaf0f7",14,30);
+ const isDark=()=>document.body.dataset.theme==="dark";
+ const sceneTone=()=>isDark()?"#182638":"#eaf0f7";
+ scene.background=new THREE.Color(sceneTone());
+ scene.fog=new THREE.Fog(sceneTone(),14,30);
  const camera=new THREE.PerspectiveCamera(42,1,.1,80);
  const target=new THREE.Vector3(0,1,0);
  let radius=10,theta=Math.PI*.25,phi=1.02;
@@ -97,10 +99,10 @@ export async function mountThreeLab(host,id,options={}){
   ctx.fillStyle="rgba(255,255,255,.94)";ctx.strokeStyle="rgba(72,91,117,.25)";ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(5,5,502,118,18);ctx.fill();ctx.stroke();
   ctx.fillStyle="#26384d";ctx.font="bold 38px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(text),256,65,470);sprite.material.map.needsUpdate=true;
  };
- const floor=box(11,.18,7,mat("#d9e1eb",.86),0,-.12,0);
- const table=box(9,.22,5.3,mat("#e6ebf2",.72),0,.08,0);
+ const floor=box(11,.18,7,mat(isDark()?"#202f43":"#d9e1eb",.86),0,-.12,0);
+ const table=box(9,.22,5.3,mat(isDark()?"#2c3c52":"#e6ebf2",.72),0,.08,0);
  for(const x of [-3.8,3.8])for(const z of [-2,2])box(.16,1.45,.16,materials.steelDark,x,-.68,z);
- const grid=new THREE.GridHelper(10,20,"#a8b6c8","#d0d9e4");grid.position.y=.205;scene.add(grid);
+ const grid=new THREE.GridHelper(10,20,isDark()?"#63758b":"#a8b6c8",isDark()?"#3b4c62":"#d0d9e4");grid.position.y=.205;scene.add(grid);
  const draggables=[];
  const addDrag=(object,role,axis="xyz")=>{object.userData.draggable=true;object.userData.role=role;object.userData.axis=axis;draggables.push(object);return object;};
  const display={};
@@ -372,7 +374,8 @@ export async function mountThreeLab(host,id,options={}){
   }else if(id==="lens"){
    emit(data.sharp?"Получено резкое изображение.":"Изображение пока размыто. Передвинь экран или линзу.");
   }else if(id==="induction"&&object===objects.magnet){
-   emit("Наблюдение сохранено.");
+   data={...data,needle:0};if(objects.needle)objects.needle.rotation.z=0;if(display.galvanometer)setLabel(display.galvanometer,"0");
+   emit("Наблюдение сохранено. После остановки магнита ток исчезает.");
   }else if(id==="heat"&&object===objects.hotMetal){
    if(object.position.x>1.0&&object.position.y<1.5){object.position.set(2,1.0,0);setData({hotMetalIn:true,mw:100,mm:100,tw:20,tm:90,tf:32.6},"Металл перенесён в калориметр. Тепловое равновесие установлено.");}
    else status("Перенеси цилиндр в калориметр.");
@@ -426,9 +429,9 @@ export async function mountThreeLab(host,id,options={}){
      const inside=Math.abs(dragObject.position.x)<.72;
      if(inside!==inductionInside){
       const action=inside?"Магнит входит в катушку":"Магнит выходит из катушки";
-      const direction=inside?(dragObject.position.x<0?"Отклонение вправо":"Отклонение влево"):(dragObject.position.x<0?"Отклонение влево":"Отклонение вправо");
+      const direction=dragObject.position.x<0?"Отклонение вправо":"Отклонение влево";
       inductionLog.push({action,direction});inductionInside=inside;
-      data={...data,needle:inside?(dragObject.position.x<0?1:-1):(dragObject.position.x<0?-1:1),inductionLog:inductionLog.slice(),inductionObserved:inductionLog.length};
+      data={...data,needle:dragObject.position.x<0?1:-1,inductionLog:inductionLog.slice(),inductionObserved:inductionLog.length};
       objects.needle.rotation.z=data.needle*.5;setLabel(display.galvanometer,data.needle>0?"→":"←");emit();
      }
     }
@@ -467,7 +470,8 @@ export async function mountThreeLab(host,id,options={}){
    const out=host.querySelector("[data-three-rheostat]");if(out)out.textContent=Number(control.value).toFixed(1).replace(".",",")+" Ом";
    emit();
   }else if(control.dataset.threeControl==="mass"){
-   data={...data,mass:Number(control.value)/1000};
+   const mass=Number(control.value)/1000,threshold=.25*mass*10;
+   data={...data,mass,force:Math.min(data.pull||0,threshold),sliding:(data.pull||0)>=threshold};
    const out=host.querySelector("[data-three-mass]");if(out)out.textContent=control.value+" г";
    if(objects.block)objects.block.scale.setScalar(1+Number(control.value)/1500);
    emit();
@@ -520,6 +524,12 @@ export async function mountThreeLab(host,id,options={}){
  };
  const observer=typeof ResizeObserver!=="undefined"?new ResizeObserver(resize):null;
  if(observer)observer.observe(stage);else window.addEventListener("resize",resize);
+ const themeObserver=typeof MutationObserver!=="undefined"?new MutationObserver(()=>{
+  const tone=sceneTone();scene.background.set(tone);scene.fog.color.set(tone);
+  floor.material.color.set(isDark()?"#202f43":"#d9e1eb");table.material.color.set(isDark()?"#2c3c52":"#e6ebf2");
+  if(Array.isArray(grid.material)){grid.material[0].color.set(isDark()?"#63758b":"#a8b6c8");grid.material[1].color.set(isDark()?"#3b4c62":"#d0d9e4");}
+ }):null;
+ if(themeObserver)themeObserver.observe(document.body,{attributes:true,attributeFilter:["data-theme"]});
  resize();loading.classList.add("hidden");
  const clock=new THREE.Clock();let raf=0,disposed=false;
  const animate=()=>{
@@ -538,6 +548,7 @@ export async function mountThreeLab(host,id,options={}){
  const dispose=()=>{
   if(disposed)return;disposed=true;cancelAnimationFrame(raf);
   if(observer)observer.disconnect();else window.removeEventListener("resize",resize);
+ if(themeObserver)themeObserver.disconnect();
   renderer.domElement.removeEventListener("pointerdown",onPointerDown);
   renderer.domElement.removeEventListener("pointermove",onPointerMove);
   renderer.domElement.removeEventListener("pointerup",onPointerUp);
