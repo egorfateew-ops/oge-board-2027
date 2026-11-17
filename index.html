@@ -654,7 +654,7 @@ function showTab(tab){
  const copy=viewLabels[tab]||viewLabels.board;
  if($("viewTitle"))$("viewTitle").textContent=copy[0];
  if($("viewSubtitle"))$("viewSubtitle").textContent=copy[1];
- document.querySelectorAll("#sidebarNav .sidebar-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ document.querySelectorAll(".app-sidebar .sidebar-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
  const topSearch=document.querySelector(".topbar-search");
  if(topSearch)topSearch.classList.toggle("hidden",tab!=="board");
  document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
@@ -1377,7 +1377,7 @@ $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.dai
 $('dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-daily-open]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.dailyOpen);if(t)openTaskDetails(t)});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
-$("sidebarNav").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+document.querySelector(".app-sidebar").addEventListener("click",e=>{const b=e.target.closest(".sidebar-link[data-tab]");if(b)showTab(b.dataset.tab)});
 $("sidebarAddBtn").addEventListener("click",()=>openModal());
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.repeat){e.preventDefault();const s=$("search");if(s&&!s.closest(".hidden"))s.focus()}});
