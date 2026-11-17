@@ -38,15 +38,68 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </form>
  <div id="setupHint" class="hint hidden">Сначала настрой Firebase: внеси параметры проекта в файл <b>config.js</b>. Подробная инструкция находится в README.md.</div>
 </div></div>
-<div id="app" class="hidden"><div class="wrap">
- <header class="header"><div><h1>Подготовка к ОГЭ</h1><div class="sub">Егор × Даниил · учебный сезон 2026–2027</div></div><div class="actions"><button type="button" class="theme-toggle" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">☾ Тема</button><span class="pill" id="who">Участник</span><button class="btn primary" id="addBtn">＋ Задание</button><button class="btn" id="logout">Выйти</button></div></header>
- <nav class="panel tabs" id="mainTabs" aria-label="Основные разделы">
+<div id="app" class="hidden">
+ <div class="app-shell">
+  <aside class="app-sidebar">
+   <a class="sidebar-brand" href="#" aria-label="Подготовка к ОГЭ — главная">
+    <span class="sidebar-logo">ОГЭ</span>
+    <span class="sidebar-brand-copy"><b>Подготовка к ОГЭ</b><small>Егор и Даниил · 2026–2027</small></span>
+   </a>
+   <div class="sidebar-section-title">ОСНОВНОЕ</div>
+   <nav class="sidebar-nav" id="sidebarNav" aria-label="Навигация">
+    <button type="button" class="sidebar-link active" data-tab="board"><span class="sidebar-icon">▦</span><span>Доска заданий</span></button>
+    <button type="button" class="sidebar-link" data-tab="daily"><span class="sidebar-icon">◷</span><span>На сегодня</span></button>
+    <button type="button" class="sidebar-link" data-tab="study"><span class="sidebar-icon">⌂</span><span>Обучение</span></button>
+    <button type="button" class="sidebar-link" data-tab="subjects"><span class="sidebar-icon">▤</span><span>Предметы</span></button>
+    <button type="button" class="sidebar-link" data-tab="knowledge"><span class="sidebar-icon">◇</span><span>Карта знаний</span></button>
+   </nav>
+   <div class="sidebar-section-title sidebar-section-spaced">ПРАКТИКА</div>
+   <nav class="sidebar-nav" aria-label="Практика">
+    <button type="button" class="sidebar-link" data-tab="tests"><span class="sidebar-icon">▧</span><span>Тренировки</span></button>
+    <button type="button" class="sidebar-link" data-tab="mistakes"><span class="sidebar-icon">↻</span><span>Мои ошибки</span></button>
+    <button type="button" class="sidebar-link" data-tab="duels"><span class="sidebar-icon">⚔</span><span>Дуэли</span></button>
+   </nav>
+   <div class="sidebar-section-title sidebar-section-spaced">РЕЗУЛЬТАТЫ</div>
+   <nav class="sidebar-nav" aria-label="Результаты">
+    <button type="button" class="sidebar-link" data-tab="stats"><span class="sidebar-icon">▥</span><span>Статистика</span></button>
+    <button type="button" class="sidebar-link" data-tab="calendar"><span class="sidebar-icon">▦</span><span>Календарь</span></button>
+   </nav>
+   <div class="sidebar-spacer"></div>
+   <section class="sidebar-quick">
+    <div class="sidebar-quick-visual" aria-hidden="true">✦</div>
+    <h3>Быстро добавить</h3>
+    <p>Создай задание для себя, друга или совместной подготовки.</p>
+    <button type="button" class="sidebar-quick-button" id="sidebarAddBtn">＋ Добавить задание</button>
+   </section>
+   <div class="sidebar-footer"><span class="sidebar-live-dot"></span><span>Общая доска синхронизируется</span></div>
+  </aside>
+  <div class="workspace">
+   <div class="wrap">
+    <header class="header topbar">
+     <div class="topbar-heading">
+      <span class="eyebrow">УЧЕБНАЯ КОМАНДА</span>
+      <h1 id="viewTitle">Доска заданий</h1>
+      <p class="sub" id="viewSubtitle">Общая подготовка · Егор и Даниил</p>
+     </div>
+     <label class="topbar-search" aria-label="Поиск по заданиям">
+      <span class="topbar-search-icon" aria-hidden="true">⌕</span>
+      <input class="field topbar-search-field" id="search" type="search" placeholder="Найти задание..." autocomplete="off">
+      <kbd>Ctrl K</kbd>
+     </label>
+     <div class="actions">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">☾ Тема</button>
+      <div class="user-chip"><span class="user-chip-avatar">О</span><span class="user-chip-copy"><b id="who">Участник</b><small>Подготовка к ОГЭ</small></span></div>
+      <button class="btn primary" id="addBtn">＋ Задание</button>
+      <button class="btn logout-button" id="logout">Выйти</button>
+     </div>
+    </header>
+ <nav class="panel tabs legacy-nav" id="mainTabs" aria-label="Основные разделы" aria-hidden="true">
   <button class="tab active" data-tab="board" data-group="tasks">Задания</button>
   <button class="tab" data-tab="study" data-group="learn">Обучение</button>
   <button class="tab" data-tab="tests" data-group="tests">Тесты</button>
   <button class="tab" data-tab="stats" data-group="progress">Прогресс</button>
  </nav>
- <nav class="subtabs" id="subTabs" aria-label="Подразделы">
+ <nav class="subtabs legacy-nav" id="subTabs" aria-label="Подразделы" aria-hidden="true">
   <div class="subtab-group" data-subgroup="tasks">
    <button type="button" class="subtab active" data-tab="board">Все</button><button type="button" class="subtab" data-tab="daily">Сегодня</button>
   </div>
@@ -70,7 +123,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 
  <section id="boardPage">
   <div class="page-intro"><div><h2>Все задания</h2><p>Общий список Егора и Даниила. Фильтруй по ученику или предмету и меняй статус по мере выполнения.</p></div><span class="page-note">Общая доска</span></div>
-  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn primary" id="seedBtn">Добавить курс физики · 6 недель</button></div>
+  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><div class="spacer"></div><button class="btn primary" id="seedBtn">Добавить курс физики · 6 недель</button></div>
   <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
  </section>
  <section id="dailyPage" class="hidden">
@@ -163,7 +216,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
     <p class="sub">Завершённые сессии попадут в статистику.</p>
    </div>
   </div>
-</div></div>
+</div></div></div></div>
 <div class="modalbg" id="modalBg"><div class="panel modal"><h2 id="modalTitle">Новое задание</h2><form id="taskForm"><div class="formgrid">
  <div class="formrow full"><label for="title">Название задания *</label><input class="field" id="title" required maxlength="120" placeholder="Например: решить вариант № 3"></div>
  <div class="formrow"><label for="subject">Предмет</label><select class="field" id="subject"><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select></div>
@@ -586,6 +639,24 @@ function renderReference(){
 function showTab(tab){
  const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress"};
  const group=groups[tab]||"tasks";
+ const viewLabels={
+  board:["Доска заданий","Общая подготовка · Егор и Даниил"],
+  daily:["План на сегодня","Задачи, повторение и короткая практика"],
+  study:["Обучение","Теория, формулы и практика по физике"],
+  subjects:["Предметы","Математика · русский язык · информатика · физика"],
+  knowledge:["Карта знаний","Темы и навыки, которые уже освоены"],
+  tests:["Тренировки","Практика в формате ОГЭ"],
+  mistakes:["Мои ошибки","Разбирай сложные вопросы и возвращайся к ним"],
+  duels:["Дуэли","Соревнование и общая учебная цель"],
+  stats:["Статистика","Личная динамика и результаты подготовки"],
+  calendar:["Календарь","Планирование подготовки по дням"]
+ };
+ const copy=viewLabels[tab]||viewLabels.board;
+ if($("viewTitle"))$("viewTitle").textContent=copy[0];
+ if($("viewSubtitle"))$("viewSubtitle").textContent=copy[1];
+ document.querySelectorAll("#sidebarNav .sidebar-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ const topSearch=document.querySelector(".topbar-search");
+ if(topSearch)topSearch.classList.toggle("hidden",tab!=="board");
  document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
  document.querySelectorAll("#subTabs .subtab-group").forEach(x=>{
   const visible=x.dataset.subgroup===group;
@@ -1306,7 +1377,11 @@ $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.dai
 $('dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-daily-open]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.dailyOpen);if(t)openTaskDetails(t)});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
+$("sidebarNav").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+$("sidebarAddBtn").addEventListener("click",()=>openModal());
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.repeat){e.preventDefault();const s=$("search");if(s&&!s.closest(".hidden"))s.focus()}});
+
 $("generatePlanBtn").addEventListener("click",generateDailyPlan);
 $("smartPlanItems").addEventListener("change",e=>{const input=e.target.closest("[data-plan-done]");if(input)togglePlanItem(input.dataset.planDone,input.checked)});
 $("smartPlanItems").addEventListener("click",e=>{const b=e.target.closest("[data-plan-action]");if(b)openPlanAction(b.dataset.planAction)});
