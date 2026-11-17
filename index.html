@@ -41,35 +41,26 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 <div id="app" class="hidden">
  <div class="app-shell">
   <aside class="app-sidebar">
-   <a class="sidebar-brand" href="#" aria-label="Подготовка к ОГЭ — главная">
-    <span class="sidebar-logo">ОГЭ</span>
-    <span class="sidebar-brand-copy"><b>Подготовка к ОГЭ</b><small>Егор и Даниил · 2026–2027</small></span>
+   <a class="sidebar-brand" href="#" aria-label="Подготовка к ОГЭ">
+    <span class="sidebar-logo"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 11.5 18.5 7 29 11.5v19L18.5 26 8 30.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M18.5 7v19M8 11.5l10.5 4.8L29 11.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg></span>
+    <span class="sidebar-brand-copy"><b>Подготовка к ОГЭ</b><small>Егор и Даниил · учебный сезон<br>2026–2027</small></span>
    </a>
-   <div class="sidebar-section-title">ОСНОВНОЕ</div>
-   <nav class="sidebar-nav" id="sidebarNav" aria-label="Навигация">
-    <button type="button" class="sidebar-link active" data-tab="board"><span class="sidebar-icon">▦</span><span>Доска заданий</span></button>
-    <button type="button" class="sidebar-link" data-tab="daily"><span class="sidebar-icon">◷</span><span>На сегодня</span></button>
-    <button type="button" class="sidebar-link" data-tab="study"><span class="sidebar-icon">⌂</span><span>Обучение</span></button>
-    <button type="button" class="sidebar-link" data-tab="subjects"><span class="sidebar-icon">▤</span><span>Предметы</span></button>
-    <button type="button" class="sidebar-link" data-tab="knowledge"><span class="sidebar-icon">◇</span><span>Карта знаний</span></button>
-   </nav>
-   <div class="sidebar-section-title sidebar-section-spaced">ПРАКТИКА</div>
-   <nav class="sidebar-nav" aria-label="Практика">
-    <button type="button" class="sidebar-link" data-tab="tests"><span class="sidebar-icon">▧</span><span>Тренировки</span></button>
-    <button type="button" class="sidebar-link" data-tab="mistakes"><span class="sidebar-icon">↻</span><span>Мои ошибки</span></button>
-    <button type="button" class="sidebar-link" data-tab="duels"><span class="sidebar-icon">⚔</span><span>Дуэли</span></button>
-   </nav>
-   <div class="sidebar-section-title sidebar-section-spaced">РЕЗУЛЬТАТЫ</div>
-   <nav class="sidebar-nav" aria-label="Результаты">
-    <button type="button" class="sidebar-link" data-tab="stats"><span class="sidebar-icon">▥</span><span>Статистика</span></button>
-    <button type="button" class="sidebar-link" data-tab="calendar"><span class="sidebar-icon">▦</span><span>Календарь</span></button>
+   <nav class="sidebar-nav" id="sidebarNav" aria-label="Основная навигация">
+    <button type="button" class="sidebar-link" data-tab="daily"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Главная</span></button>
+    <button type="button" class="sidebar-link active" data-tab="board"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>Задания</span></button>
+    <button type="button" class="sidebar-link" data-tab="study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v7"/></svg><span>Обучение</span></button>
+    <button type="button" class="sidebar-link" data-tab="tests"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v5h4M9 12h6M9 16h6"/></svg><span>Тесты</span></button>
+    <button type="button" class="sidebar-link" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Прогресс</span></button>
+    <button type="button" class="sidebar-link" data-tab="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h3M8 17h3"/></svg><span>Календарь</span></button>
+    <button type="button" class="sidebar-link" data-tab="duels"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 6 6M14 14l6 6M20 4l-6 6M10 14l-6 6M4 4l3-1 4 4-1 3M20 4l-3-1-4 4 1 3M4 20l3 1 4-4-1-3M20 20l-3 1-4-4 1-3"/></svg><span>Дуэли</span></button>
+    <button type="button" class="sidebar-link" data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.2 1-1.4 2.4-1.5-.6a8 8 0 0 1-1.7 1l-.3 1.6h-2.8l-.3-1.6a8 8 0 0 1-1.7-1l-1.5.6-1.4-2.4 1.2-1a8 8 0 0 1 0-2l-1.2-1 1.4-2.4 1.5.6a8 8 0 0 1 1.7-1l.3-1.6h2.8l.3 1.6a8 8 0 0 1 1.7 1l1.5-.6 1.4 2.4-1.2 1a8 8 0 0 1 0 2z"/></svg><span>Настройки</span></button>
    </nav>
    <div class="sidebar-spacer"></div>
    <section class="sidebar-quick">
-    <div class="sidebar-quick-visual" aria-hidden="true">✦</div>
-    <h3>Быстро добавить</h3>
-    <p>Создай задание для себя, друга или совместной подготовки.</p>
-    <button type="button" class="sidebar-quick-button" id="sidebarAddBtn">＋ Добавить задание</button>
+    <div class="sidebar-quick-visual" aria-hidden="true">🎯</div>
+    <h3>Быстро добавить задание</h3>
+    <p>Создайте новую задачу для себя, друга или для совместной подготовки.</p>
+    <button type="button" class="sidebar-quick-button" id="sidebarAddBtn"><span>＋</span> Добавить</button>
    </section>
    <div class="sidebar-footer"><span class="sidebar-live-dot"></span><span>Общая доска синхронизируется</span></div>
   </aside>
@@ -77,23 +68,25 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <div class="wrap">
     <header class="header topbar">
      <div class="topbar-heading">
-      <span class="eyebrow">УЧЕБНАЯ КОМАНДА</span>
-      <h1 id="viewTitle">Доска заданий</h1>
-      <p class="sub" id="viewSubtitle">Общая подготовка · Егор и Даниил</p>
+      <h1 id="viewTitle">Доска подготовки</h1>
+      <p class="sub" id="viewSubtitle">Подготовка к ОГЭ · Егор и Даниил</p>
      </div>
      <label class="topbar-search" aria-label="Поиск по заданиям">
-      <span class="topbar-search-icon" aria-hidden="true">⌕</span>
-      <input class="field topbar-search-field" id="search" type="search" placeholder="Найти задание..." autocomplete="off">
-      <kbd>Ctrl K</kbd>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <input class="field topbar-search-field" id="search" type="search" placeholder="Найти задание, тему или теорию..." autocomplete="off">
+      <kbd>⌘ K</kbd>
      </label>
      <div class="actions">
-      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">☾ Тема</button>
-      <div class="user-chip"><span class="user-chip-avatar">О</span><span class="user-chip-copy"><b id="who">Участник</b><small>Подготовка к ОГЭ</small></span></div>
-      <button class="btn primary" id="addBtn">＋ Задание</button>
-      <button class="btn logout-button" id="logout">Выйти</button>
+      <button type="button" class="icon-button" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">☾</button>
+      <button type="button" class="icon-button notification-button" id="notificationBtn" aria-label="Уведомления" title="Уведомления"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><i></i></button>
+      <div class="user-chip">
+       <span class="user-chip-avatars"><i>Е</i><i>Д</i></span>
+       <span class="user-chip-copy"><b>Егор и Даниил</b><small id="who">Участники подготовки</small></span>
+       <span class="user-chip-chevron">⌄</span>
+      </div>
+      <button class="btn primary topbar-add" id="addBtn"><span>＋</span> Добавить</button>
      </div>
-    </header>
- <nav class="panel tabs legacy-nav" id="mainTabs" aria-label="Основные разделы" aria-hidden="true">
+    </header> <nav class="panel tabs legacy-nav" id="mainTabs" aria-label="Основные разделы" aria-hidden="true">
   <button class="tab active" data-tab="board" data-group="tasks">Задания</button>
   <button class="tab" data-tab="study" data-group="learn">Обучение</button>
   <button class="tab" data-tab="tests" data-group="tests">Тесты</button>
@@ -122,9 +115,48 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
 
  <section id="boardPage">
-  <div class="page-intro"><div><h2>Все задания</h2><p>Общий список Егора и Даниила. Фильтруй по ученику или предмету и меняй статус по мере выполнения.</p></div><span class="page-note">Общая доска</span></div>
-  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><div class="spacer"></div><button class="btn primary" id="seedBtn">Добавить курс физики · 6 недель</button></div>
-  <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
+  <div class="board-toolbar-row">
+   <div class="subject-chips" role="group" aria-label="Фильтр по предметам">
+    <button type="button" class="filter-icon-button" id="filterToggle" aria-label="Дополнительные фильтры" title="Дополнительные фильтры"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 7v0M15 17v0"/><circle cx="9" cy="7" r="2.3"/><circle cx="15" cy="17" r="2.3"/></svg></button>
+    <button type="button" class="subject-chip physics-chip" data-subject-chip="Физика"><i></i>Физика</button>
+    <button type="button" class="subject-chip math-chip" data-subject-chip="Математика"><i></i>Математика</button>
+    <button type="button" class="subject-chip russian-chip" data-subject-chip="Русский язык"><i></i>Русский</button>
+    <button type="button" class="subject-chip informatics-chip" data-subject-chip="Информатика"><i></i>Информатика</button>
+   </div>
+   <div class="board-view-switch" role="group" aria-label="Вид заданий">
+    <button type="button" class="view-mode-button" data-view-mode="table"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg><span>Таблица</span></button>
+    <button type="button" class="view-mode-button active" data-view-mode="board"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/></svg><span>Доска</span></button>
+    <button type="button" class="view-mode-button" data-view-mode="list"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Список</span></button>
+   </div>
+  </div>
+  <div class="board-extra-filters hidden" id="boardExtraFilters">
+   <label>Ответственный<select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select></label>
+   <label>Предмет<select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select></label>
+   <button type="button" class="filter-reset" id="clearFiltersBtn">Сбросить фильтры</button>
+  </div>
+  <main class="board" id="taskBoard" data-view="board">
+   <section class="panel column" data-column="todo">
+    <div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div>
+    <button type="button" class="column-add" data-add-status="todo">＋ Добавить задание</button>
+    <div class="tasklist" id="todoList"></div>
+   </section>
+   <section class="panel column" data-column="doing">
+    <div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div>
+    <button type="button" class="column-add" data-add-status="doing">＋ Добавить задание</button>
+    <div class="tasklist" id="doingList"></div>
+   </section>
+   <section class="panel column" data-column="review">
+    <div class="colhead"><span><i class="dot review"></i>На проверке</span><span class="count" id="reviewCount">0</span></div>
+    <button type="button" class="column-add" data-add-status="review">＋ Добавить задание</button>
+    <div class="tasklist" id="reviewList"></div>
+   </section>
+   <section class="panel column" data-column="done">
+    <div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div>
+    <button type="button" class="column-add" data-add-status="done">＋ Добавить задание</button>
+    <div class="tasklist" id="doneList"></div>
+   </section>
+  </main>
+  <div id="boardAltView" class="board-alt-view hidden"></div>
  </section>
  <section id="dailyPage" class="hidden">
   <div class="panel smart-plan">
@@ -138,7 +170,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  
  <section id="studyPage" class="hidden">
   <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">19 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 19 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
-  <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
+  <div class="study-shortcuts"><button type="button" data-tab="subjects">Все предметы →</button><button type="button" data-tab="knowledge">Карта знаний →</button></div><div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
   <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
 
  </section>
@@ -203,6 +235,15 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
    <div class="test-bottom-actions"><button class="btn" id="testPrevBtn">← Назад</button><span id="testAnsweredLabel">Отвечено: 0 / 10</span><button class="btn primary" id="testNextBtn">Следующий →</button><button class="btn danger" id="finishTestBtn">Завершить тест</button></div>
   </div>
   <div id="testResult" class="hidden"></div>
+  <div class="tests-shortcuts"><button type="button" data-tab="mistakes">Мои ошибки и повторение →</button></div>
+ </section>
+
+ <section id="settingsPage" class="hidden">
+  <div class="page-intro"><div><h2>Настройки</h2><p>Внешний вид и параметры учебной команды.</p></div></div>
+  <div class="settings-grid">
+   <section class="panel section settings-card"><span class="settings-icon">◐</span><div><h3>Внешний вид</h3><p class="sub">Выбери светлую или тёмную тему интерфейса.</p><button type="button" class="btn" id="settingsThemeToggle">Переключить тему</button></div></section>
+   <section class="panel section settings-card"><span class="settings-icon">◎</span><div><h3>Учётная запись</h3><p class="sub">Сейчас выполнен вход как <b id="settingsCurrentUser">участник</b>.</p><button type="button" class="btn danger" id="logout">Выйти из аккаунта</button></div></section>
+  </div>
  </section>
 <div class="footer" id="sync">Подключение к общей базе…</div>
   <div id="focusWidget" class="focus-widget">
@@ -413,7 +454,8 @@ const configured=firebaseConfig.apiKey&&!firebaseConfig.apiKey.includes('YOUR_')
 const tasksCol=()=>collection(db,'rooms','oge2027','tasks'),taskDoc=id=>doc(db,'rooms','oge2027','tasks',id);
 function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),2200)}
 function showLogin(msg=''){$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('loginMsg').textContent=msg}
-function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=member.name;$('sync').textContent='Общая база подключена · синхронизация включена'; }
+function headerDateLabel(){return new Date().toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'long',year:'numeric'}).replace(' г.','');}
+function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=member.name;$('viewSubtitle').textContent=headerDateLabel();$('sync').textContent='Общая база подключена · синхронизация включена'; }
 
 
 let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
@@ -593,7 +635,7 @@ function renderCalendarDay(){
  const d=dateFromKey(calendarSelectedDate),arr=tasksOnDate(calendarSelectedDate);
  $("calendarDayTitle").innerHTML='<span class="eyebrow">ВЫБРАННАЯ ДАТА</span><h3>'+d.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})+'</h3><p>'+arr.length+' '+(arr.length===1?"задание":arr.length>1&&arr.length<5?"задания":"заданий")+'</p>';
  $("calendarDayList").innerHTML=arr.length?arr.map(t=>{
-  const label=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
+  const label=taskStatusLabel(t.status);
   return '<button type="button" class="calendar-task" data-cal-open="'+esc(t.id)+'"><span class="calendar-task-dot '+esc(t.status||"todo")+'"></span><span class="calendar-task-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.subject||"Другое")+' · '+esc(t.person||"")+'</small></span><span class="calendar-task-status">'+label+'</span></button>';
  }).join(""):'<div class="study-empty">На эту дату заданий нет. Можно добавить новое.</div>';
 }
@@ -637,11 +679,11 @@ function renderReference(){
  if(!queryText&&all.length>shown.length)root.insertAdjacentHTML("beforeend",'<p class="reference-more">Показаны первые 8 материалов из '+all.length+'. Введи запрос, чтобы найти нужную формулу или правило.</p>');
 }
 function showTab(tab){
- const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress"};
+ const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress",settings:"settings"};
  const group=groups[tab]||"tasks";
  const viewLabels={
-  board:["Доска заданий","Общая подготовка · Егор и Даниил"],
-  daily:["План на сегодня","Задачи, повторение и короткая практика"],
+  board:["Доска подготовки",headerDateLabel()],
+  daily:["Главная","Твой план подготовки на сегодня"],
   study:["Обучение","Теория, формулы и практика по физике"],
   subjects:["Предметы","Математика · русский язык · информатика · физика"],
   knowledge:["Карта знаний","Темы и навыки, которые уже освоены"],
@@ -649,7 +691,8 @@ function showTab(tab){
   mistakes:["Мои ошибки","Разбирай сложные вопросы и возвращайся к ним"],
   duels:["Дуэли","Соревнование и общая учебная цель"],
   stats:["Статистика","Личная динамика и результаты подготовки"],
-  calendar:["Календарь","Планирование подготовки по дням"]
+  calendar:["Календарь","Планирование подготовки по дням"],
+  settings:["Настройки","Параметры интерфейса и учётной записи"]
  };
  const copy=viewLabels[tab]||viewLabels.board;
  if($("viewTitle"))$("viewTitle").textContent=copy[0];
@@ -666,7 +709,7 @@ function showTab(tab){
  document.querySelectorAll(".subtab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
  const subTabs=$("subTabs");if(subTabs)subTabs.classList.remove("hidden");
  const hero=document.querySelector(".hero");if(hero)hero.classList.toggle("hidden",tab!=="board");
- ["board","daily","stats","study","subjects","calendar","tests","knowledge","mistakes","duels"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
+ ["board","daily","stats","study","subjects","calendar","tests","knowledge","mistakes","duels","settings"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==tab));
  if(tab==="study"){renderStudy();$("studyPage").scrollIntoView({behavior:"smooth",block:"start"})}
  if(tab==="subjects"){backToSubjects();renderSubjects()}
  if(tab==="calendar")renderCalendar();
@@ -676,6 +719,7 @@ function showTab(tab){
  if(tab==="duels")renderDuels();
  if(tab==="daily"){renderDailyPlan();renderReviewQueue()}
  if(tab==="stats")renderStats();
+ if(tab==="settings"&&$("settingsCurrentUser"))$("settingsCurrentUser").textContent=member?.name||"участник";
  if(tab==="subjects")renderReference();
 }
 
@@ -1204,14 +1248,19 @@ function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===n
 function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
 function filtered(){const p=$('personFilter').value,s=$('subjectFilter').value,q=$('search').value.toLowerCase().trim();return tasks.filter(t=>(p==='all'||t.person===p)&&(s==='all'||t.subject===s)&&(!q||(t.title+' '+(t.desc||'')+' '+t.subject+' '+t.person).toLowerCase().includes(q)))}
+let boardViewMode='board';
+function taskStatusLabel(status){return status==='doing'?'В процессе':status==='review'?'На проверке':status==='done'?'Готово':'К выполнению'}
+function nextTaskStatus(status){return status==='todo'?'doing':status==='doing'?'review':status==='review'?'done':'todo'}
+function shortDueText(value){if(!value)return 'Без срока';const d=new Date(value+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}).replace(/\./g,'')}
+function subjectClass(subject){return subject==='Физика'?'subject-physics':subject==='Математика'?'subject-math':subject==='Русский язык'?'subject-russian':subject==='Информатика'?'subject-informatics':'subject-other'}
+function taskAvatars(person){if(person==='Вместе')return '<span class="task-avatars"><i>Е</i><i>Д</i></span>';return '<span class="task-avatar '+(person==='Даниил'?'avatar-daniil':'')+'">'+(person==='Даниил'?'Д':'Е')+'</span>'}
 let taskDetailsCurrentId=null;
 function card(t){
- const next=t.status==="todo"?"doing":t.status==="doing"?"done":"todo";
- const label=t.status==="todo"?"Начать":t.status==="doing"?"Готово":"Вернуть";
- const status=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
- const course=t.courseWeek?'<span class="task-course-chip">Курс · неделя '+Number(t.courseWeek)+'</span>':'';
- return '<article class="task"><div class="task-card-top"><span class="tag">'+esc(t.subject||"Другое")+'</span>'+course+'<span class="task-xp">★ '+(Number(t.points)||0)+' XP</span></div><button type="button" class="task-open" data-action="open" data-id="'+esc(t.id)+'"><span class="tasktitle">'+esc(t.title)+'</span>'+(t.desc?'<span class="desc">'+esc(t.desc)+'</span>':'<span class="desc">Открой задание, чтобы посмотреть подробности.</span>')+'<span class="task-open-link">Открыть задание <span aria-hidden="true">→</span></span></button><div class="meta"><span>👤 '+esc(t.person)+'</span><span>📅 '+dueText(t.date)+'</span><span class="task-status-label">'+status+'</span></div><div class="taskactions"><button type="button" class="small" data-action="move" data-id="'+esc(t.id)+'">'+label+'</button><button type="button" class="small" data-action="edit" data-id="'+esc(t.id)+'">Изменить</button></div></article>';
+ const person=t.person||'Егор',points=Number(t.points)||0,subject=t.subject||'Другое';
+ const description=t.desc||'Открой задание, чтобы посмотреть подробности.';
+ return '<article class="task"><div class="task-card-top"><span class="tag '+subjectClass(subject)+'">'+esc(subject)+'</span><button type="button" class="task-more" data-action="open" data-id="'+esc(t.id)+'" aria-label="Открыть меню задания" title="Подробнее">···</button></div><button type="button" class="task-open" data-action="open" data-id="'+esc(t.id)+'"><span class="tasktitle">'+esc(t.title)+'</span><span class="desc">'+esc(description)+'</span></button><div class="task-card-meta"><span class="task-due"><span aria-hidden="true">▢</span>'+esc(shortDueText(t.date))+'</span><span class="task-xp"><span aria-hidden="true">▱</span> +'+points+' XP</span></div><div class="task-card-footer">'+taskAvatars(person)+'<span class="task-person-pill">'+esc(person)+'</span></div></article>';
 }
+
 function findPhysicsLessonForTask(t){
  for(let wi=0;wi<physicsWeeks.length;wi++){
   for(let li=0;li<physicsWeeks[wi].lessons.length;li++){
@@ -1228,9 +1277,9 @@ function openTaskDetails(t){
  $("taskDetailSubject").textContent=t.subject||"Другое";
  $("taskDetailTitle").textContent=t.title||"Задание";
  $("taskDetailDesc").textContent=t.desc||"Подробное описание для этого задания пока не добавлено.";
- const status=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
+ const status=taskStatusLabel(t.status);
  $("taskDetailMeta").innerHTML='<span>👤 '+esc(t.person||"Не назначено")+'</span><span>📅 '+esc(dueText(t.date))+'</span><span>★ '+(Number(t.points)||0)+' XP</span><span>'+status+'</span>';
- $("taskDetailStatus").textContent=t.status==="todo"?"Начать задание":t.status==="doing"?"Отметить выполненным":"Вернуть в работу";
+ $("taskDetailStatus").textContent=nextTaskStatus(t.status)==="done"?"Отметить выполненным":"Переместить: "+taskStatusLabel(nextTaskStatus(t.status));
  const lesson=findPhysicsLessonForTask(t),course=$("taskDetailCourse"),openLesson=$("taskDetailOpenLesson"),practiceBtn=$("taskDetailPractice");
  course.classList.add("hidden");openLesson.classList.add("hidden");practiceBtn.classList.add("hidden");
  if(t.subject==="Физика"&&t.courseWeek){
@@ -1263,7 +1312,30 @@ function openPhysicsLesson(id){
  }
  toast("Урок не найден в программе курса");
 }
-function renderBoard(){const arr=filtered();[['todo','todoList','todoCount'],['doing','doingList','doingCount'],['done','doneList','doneCount']].forEach(([st,list,count])=>{const a=arr.filter(t=>t.status===st);$(list).innerHTML=a.length?a.map(card).join(''):'<div class="empty">Пока пусто</div>';$ (count).textContent=a.length})}
+function renderBoard(){
+ const arr=filtered();
+ const columns=[['todo','todoList','todoCount'],['doing','doingList','doingCount'],['review','reviewList','reviewCount'],['done','doneList','doneCount']];
+ columns.forEach(([status,list,count])=>{
+  const items=arr.filter(t=>(t.status||'todo')===status);
+  const listNode=$(list),countNode=$(count);
+  if(listNode)listNode.innerHTML=items.length?items.map(card).join(''):'<div class="empty">Пока пусто</div>';
+  if(countNode)countNode.textContent=items.length;
+ });
+ const board=$('taskBoard'),alt=$('boardAltView');
+ if(board)board.classList.toggle('hidden',boardViewMode!=='board');
+ if(alt){
+  alt.classList.toggle('hidden',boardViewMode==='board');
+  if(boardViewMode==='list'){
+   alt.innerHTML=arr.length?'<div class="board-list-view">'+arr.map(t=>'<article class="board-list-row"><div class="board-list-main"><i class="list-status-dot '+esc(t.status||'todo')+'"></i><span><b>'+esc(t.title)+'</b><small>'+esc(t.subject||'Другое')+' · '+esc(t.person||'')+'</small></span></div><span class="board-list-status">'+taskStatusLabel(t.status)+'</span><span class="board-list-date">'+esc(shortDueText(t.date))+'</span><b class="board-list-xp">+'+(Number(t.points)||0)+' XP</b><button type="button" class="small" data-action="open" data-id="'+esc(t.id)+'">Открыть</button></article>').join(''):'<div class="empty">Пока нет заданий</div>';
+  }else if(boardViewMode==='table'){
+   alt.innerHTML=arr.length?'<div class="board-table-wrap"><table class="board-table"><thead><tr><th>Задание</th><th>Предмет</th><th>Ответственный</th><th>Срок</th><th>Статус</th><th>Баллы</th><th></th></tr></thead><tbody>'+arr.map(t=>'<tr><td><button type="button" class="table-task-title" data-action="open" data-id="'+esc(t.id)+'">'+esc(t.title)+'</button></td><td>'+esc(t.subject||'Другое')+'</td><td>'+esc(t.person||'')+'</td><td>'+esc(shortDueText(t.date))+'</td><td><span class="table-status '+esc(t.status||'todo')+'">'+taskStatusLabel(t.status)+'</span></td><td>+'+(Number(t.points)||0)+' XP</td><td><button type="button" class="small" data-action="edit" data-id="'+esc(t.id)+'">Изменить</button></td></tr>').join('')+'</tbody></table></div>':'<div class="empty">Пока нет заданий</div>';
+  }
+ }
+ document.querySelectorAll('[data-view-mode]').forEach(b=>b.classList.toggle('active',b.dataset.viewMode===boardViewMode));
+ const selected=$('subjectFilter')?.value||'all';
+ document.querySelectorAll('[data-subject-chip]').forEach(b=>b.classList.toggle('active',b.dataset.subjectChip===selected));
+}
+
 function renderDaily(){
  const arr=tasks.filter(t=>t.daily||t.date===today()),done=arr.filter(t=>t.status==="done").length;
  $("todayCount").textContent=done+" / "+arr.length;
@@ -1337,23 +1409,34 @@ function renderStats(){
 function render(){renderBoard();renderDaily();renderStats();renderSubjects();if(!$('calendarPage').classList.contains('hidden'))renderCalendar();[['Егор','egor'],['Даниил','dan']].forEach(([n,id])=>{$(id+'Xp').textContent=pointsFor(n)+' XP';$(id+'Pct').textContent=progress(n)+'%';$(id+'Fill').style.width=progress(n)+'%'})}
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
 function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
-function openModal(t=null,daily=false){editing=t?.id||null;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
+let newTaskStatus='todo';
+function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Математика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
 $('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
-$('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:'todo',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
+$('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:newTaskStatus,createdAt:serverTimestamp(),createdBy:user.uid,completedAt:newTaskStatus==='done'?serverTimestamp():null,completedBy:newTaskStatus==='done'?user.uid:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{
+ const add=e.target.closest('[data-add-status]');
+ if(add){openModal(null,false,add.dataset.addStatus);return}
+ const subjectChip=e.target.closest('[data-subject-chip]');
+ if(subjectChip){$('subjectFilter').value=$('subjectFilter').value===subjectChip.dataset.subjectChip?'all':subjectChip.dataset.subjectChip;renderBoard();return}
+ const view=e.target.closest('[data-view-mode]');
+ if(view){boardViewMode=view.dataset.viewMode;renderBoard();return}
+ const filter=e.target.closest('#filterToggle');
+ if(filter){$('boardExtraFilters').classList.toggle('hidden');return}
+ const clear=e.target.closest('#clearFiltersBtn');
+ if(clear){$('personFilter').value='all';$('subjectFilter').value='all';$('search').value='';renderBoard();return}
  const b=e.target.closest('[data-action]');if(!b)return;
  const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;
  try{
   if(b.dataset.action==='open')openTaskDetails(t);
   if(b.dataset.action==='edit')openModal(t);
   if(b.dataset.action==='move'){
-   const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';
+   const st=nextTaskStatus(t.status);
    await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});
-   toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён');
+   toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён: '+taskStatusLabel(st));
   }
  }catch(err){toast('Не удалось изменить: '+err.message)}
 });
@@ -1364,7 +1447,7 @@ $('taskDetailsBg').addEventListener('click',async e=>{
  try{
   const action=b.dataset.taskDetailAction;
   if(action==='status'){
-   const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';
+   const st=nextTaskStatus(t.status);
    await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});
    closeTaskDetails();toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён');
   }else if(action==='edit'){closeTaskDetails();openModal(t)}
@@ -1378,6 +1461,7 @@ $('dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-dail
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
 document.querySelector(".app-sidebar").addEventListener("click",e=>{const b=e.target.closest(".sidebar-link[data-tab]");if(b)showTab(b.dataset.tab)});
+document.querySelector(".workspace").addEventListener("click",e=>{const b=e.target.closest(".study-shortcuts [data-tab],.tests-shortcuts [data-tab]");if(b)showTab(b.dataset.tab)});
 $("sidebarAddBtn").addEventListener("click",()=>openModal());
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.repeat){e.preventDefault();const s=$("search");if(s&&!s.closest(".hidden"))s.focus()}});
@@ -1469,19 +1553,22 @@ $('seedBtn').addEventListener('click',generatePhysicsCoursePlan);
 function applyTheme(theme){
  const next=theme==="dark"?"dark":"light";
  document.body.dataset.theme=next;
- const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=next==="dark"?"#0c1220":"#f5f6fa";
- const label=next==="dark"?"☀ Светлая тема":"☾ Тёмная тема";
- ["themeToggle","themeToggleAuth"].forEach(id=>{const b=$(id);if(b){b.textContent=label;b.setAttribute("aria-pressed",String(next==="dark"))}});
+ const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=next==="dark"?"#171522":"#faf5f5";
+ const label=next==="dark"?"☀":"☾";
+ ["themeToggle","themeToggleAuth"].forEach(id=>{const b=$(id);if(b){b.textContent=label;b.setAttribute("aria-label",next==="dark"?"Включить светлую тему":"Включить тёмную тему");b.setAttribute("aria-pressed",String(next==="dark"))}});
+ const settings=$("settingsThemeToggle");if(settings)settings.textContent=next==="dark"?"Включить светлую тему":"Включить тёмную тему";
 }
 function toggleTheme(){
  const next=document.body.dataset.theme==="dark"?"light":"dark";
- try{localStorage.setItem("oge-board-theme",next)}catch(e){}
+ try{localStorage.setItem("oge-board-theme-v2",next)}catch(e){}
  applyTheme(next);
 }
-try{applyTheme(localStorage.getItem("oge-board-theme")||"light")}catch(e){applyTheme("light")}
+try{applyTheme(localStorage.getItem("oge-board-theme-v2")||"light")}catch(e){applyTheme("light")}
 
 $("themeToggle")?.addEventListener("click",toggleTheme);
 $("themeToggleAuth")?.addEventListener("click",toggleTheme);
+$("settingsThemeToggle")?.addEventListener("click",toggleTheme);
+$("notificationBtn")?.addEventListener("click",()=>toast("Пока нет новых уведомлений"));
 $("referenceDetails")?.addEventListener("toggle",()=>{if($("referenceDetails").open)renderReference()});
 $("referenceSearch")?.addEventListener("input",renderReference);
 $("referenceSubject")?.addEventListener("change",renderReference);
