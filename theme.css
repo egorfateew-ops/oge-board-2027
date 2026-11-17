@@ -2567,7 +2567,7 @@ body[data-theme="dark"] .vlab-scene{box-shadow:0 12px 28px #0003,inset 0 1px 0 #
 .vlab-workspace.is-3d .vlab-mode-switch button[data-vlab-action=mode-3d]{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px #1b294014}
 body[data-theme=dark] .vlab-three-toolbar,body[data-theme=dark] .vlab-three-controls{background:var(--soft);border-color:var(--line)}
 body[data-theme=dark] .vlab-three-toolbar b,body[data-theme=dark] .vlab-three-control b{color:var(--text)}
-body[data-theme=dark] .vlab-three-mode-switch{background:var(--soft2)}
+body[data-theme=dark] .vlab-mode-switch{background:var(--soft2);border-color:var(--line)}
 body[data-theme=dark] .vlab-three-stage{border-color:#40516a}
 body[data-theme=dark] .vlab-three-hint{background:#1b2939e8;border-color:#40516a;color:#c2cedc}
 body[data-theme=dark] .vlab-three-readouts>span{background:#1d2a3bee;border-color:#40516a}
