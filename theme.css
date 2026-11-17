@@ -2647,3 +2647,109 @@ body[data-theme=dark] .vlab-three-status{background:var(--soft);border-color:var
  .vlab-three-control{flex-basis:100%;min-width:0}
  .vlab-three-footer{font-size:8px}
 }
+
+/* Virtual physics laboratory — six-stage upgrade */
+.vlab-scale-apparatus{z-index:4}
+.vlab-scale-apparatus>small{bottom:-25px;z-index:18;left:8px;right:8px;padding:5px 7px;border:1px solid #cbd7e4;border-radius:7px;background:#f8fbff;color:#344b65;font-size:8px;letter-spacing:.08em;line-height:1.2;box-shadow:0 3px 8px #25334b16}
+.vlab-journal-panel{display:grid;gap:13px;margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);min-width:0}
+.vlab-journal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.vlab-journal-head h3{margin:4px 0;font-size:16px;color:var(--text)}
+.vlab-journal-head p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+.vlab-journal-count{flex:none;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--soft);color:var(--muted);font-size:10px;font-weight:800}
+.vlab-journal-actions{display:flex;flex-wrap:wrap;gap:7px}
+.vlab-journal-actions .btn{min-height:36px;font-size:10px}
+.vlab-journal-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:12px;min-width:0}
+.vlab-journal-table-wrap,.vlab-journal-graph-wrap{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.vlab-journal-table-wrap{overflow-x:auto}
+.vlab-journal-table{width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap}
+.vlab-journal-table th,.vlab-journal-table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+.vlab-journal-table th{background:var(--soft2);color:var(--muted);font-size:9px;font-weight:850}
+.vlab-journal-table td{color:var(--text);font-variant-numeric:tabular-nums}
+.vlab-journal-table tr:last-child td{border-bottom:0}
+.vlab-journal-graph-title{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.vlab-journal-graph-title b{font-size:10px;color:var(--text)}
+.vlab-journal-graph-title small{font-size:8px;color:var(--muted);text-align:right}
+.vlab-journal-graph{min-height:190px;padding:7px}
+.vlab-chart-svg{display:block;width:100%;height:auto;overflow:visible}
+.vlab-chart-svg text{fill:var(--muted);font-size:9px}
+.vlab-chart-grid{fill:none;stroke:var(--line2);stroke-width:1.4}
+.vlab-chart-line{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.vlab-chart-svg circle{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.vlab-journal-empty,.vlab-journal-single-point{display:grid;min-height:155px;place-content:center;gap:7px;padding:16px;color:var(--muted);font-size:10px;text-align:center;line-height:1.5}
+.vlab-journal-single-point b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
+.vlab-journal-single-point small{color:var(--muted);font-size:9px}
+.vlab-journal-note{padding:9px 11px;border-radius:9px;background:var(--soft2);color:var(--muted);font-size:9px;line-height:1.45}
+.vlab-workflow span.done{border-color:#36a982;background:#e8f7f1;color:#167653}
+.vlab-workflow span.done i{background:#36a982;color:#fff}
+.vlab-three-toolbar{flex-wrap:wrap}
+.vlab-three-toolbar-actions{flex-wrap:wrap;justify-content:flex-end}
+.vlab-three-toolbar-actions button{font-size:9px;white-space:nowrap}
+.vlab-three-stage{background:radial-gradient(ellipse at 50% 10%,#f8fbff 0%,#e8eff7 56%,#dce5ef 100%)}
+.vlab-three-stage canvas{outline:none}
+.vlab-three-controls{align-items:stretch}
+.vlab-three-control-actions{display:flex;gap:7px;flex-wrap:wrap}
+.vlab-three-control-actions button{flex:1 1 130px}
+body[data-theme=dark] .vlab-journal-panel{background:var(--surface);border-color:var(--line)}
+body[data-theme=dark] .vlab-journal-table-wrap,body[data-theme=dark] .vlab-journal-graph-wrap{background:var(--soft)}
+body[data-theme=dark] .vlab-journal-table th{background:var(--soft2)}
+body[data-theme=dark] .vlab-journal-note{background:var(--soft2)}
+body[data-theme=dark] .vlab-workflow span.done{background:#153c34;border-color:#2d9a76;color:#8fe0c1}
+body[data-theme=dark] .vlab-workflow span.done i{background:#238a69;color:#fff}
+@media(max-width:850px){
+ .vlab-journal-grid{grid-template-columns:1fr}
+ .vlab-journal-head h3{font-size:14px}
+ .vlab-three-toolbar-actions{justify-content:flex-start}
+}
+@media(max-width:620px){
+ .vlab-journal-panel{padding:11px;border-radius:12px}
+ .vlab-journal-head{align-items:flex-start}
+ .vlab-journal-head h3{font-size:13px}
+ .vlab-journal-head p{font-size:9px}
+ .vlab-journal-count{font-size:8px;padding:6px 8px}
+ .vlab-journal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .vlab-journal-actions .btn{width:100%;padding:7px 8px;font-size:9px}
+ .vlab-journal-grid{gap:8px}
+ .vlab-journal-graph{min-height:160px}
+ .vlab-three-toolbar{align-items:flex-start}
+ .vlab-three-toolbar>div:first-child{width:100%}
+ .vlab-three-toolbar-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+ .vlab-three-toolbar-actions button{min-width:0;min-height:36px;padding:6px 7px;font-size:8px}
+ .vlab-three-stage{height:350px;min-height:350px}
+ .vlab-three-readouts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .vlab-three-footer{flex-direction:column}
+ .vlab-three-control{flex-basis:100%;min-width:0}
+}
+@media print{
+ body.vlab-printing *{visibility:hidden!important}
+ body.vlab-printing #labsPage,
+ body.vlab-printing #labsPage #virtualLabWorkspace,
+ body.vlab-printing #labsPage #virtualLabWorkspace *{visibility:visible!important}
+ body.vlab-printing #labsPage{display:block!important;position:absolute!important;inset:0!important;width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+ body.vlab-printing #labsPage>.vlab-hero,
+ body.vlab-printing .vlab-catalog-panel,
+ body.vlab-printing .vlab-workspace-actions,
+ body.vlab-printing .vlab-workflow,
+ body.vlab-printing .vlab-three-host,
+ body.vlab-printing .vlab-scene-scroll,
+ body.vlab-printing .vlab-touch-tip,
+ body.vlab-printing .vlab-journal-actions,
+ body.vlab-printing .vlab-three-footer{display:none!important}
+ body.vlab-printing .vlab-page-layout{display:block!important}
+ body.vlab-printing #virtualLabWorkspace{display:block!important;width:100%!important;border:0!important;box-shadow:none!important;padding:0!important;background:#fff!important;color:#111!important}
+ body.vlab-printing .vlab-workspace-head,
+ body.vlab-printing .vlab-lower-grid,
+ body.vlab-printing .vlab-journal-panel{break-inside:avoid;page-break-inside:avoid}
+ body.vlab-printing .vlab-workspace-head h2,
+ body.vlab-printing .vlab-workspace-head p,
+ body.vlab-printing .vlab-procedure h3,
+ body.vlab-printing .vlab-report-heading h3,
+ body.vlab-printing .vlab-journal-head h3{color:#111!important}
+ body.vlab-printing .vlab-procedure,
+ body.vlab-printing .vlab-report-panel,
+ body.vlab-printing .vlab-journal-panel{background:#fff!important;border:1px solid #bbb!important;color:#111!important}
+ body.vlab-printing .vlab-journal-grid{grid-template-columns:1fr 1fr!important}
+ body.vlab-printing .vlab-chart-svg text{fill:#333!important}
+ body.vlab-printing .vlab-chart-grid{stroke:#ccc!important}
+ body.vlab-printing .vlab-journal-table th,
+ body.vlab-printing .vlab-journal-table td{color:#111!important;border-color:#ddd!important}
+}

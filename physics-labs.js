@@ -31,7 +31,7 @@ function field(key,label,unit,placeholder) {
   return '<label class="vlab-field"><span>'+esc(label)+'</span><div><input class="field" type="number" step="any" inputmode="decimal" data-vlab-field="'+esc(key)+'" placeholder="'+esc(placeholder || "Сними показание")+'"><small>'+esc(unit || "")+'</small></div></label>';
 }
 function reportChecks() {
-  return '<div class="vlab-report-checks"><label><input type="checkbox" data-vlab-check="scheme"> Перенёс схему установки в бланк</label><label><input type="checkbox" data-vlab-check="units"> Указал единицы и погрешности</label></div><label class="vlab-conclusion-field"><span>Вывод по эксперименту</span><textarea data-vlab-conclusion rows="2" placeholder="Что показал опыт? Как связаны измеренные величины?"></textarea></label>';
+  return '<div class="vlab-report-checks"><label><input type="checkbox" data-vlab-check="scheme"> Перенёс схему установки в бланк</label><label><input type="checkbox" data-vlab-check="units"> Указал единицы измерения</label><label><input type="checkbox" data-vlab-check="uncertainty"> Оценил погрешность измерений</label></div><label class="vlab-conclusion-field"><span>Вывод по эксперименту</span><textarea data-vlab-conclusion rows="2" placeholder="Что показал опыт? Как связаны измеренные величины?"></textarea></label>';
 }
 function densityScene() {
   return '<div class="vlab-scene vlab-density-scene" data-scene="density">'+
@@ -234,12 +234,22 @@ function instructionsMarkup(item) {
   return '<div class="vlab-procedure"><div><span class="eyebrow">ХОД ЭКСПЕРИМЕНТА</span><h3>Что нужно сделать</h3></div><ol>'+((steps[item.id]||[]).map((step,i)=>'<li><span>'+String(i+1)+'</span>'+esc(step)+'</li>').join(""))+'</ol><div class="vlab-safety"><b>Техника безопасности</b><p>'+esc(item.id==="ohm"?"Работай только с низким напряжением 4,5 В. Никогда не подключай схему к бытовой розетке.":item.id==="heat"?"В реальной лаборатории используй только тёплую воду и работай под наблюдением учителя.":item.id==="spring"||item.id==="lever"?"Не перегружай пружину и не располагай лицо под подвешенными грузами.": "Не роняй приборы и не допускай резких движений оборудования.")+'</p></div></div>';
 }
 function workspaceMarkup(item) {
+function journalMarkup() {
+  return '<section class="vlab-journal-panel" data-vlab-journal>'+
+    '<div class="vlab-journal-head"><div><span class="eyebrow">ЛАБОРАТОРНЫЙ ЖУРНАЛ</span><h3>Измерения и результаты</h3><p>Фиксируй показания, сравнивай опыты и строй график по полученным данным.</p></div><span class="vlab-journal-count" data-vlab-journal-count>0 записей</span></div>'+
+    '<div class="vlab-journal-actions"><button type="button" class="btn primary" data-vlab-action="add-measurement">＋ Снять показания</button><button type="button" class="btn" data-vlab-action="export-csv">↓ Скачать таблицу CSV</button><button type="button" class="btn" data-vlab-action="print-report">Печать / PDF</button><button type="button" class="btn" data-vlab-action="clear-measurements">Очистить журнал</button></div>'+
+    '<div class="vlab-journal-grid"><div class="vlab-journal-table-wrap" data-vlab-journal-table><div class="vlab-journal-empty">После первого измерения здесь появится таблица результатов.</div></div>'+
+    '<div class="vlab-journal-graph-wrap"><div class="vlab-journal-graph-title"><b>График эксперимента</b><small data-vlab-graph-caption>Появится после снятия показаний</small></div><div class="vlab-journal-graph" data-vlab-journal-graph><div class="vlab-journal-empty">Пока недостаточно данных для графика.</div></div></div></div>'+
+    '<div class="vlab-journal-note" data-vlab-journal-note>Совет: для графика зависимости измени параметр установки и сними несколько измерений.</div>'+
+  '</section>';
+}
+
   return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><div class="vlab-mode-switch" role="group" aria-label="Режим лаборатории"><button type="button" class="active" data-vlab-action="mode-2d" aria-pressed="true">2D</button><button type="button" data-vlab-action="mode-3d" aria-pressed="false">3D</button></div><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
     '<div class="vlab-workflow" aria-label="Этапы лабораторной работы"><span class="active"><i>01</i> Опыт</span><span><i>02</i> Измерения</span><span><i>03</i> Вывод</span></div>'+
     '<div class="vlab-three-host" data-vlab-three-host hidden></div>'+
     '<div class="vlab-scene-scroll"><div class="vlab-scene-frame">'+sceneMarkup(item.id)+'</div></div>'+
     '<p class="vlab-touch-tip">Перетаскивай оборудование пальцем или мышью. На узком экране рабочий стол можно сдвигать по горизонтали.</p>'+
-    '<div class="vlab-lower-grid">'+instructionsMarkup(item)+reportMarkup(item.id)+'</div>';
+    '<div class="vlab-lower-grid">'+instructionsMarkup(item)+reportMarkup(item.id)+'</div>'+journalMarkup();
 }
 
 export function mountLabSimulator(container,id,options = {}) {
@@ -253,6 +263,8 @@ export function mountLabSimulator(container,id,options = {}) {
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
+  let journalRows = [];
+  let lastResult = null;
   let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:9.3,magnetInside:false,needle:0,inductionObserved:0,inductionLog:[],measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
   const q = selector => container.querySelector(selector);
@@ -284,14 +296,133 @@ export function mountLabSimulator(container,id,options = {}) {
   const setRead = (key,value) => { const node=read(key); if(node)node.textContent=value; };
   const fmt = (value,digits=2) => Number(value).toFixed(digits).replace(".",",");
   const fieldValue = key => { const input=q('[data-vlab-field="'+key+'"]'); return input ? Number(String(input.value).replace(",",".")) : NaN; };
+  const measurementRows = () => {
+    const row=(label,values,x=null,y=null,key="")=>({label,values,x:Number.isFinite(Number(x))?Number(x):null,y:Number.isFinite(Number(y))?Number(y):null,key:key||JSON.stringify(values)});
+    if(item.id==="density"&&state.massMeasured&&state.submerged){
+      const mass=Number(state.mass||54),volume=Number((state.after||60)-(state.before||40)),rho=mass/volume;
+      return [row("Опыт",{"Масса, г":fmt(mass,1),"Объём, см³":fmt(volume,1),"Плотность, г/см³":fmt(rho,2)},volume,mass)];
+    }
+    if(item.id==="motion"&&state.cartMoved&&Number(state.cartTime||0)>0){
+      const distance=Number(state.distance||1),time=Number(state.cartTime),speed=distance/time;
+      return [row("Заезд",{"Путь, м":fmt(distance,2),"Время, с":fmt(time,2),"Скорость, м/с":fmt(speed,2)},time,distance)];
+    }
+    if(item.id==="spring"&&Number(state.mass||0)>0){
+      const mass=Number(state.mass),extension=Number(state.springExtension||state.extension||mass/20),force=mass/1000*10,k=force/(extension/100);
+      return [row("Нагрузка",{"Масса, г":fmt(mass,0),"Удлинение, см":fmt(extension,2),"Сила, Н":fmt(force,2),"Жёсткость, Н/м":fmt(k,1)},extension,force)];
+    }
+    if(item.id==="archimedes"&&state.submerged){
+      const air=Number(state.air||3.9),water=Number(state.water||3.4),fa=air-water;
+      return [row("Погружение",{"Вес в воздухе, Н":fmt(air,2),"Вес в воде, Н":fmt(water,2),"Сила Архимеда, Н":fmt(fa,2)},water,fa)];
+    }
+    if(item.id==="lever"&&state.lever){
+      const v=state.lever,m1=Number(v.m1||200),m2=Number(v.m2||200),l1=Number(v.l1||20),l2=Number(v.l2||20),a=m1*l1,b=m2*l2;
+      return [row("Равновесие",{"m₁, г":fmt(m1,0),"l₁, см":fmt(l1,1),"m₂, г":fmt(m2,0),"l₂, см":fmt(l2,1),"M₁, г·см":fmt(a,1),"M₂, г·см":fmt(b,1)},a,b)];
+    }
+    if(item.id==="pendulum"&&Number(state.pendulumElapsed||0)>0){
+      const length=Number(state.pendulumLength||.5),time=Number(state.pendulumElapsed),count=Number(state.pendulumCount||10),period=time/count;
+      return [row("Серия колебаний",{"Длина, м":fmt(length,2),"Время, с":fmt(time,2),"Колебаний":count,"Период, с":fmt(period,3)},length,period*period)];
+    }
+    if(item.id==="heat"&&state.hotMetalIn){
+      const mw=Number(state.mw||100),mm=Number(state.mm||100),tw=Number(state.tw||20),tm=Number(state.tm||90),tf=Number(state.tf||32.6);
+      const heatCapacity=4200*(mw/1000)*(tf-tw)/((mm/1000)*(tm-tf));
+      return [row("Тепловой баланс",{"Вода, г":fmt(mw,0),"Металл, г":fmt(mm,0),"t воды, °C":fmt(tw,1),"t металла, °C":fmt(tm,1),"t смеси, °C":fmt(tf,1),"c металла, Дж/(кг·°C)":fmt(heatCapacity,0)},tf-tw,tm-tf)];
+    }
+    if(item.id==="ohm"&&Array.isArray(state.readings)){
+      return state.readings.map((v,i)=>row("Измерение №"+(i+1),{"I, А":fmt(v.i,3),"U, В":fmt(v.u,3),"R, Ом":fmt(v.u/v.i,2)},Number(v.i),Number(v.u),"ohm-"+i));
+    }
+    if(item.id==="induction"&&Array.isArray(state.inductionLog)){
+      return state.inductionLog.map((v,i)=>row("Наблюдение №"+(i+1),{"Действие":v.action,"Отклонение":v.direction},i+1,String(v.direction||"").includes("вправо")?1:-1,"induction-"+i));
+    }
+    if(item.id==="lens"&&state.lens){
+      const a=Number(state.lens.a||30),b=Number(state.lens.b||30),f=a*b/(a+b);
+      return [row("Настройка",{"Предмет — линза, см":fmt(a,1),"Линза — экран, см":fmt(b,1),"Фокусное расстояние, см":fmt(f,1),"Изображение":state.lens.sharp?"резкое":"размытое"},a,b)];
+    }
+    if(item.id==="uncertainty"&&Array.isArray(state.measurements)){
+      return state.measurements.map((v,i)=>row("Замер №"+(i+1),{"№":i+1,"Показание, см":fmt(v,2)},i+1,Number(v),"uncertainty-"+i));
+    }
+    if(item.id==="friction"&&state.friction?.sliding){
+      const v=state.friction,mass=Number(v.mass||.2),force=Number(v.force||0),normal=mass*10,mu=force/normal;
+      return [row("Скольжение",{"Масса, кг":fmt(mass,3),"Нормальная сила, Н":fmt(normal,2),"Сила трения, Н":fmt(force,2),"Коэффициент μ":fmt(mu,3)},normal,force)];
+    }
+    return [];
+  };
+  const renderJournalGraph = () => {
+    const target=q("[data-vlab-journal-graph]"),caption=q("[data-vlab-graph-caption]");
+    if(!target)return;
+    let points=[],xLabel="Параметр X",yLabel="Параметр Y";
+    if(item.id==="ohm"){points=(state.readings||[]).map((v,i)=>({x:Number(v.i),y:Number(v.u),label:"Замер "+(i+1)}));xLabel="Ток, А";yLabel="Напряжение, В";}
+    else if(item.id==="uncertainty"){points=(state.measurements||[]).map((v,i)=>({x:i+1,y:Number(v),label:"Замер "+(i+1)}));xLabel="Номер измерения";yLabel="Длина, см";}
+    else {
+      points=journalRows.filter(v=>Number.isFinite(v.x)&&Number.isFinite(v.y)).map(v=>({x:v.x,y:v.y,label:v.label}));
+      const labels={density:["Объём, см³","Масса, г"],motion:["Время, с","Путь, м"],spring:["Удлинение, см","Сила, Н"],archimedes:["Вес в воде, Н","Сила Архимеда, Н"],lever:["Момент слева, г·см","Момент справа, г·см"],pendulum:["Длина, м","Период², с²"],heat:["Нагрев воды, °C","Охлаждение металла, °C"],lens:["Расстояние a, см","Расстояние b, см"],friction:["Нормальная сила, Н","Сила трения, Н"]}[item.id]||[xLabel,yLabel];
+      xLabel=labels[0];yLabel=labels[1];
+    }
+    if(caption)caption.textContent=points.length+" точек · "+xLabel+" / "+yLabel;
+    if(!points.length){target.innerHTML='<div class="vlab-journal-empty">Сначала проведи опыт и добавь измерение.</div>';return;}
+    if(points.length===1){target.innerHTML='<div class="vlab-journal-single-point"><b>'+esc(fmt(points[0].x,2))+'; '+esc(fmt(points[0].y,2))+'</b><small>Добавь ещё измерения, чтобы увидеть зависимость на графике.</small></div>';return;}
+    const xs=points.map(v=>v.x),ys=points.map(v=>v.y),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+    const xpad=(xmax-xmin)||Math.max(.5,Math.abs(xmax)*.12),ypad=(ymax-ymin)||Math.max(.5,Math.abs(ymax)*.12);
+    const left=48,right=398,top=18,bottom=186;
+    const px=v=>left+((v-(xmin-xpad*.12))/(xmax-xmin+xpad*.24))*(right-left);
+    const py=v=>bottom-((v-(ymin-ypad*.12))/(ymax-ymin+ypad*.24))*(bottom-top);
+    const path=points.map((v,i)=>(i?"L":"M")+px(v.x).toFixed(1)+" "+py(v.y).toFixed(1)).join(" ");
+    const dots=points.map(v=>'<circle cx="'+px(v.x).toFixed(1)+'" cy="'+py(v.y).toFixed(1)+'" r="4.5"><title>'+esc(v.label)+': '+esc(fmt(v.x,2))+'; '+esc(fmt(v.y,2))+'</title></circle>').join("");
+    target.innerHTML='<svg class="vlab-chart-svg" viewBox="0 0 420 230" role="img" aria-label="График '+esc(item.title)+'"><path class="vlab-chart-grid" d="M48 18V186H398"/><path class="vlab-chart-line" d="'+path+'"/>'+dots+'<text x="220" y="218" text-anchor="middle">'+esc(xLabel)+'</text><text x="12" y="105" transform="rotate(-90 12 105)" text-anchor="middle">'+esc(yLabel)+'</text></svg>';
+  };
+  const renderJournal = () => {
+    const table=q("[data-vlab-journal-table]"),count=q("[data-vlab-journal-count]");
+    if(count)count.textContent=journalRows.length+" "+(journalRows.length===1?"запись":journalRows.length<5?"записи":"записей");
+    if(table){
+      if(!journalRows.length)table.innerHTML='<div class="vlab-journal-empty">После первого измерения здесь появится таблица результатов.</div>';
+      else {
+        const columns=[...new Set(journalRows.flatMap(v=>Object.keys(v.values)))];
+        table.innerHTML='<table class="vlab-journal-table"><thead><tr><th>№</th><th>Опыт</th>'+columns.map(v=>'<th>'+esc(v)+'</th>').join("")+'</tr></thead><tbody>'+journalRows.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.label)+'</td>'+columns.map(key=>'<td>'+esc(v.values[key]??"—")+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
+      }
+    }
+    renderJournalGraph();
+  };
+  const updateWorkflow = () => {
+    const stages=q(".vlab-workflow")?.querySelectorAll("span");if(!stages)return;
+    const touched=!!(state.massMeasured||state.submerged||state.cartMoved||state.mass||state.hotMetalIn||state.keyClosed||state.inductionObserved||state.pendulumElapsed||state.measurements?.length||state.readings?.length||state.friction?.sliding||state.lens?.sharp);
+    const complete=[touched,journalRows.length>0,!!lastResult],firstIncomplete=complete.findIndex(v=>!v);
+    stages.forEach((node,i)=>{node.classList.toggle("done",complete[i]);node.classList.toggle("active",i===(firstIncomplete<0?2:firstIncomplete));});
+  };
+  const addMeasurement = () => {
+    const rows=measurementRows();
+    if(!rows.length){showResult("Пока нечего записывать. Сначала закончи измерительную часть эксперимента.",false);return;}
+    const known=new Set(journalRows.map(v=>v.key)),fresh=rows.filter(v=>!known.has(v.key)).map(v=>({...v,number:journalRows.length+1}));
+    if(!fresh.length){showResult("Эти показания уже есть в журнале. Измени условия опыта и сними новое измерение.",false);return;}
+    journalRows.push(...fresh);renderJournal();updateWorkflow();
+    showResult("В журнал добавлено измерений: "+fresh.length+". Результаты можно выгрузить в CSV или PDF.",true);
+  };
+  const clearJournal = () => {journalRows=[];lastResult=null;renderJournal();updateWorkflow();};
+  const exportJournalCsv = () => {
+    if(!journalRows.length)addMeasurement();
+    if(!journalRows.length)return;
+    const columns=[...new Set(journalRows.flatMap(v=>Object.keys(v.values)))],headers=["№","Опыт",...columns],quote=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
+    const rows=journalRows.map((v,i)=>[i+1,v.label,...columns.map(key=>v.values[key]??"")].map(quote).join(";"));
+    const blob=new Blob(["\uFEFF"+[headers.map(quote).join(";"),...rows].join("\r\n")],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="laboratornaya-"+item.id+".csv";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+  const printJournalReport = () => {
+    if(!journalRows.length)addMeasurement();
+    if(!journalRows.length)return;
+    document.body.classList.add("vlab-printing");
+    const done=()=>document.body.classList.remove("vlab-printing");
+    window.addEventListener("afterprint",done,{once:true});window.print();setTimeout(done,1500);
+  };
+
   const showResult = (message,good=false) => { const target=q("[data-vlab-result]"); if(target)target.innerHTML='<div class="vlab-result-state '+(good?"good":"bad")+'">'+message+'</div>'; };
   const save = async (result,values,readings={}) => {
     const checks = {};
     container.querySelectorAll("[data-vlab-check]").forEach(input => { checks[input.dataset.vlabCheck]=input.checked; });
     const checkCount=Object.values(checks).filter(Boolean).length;
-    const report={labId:item.id,labTitle:item.title,score:result.score,maxScore:result.maxScore||3,result:result.value,detail:result.detail,values,readings,checks,checkCount,conclusion:q("[data-vlab-conclusion]")?.value.trim()||"",completed:true};
+    if(!journalRows.length)journalRows.push(...measurementRows());
+    renderJournal();
+    const report={labId:item.id,labTitle:item.title,score:result.score,maxScore:result.maxScore||3,result:result.value,detail:result.detail,values,readings,checks,checkCount,journal:journalRows,conclusion:q("[data-vlab-conclusion]")?.value.trim()||"",completed:true,createdAt:new Date().toISOString()};
     try {
       if(options.onSave) await options.onSave(report);
+      lastResult={...report};renderJournal();updateWorkflow();
       showResult('<b>Опыт проверен · '+result.score+'/'+(result.maxScore||3)+' балла</b><p>'+esc(result.value)+'</p><p>'+esc(result.detail)+'</p><small>Отчёт сохранён в личном прогрессе.</small>',true);
     } catch(error) {
       showResult('<b>Расчёт выполнен, но сохранение не удалось.</b><p>'+esc(error?.message||error)+'</p>',false);
@@ -417,6 +548,7 @@ export function mountLabSimulator(container,id,options = {}) {
     if(item.id==="heat")updateHeat();
     if(item.id==="uncertainty")updateUncertainty();
     if(item.id==="friction")updateFriction();
+    renderJournal();updateWorkflow();
   };
   const inside = (x,y,zone) => !!zone && x>=zone.offsetLeft && x<=zone.offsetLeft+zone.offsetWidth && y>=zone.offsetTop && y<=zone.offsetTop+zone.offsetHeight;
   let drag=null;
@@ -579,7 +711,7 @@ export function mountLabSimulator(container,id,options = {}) {
         const modeButton=q("[data-vlab-action=mode-3d]");if(modeButton)modeButton.disabled=true;
         container._vlabThreeLoading=(async()=>{
           try{
-            const {mountThreeLab}=await import("./three-labs.js?v=20261117-polish2");
+            const {mountThreeLab}=await import("./three-labs.js?v=20261117-labsuite1");
             if(signal.aborted)return;
             container._vlabThree=await mountThreeLab(host3d,item.id,{onUpdate:syncThree});
             if(signal.aborted&&container._vlabThree?.dispose){container._vlabThree.dispose();container._vlabThree=null;}
@@ -599,6 +731,10 @@ export function mountLabSimulator(container,id,options = {}) {
       return;
     }
     if(action==="transfer"){transferReadings();return;}
+    if(action==="add-measurement"){addMeasurement();return;}
+    if(action==="clear-measurements"){clearJournal();return;}
+    if(action==="export-csv"){exportJournalCsv();return;}
+    if(action==="print-report"){printJournalReport();return;}
     if(action==="toggle-switch"){state.keyClosed=!state.keyClosed;updateOhm();return;}
     if(action==="record-ohm"){
       if(!state.keyClosed){showResult("Сначала замкни ключ цепи.",false);return;}
@@ -641,12 +777,12 @@ export function mountLabSimulator(container,id,options = {}) {
       state.massMeasured=!!payload.massMeasured;state.submerged=!!payload.submerged;
       put("mass",54);put("before",40);put("after",60);
     }else if(item.id==="motion"){
-      state.cartMoved=!!payload.cartMoved;state.cartTime=Number(payload.cartTime||payload.time||0);
-      put("distance",1);if(state.cartMoved)put("time",state.cartTime);
+      state.cartMoved=!!payload.cartMoved;state.cartTime=Number(payload.cartTime||payload.time||0);state.distance=Number(payload.distance||1);
+      put("distance",state.distance);if(state.cartMoved)put("time",state.cartTime);
     }else if(item.id==="spring"){
       state.mass=Number(payload.mass||100);state.springExtension=Number(payload.extension||5);put("mass",state.mass);put("extension",state.springExtension);
     }else if(item.id==="archimedes"){
-      state.submerged=!!payload.submerged;put("air",3.9);if(state.submerged)put("water",3.4);
+      state.submerged=!!payload.submerged;state.air=Number(payload.air||3.9);state.water=Number(payload.water||3.4);put("air",state.air);if(state.submerged)put("water",state.water);
     }else if(item.id==="lever"){
       state.lever={m1:Number(payload.m1||200),l1:Number(payload.l1||20),m2:Number(payload.m2||200),l2:Number(payload.l2||20)};
       put("m1",state.lever.m1);put("l1",state.lever.l1);put("m2",state.lever.m2);put("l2",state.lever.l2);
@@ -654,8 +790,8 @@ export function mountLabSimulator(container,id,options = {}) {
       state.pendulumElapsed=Number(payload.time||0);state.pendulumLength=Number(payload.length||.5);state.pendulumCount=Number(payload.count||0);
       put("length",state.pendulumLength);put("time",state.pendulumElapsed);put("count",state.pendulumCount);
     }else if(item.id==="heat"){
-      state.hotMetalIn=!!payload.hotMetalIn;
-      put("mw",100);put("mm",100);put("tw",20);put("tm",90);if(state.hotMetalIn)put("tf",32.6);
+      state.hotMetalIn=!!payload.hotMetalIn;state.mw=Number(payload.mw||100);state.mm=Number(payload.mm||100);state.tw=Number(payload.tw||20);state.tm=Number(payload.tm||90);state.tf=Number(payload.tf||32.6);
+      put("mw",state.mw);put("mm",state.mm);put("tw",state.tw);put("tm",state.tm);if(state.hotMetalIn)put("tf",state.tf);
     }else if(item.id==="ohm"){
       state.keyClosed=!!payload.keyClosed;state.rheostat=Number(payload.rheostat||9.3);state.readings=Array.isArray(payload.readings)?payload.readings.slice():[];
       updateOhm();
@@ -672,6 +808,7 @@ export function mountLabSimulator(container,id,options = {}) {
       state.friction={mass:Number(payload.mass||.2),pull:Number(payload.pull||0),force:Number(payload.force||0),maxForce:.25*Number(payload.mass||.2)*10,sliding:!!payload.sliding};
       put("mass",state.friction.mass);if(state.friction.sliding)put("force",state.friction.force);
     }
+    renderJournal();updateWorkflow();
   };
   const calculate = async () => {
     let result={valid:false,score:0,maxScore:3,value:"",detail:""};

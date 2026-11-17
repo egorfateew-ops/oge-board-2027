@@ -8,7 +8,7 @@ const labNames={
 
 export async function mountThreeLab(host,id,options={}){
  if(host._threeLab&&host._threeLab.dispose)host._threeLab.dispose();
- host.innerHTML='<div class="vlab-three-shell"><div class="vlab-three-toolbar"><div><span class="eyebrow">ИНТЕРАКТИВНЫЙ 3D-СТЕНД</span><b>'+labNames[id]+'</b></div><div class="vlab-three-toolbar-actions"><button type="button" data-three-action="camera">↗ Камера</button><button type="button" data-three-action="reset">↻ Сброс</button></div></div><div class="vlab-three-stage"><div class="vlab-three-canvas"></div><div class="vlab-three-hint">Перетаскивай приборы · фон — вращение · колесо мыши — масштаб</div><div class="vlab-three-loading" data-three-loading>Загружаем 3D-лабораторию…</div></div><div class="vlab-three-readouts" data-three-readouts></div><div class="vlab-three-status" data-three-status role="status" aria-live="polite">Стенд готов. Перемещай оборудование мышью или пальцем.</div><div class="vlab-three-controls" data-three-controls></div><div class="vlab-three-footer"><span>🖱️ Зажми фон и двигай мышь, чтобы повернуть камеру</span><span>На телефоне: один палец — вращение, два — масштаб</span></div></div>';
+ host.innerHTML='<div class="vlab-three-shell"><div class="vlab-three-toolbar"><div><span class="eyebrow">ИНТЕРАКТИВНЫЙ 3D-СТЕНД</span><b>'+labNames[id]+'</b></div><div class="vlab-three-toolbar-actions"><button type="button" data-three-action="view-top">Вид сверху</button><button type="button" data-three-action="view-front">Спереди</button><button type="button" data-three-action="grid">Сетка</button><button type="button" data-three-action="fullscreen">На весь экран</button><button type="button" data-three-action="camera">↗ Сброс вида</button><button type="button" data-three-action="reset">↻ Сброс опыта</button></div></div><div class="vlab-three-stage"><div class="vlab-three-canvas"></div><div class="vlab-three-hint">Перетаскивай приборы · фон — вращение · колесо мыши — масштаб</div><div class="vlab-three-loading" data-three-loading>Загружаем 3D-лабораторию…</div></div><div class="vlab-three-readouts" data-three-readouts></div><div class="vlab-three-status" data-three-status role="status" aria-live="polite">Стенд готов. Перемещай оборудование мышью или пальцем.</div><div class="vlab-three-controls" data-three-controls></div><div class="vlab-three-footer"><span>🖱️ Зажми фон и двигай мышь, чтобы повернуть камеру</span><span>На телефоне: один палец — вращение, два — масштаб</span></div></div>';
  const stage=host.querySelector(".vlab-three-stage");
  const canvasHost=host.querySelector(".vlab-three-canvas");
  const loading=host.querySelector("[data-three-loading]");
@@ -119,7 +119,7 @@ export async function mountThreeLab(host,id,options={}){
  const addDigitalScale=(x,z)=>{
   box(1.5,.18,1.05,materials.dark,x,.34,z);box(1.3,.08,.92,materials.steel,x,.46,z);
   box(.58,.12,.24,materials.black,x,.57,z+.22);addDisplay("scale","0,0 г",x,.78,z+.43);
-  box(.08,.08,.08,materials.red,x-.48,.58,z+.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.76,z+1.12,.65);
+  box(.08,.08,.08,materials.red,x-.48,.58,z+.22);label("ЭЛЕКТРОННЫЕ ВЕСЫ",x,.98,z+1.42,.65);
  };
  const addBeaker=(x,z,waterLevel=.85,volumeText="40 мл")=>{
   cylinder(.55,.55,1.25,materials.glass,x,.95,z,48);
@@ -157,7 +157,7 @@ export async function mountThreeLab(host,id,options={}){
  };
  const setReadouts=(rows)=>{readoutValues=rows;renderReadouts();};
  const addControl=(html)=>{customControls=html;controls.innerHTML=html;};
- let objects={},animationState={running:false,start:0,cycles:0,period:0,length:50},motionStart=0,inductionInside=false,inductionLog=[],ohmReadings=[],measurements=[];
+ let objects={},animationState={running:false,start:0,cycles:0,period:0,length:50},motionStart=0,motionState={running:false,start:0,startX:-2.8,speed:.5},inductionInside=false,inductionLog=[],ohmReadings=[],measurements=[];
  const sceneLabel=(text)=>label(text,0,3.7,-1.8,.75);
  const makeRuler=(x1,x2,z,y=.34)=>{
   box(x2-x1,.035,.12,materials.white,(x1+x2)/2,y,z);
@@ -167,7 +167,7 @@ export async function mountThreeLab(host,id,options={}){
  };
  function buildDensity(){
   addDigitalScale(-2.2,0);const beaker=addBeaker(2,0,.6);
-  const sample=cylinder(.25,.25,.75,materials.steel,0,.72,1.4,32);sample.userData.baseY=.72;
+  const sample=cylinder(.25,.25,.75,materials.steel,0,.72,1.4,32);sample.userData.baseY=.72;sample.userData.label=label("ЦИЛИНДР",0,1.48,1.85,.42);
   addDrag(sample,"sample","xyz");objects.sample=sample;objects.water=beaker.water;
   setReadouts([["Масса","не измерена"],["Объём","40 мл"],["Плотность","—"]]);
   setData({massMeasured:false,submerged:false,mass:54,before:40,after:60});
@@ -179,14 +179,17 @@ export async function mountThreeLab(host,id,options={}){
   const cart=new THREE.Group();cart.position.set(-2.8,.62,0);scene.add(cart);
   box(.95,.2,.48,materials.blue,0,.12,0,cart);box(.35,.23,.38,materials.white,.05,.34,0,cart);
   for(const z of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,0,0,z,cart);
+  cart.userData.label=label("ТЕЛЕЖКА",-2.8,1.42,.5,.42);
   addDrag(cart,"cart","x");objects.cart=cart;
+  addControl('<label class="vlab-three-control"><span>Начальная скорость <b data-three-speed>0,50 м/с</b></span><input type="range" min="0.1" max="2" step="0.05" value="0.5" data-three-control="speed"></label><div class="vlab-three-control-actions"><button type="button" data-three-action="run-cart">▶ Запустить тележку</button><button type="button" data-three-action="stop-cart">■ Остановить</button></div>');
   setReadouts([["Путь","0,00 м"],["Время","0,00 с"],["Скорость","—"]]);
-  setData({cartMoved:false,cartTime:0,distance:1});
+  setData({cartMoved:false,cartTime:0,distance:1,speed:.5});
  }
  function buildSpring(){
   addStand(-1.5,0);const springTop=3.55,weightY=1.75;
   const weight=addWeight(-1.5,weightY,0,"weight",100);objects.weight=weight;
   objects.springTop=springTop;objects.springBaseY=weightY;
+  addControl('<label class="vlab-three-control"><span>Масса груза <b data-three-spring-mass>100 г</b></span><input type="range" min="50" max="240" step="10" value="100" data-three-control="spring-mass"></label>');
   const coil=makeSpringCoil(-1.5,springTop,weightY+.42);objects.coil=coil;
   makeRuler(-.8,2.1,-.55,.35);
   setReadouts([["Груз","100 г"],["Удлинение","5,0 см"],["Сила","1,00 Н"],["Жёсткость","20 Н/м"]]);
@@ -208,10 +211,12 @@ export async function mountThreeLab(host,id,options={}){
   const beaker=addBeaker(1.8,0,1.0,"100 мл");
   const body=new THREE.Group();body.position.set(-1.3,2.0,0);scene.add(body);
   cylinder(.28,.28,.65,materials.steel,0,0,0,32,body);torus(.16,.04,materials.steel,0,.36,0);
+  body.userData.label=label("ТЕЛО",body.position.x,body.position.y+.75,.52,.42);
   addDrag(body,"body","xyz");objects.body=body;objects.beaker=beaker;
+  addControl('<label class="vlab-three-control"><span>Объём тела <b data-three-volume>50 см³</b></span><input type="range" min="20" max="80" step="5" value="50" data-three-control="volume"></label>');
   objects.bodyString=cylinder(.02,.02,1,materials.steel,-1.3,2.45,0,10);orientRod(objects.bodyString,[-1.3,2.35,0],[-1.3,2.36,0]);
   setReadouts([["Вес в воздухе","3,90 Н"],["Вес в воде","ожидает"],["Сила Архимеда","—"]]);
-  setData({submerged:false,air:3.9,water:3.4});
+  setData({submerged:false,air:3.9,water:3.41,volume:50});
  }
  function buildLever(){
   cylinder(.12,.12,1.2,materials.steelDark,0,.82,0,24);
@@ -227,7 +232,7 @@ export async function mountThreeLab(host,id,options={}){
   const pivot=new THREE.Vector3(-.7,3.7,0);objects.pivot=pivot;
   const bob=sphere(.34,materials.blueSoft,.1,2.45,0);addDrag(bob,"bob","xyz");objects.bob=bob;
   const string=cylinder(.025,.025,1,materials.steel,pivot.x,(pivot.y+bob.position.y)/2,0,10);objects.string=string;orientRod(string,[pivot.x,pivot.y,pivot.z],[bob.position.x,bob.position.y,0]);
-  animationState.length=50;animationState.period=2*Math.PI*Math.sqrt(.5/10);
+  animationState.length=50;animationState.period=2*Math.PI*Math.sqrt(.5/9.81);
   addControl('<label class="vlab-three-control"><span>Длина нити <b data-three-length>50 см</b></span><input type="range" min="20" max="100" step="5" value="50" data-three-control="length"></label><div class="vlab-three-control-actions"><button type="button" data-three-action="pendulum-start">▶ Запустить</button><button type="button" data-three-action="pendulum-stop">■ Остановить</button></div>');
   setReadouts([["Длина","50 см"],["Время","0,00 с"],["Колебаний","0"]]);
   setData({length:.5,time:0,count:0});
@@ -235,9 +240,10 @@ export async function mountThreeLab(host,id,options={}){
  function buildHeat(){
   const bath=addBeaker(-1.9,0,1.0,"90 °C");label("ВОДЯНАЯ БАНЯ · 90 °C",-1.9,2.12,.86,.62);
   const calorimeter=addBeaker(2,0,.6,"100 мл");objects.calorimeter=calorimeter;label("КАЛОРИМЕТР",2,2.02,.86,.5);
+  addControl('<label class="vlab-three-control"><span>Масса воды <b data-three-water-mass>100 г</b></span><input type="range" min="50" max="250" step="10" value="100" data-three-control="water-mass"></label><label class="vlab-three-control"><span>Масса металла <b data-three-metal-mass>100 г</b></span><input type="range" min="50" max="250" step="10" value="100" data-three-control="metal-mass"></label><label class="vlab-three-control"><span>Начальная температура металла <b data-three-metal-temp>90 °C</b></span><input type="range" min="60" max="100" step="2" value="90" data-three-control="metal-temp"></label>');
   const metal=cylinder(.25,.25,.7,materials.steel,0,.75,1.2,32);addDrag(metal,"hotMetal","xyz");objects.hotMetal=metal;
   setReadouts([["Вода до опыта","20 °C"],["Металл до опыта","90 °C"],["Итоговая температура","ожидает"]]);
-  setData({hotMetalIn:false,mw:100,mm:100,tw:20,tm:90,tf:32.6});
+  setData({hotMetalIn:false,mw:100,mm:100,tw:20,tm:90,tf:(100*4.2*20+100*.92*90)/(100*4.2+100*.92)});
  }
  function buildOhm(){
   const board=box(6,.18,3,materials.dark,0,.34,0);
@@ -268,16 +274,16 @@ export async function mountThreeLab(host,id,options={}){
   makeRuler(-3,3,.3,.44);
   const object=new THREE.Group();object.position.set(-2,.95,0);scene.add(object);
   cylinder(.12,.12,1.1,materials.yellow,0,0,0,24,object);sphere(.18,materials.yellow,0,.6,0,object);
-  addDrag(object,"object","x");objects.object=object;label("ПРЕДМЕТ",-2,1.9,.52,.45);
-  const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;label("ЛИНЗА",0,2.08,.52,.42);
-  const screen=new THREE.Group();screen.position.set(2.6,1.1,0);scene.add(screen);
+  addDrag(object,"object","x");objects.object=object;object.userData.label=label("ПРЕДМЕТ",-2,1.9,.52,.45);
+  const lens=cylinder(.05,.05,1.5,materials.blueSoft,0,1.15,0,32);lens.material=materials.glass;addDrag(lens,"lens","x");objects.lens=lens;lens.userData.label=label("ЛИНЗА",0,2.08,.52,.42);
+  const screen=new THREE.Group();screen.position.set(2.0,1.1,0);scene.add(screen);
   box(.12,1.4,.9,materials.white,0,0,0,screen);
   rod([-.03,-.25,.48],[-.03,.25,.48],.035,materials.red,screen);
   rod([-.03,.25,.48],[-.22,.08,.48],.03,materials.red,screen);
   rod([-.03,.25,.48],[.16,.08,.48],.03,materials.red,screen);
-  addDrag(screen,"screen","x");objects.screen=screen;label("ЭКРАН",2.6,2.05,.58,.42);
-  setReadouts([["Предмет — линза","30 см"],["Линза — экран","39 см"],["Изображение","размытое"]]);
-  setData({a:30,b:39,sharp:false});
+  addDrag(screen,"screen","x");objects.screen=screen;screen.userData.label=label("ЭКРАН",2.0,2.05,.58,.42);
+  setReadouts([["Предмет — линза","30 см"],["Линза — экран","30 см"],["Изображение","резкое"]]);
+  setData({a:30,b:30,sharp:true});
  }
  function buildUncertainty(){
   box(6,.12,.6,materials.white,0,.38,0);
@@ -304,17 +310,19 @@ export async function mountThreeLab(host,id,options={}){
   if(id==="density"){
    setReadouts([["Масса",data.massMeasured?"54,0 г":"не измерена"],["Объём",data.submerged?"60 мл":"40 мл"],["Плотность",data.submerged&&data.massMeasured?"2,70 г/см³":"—"]]);
   }else if(id==="motion"){
-   setReadouts([["Путь",data.cartMoved?"1,00 м":"0,00 м"],["Время",data.cartMoved?Number(data.time).toFixed(2).replace(".",",")+" с":"0,00 с"],["Скорость",data.cartMoved?(1/data.time).toFixed(2).replace(".",",")+" м/с":"—"]]);
+   const distance=Number(data.distance||1),time=Number(data.time||0),speed=time>0?distance/time:0;
+   setReadouts([["Путь",data.cartMoved?distance.toFixed(2).replace(".",",")+" м":"0,00 м"],["Время",data.cartMoved?time.toFixed(2).replace(".",",")+" с":"0,00 с"],["Скорость",data.cartMoved?speed.toFixed(2).replace(".",",")+" м/с":"—"]]);
   }else if(id==="spring"){
    const ext=data.extension||5;setReadouts([["Груз",(data.mass||100)+" г"],["Удлинение",ext.toFixed(1).replace(".",",")+" см"],["Сила",((data.mass||100)/1000*10).toFixed(2).replace(".",",")+" Н"],["Жёсткость",(((data.mass||100)/1000*10)/(ext/100)).toFixed(1).replace(".",",")+" Н/м"]]);
   }else if(id==="archimedes"){
-   setReadouts([["Вес в воздухе","3,90 Н"],["Вес в воде",data.submerged?"3,40 Н":"ожидает"],["Сила Архимеда",data.submerged?"0,50 Н":"—"]]);
+   const fa=0.0098*Number(data.volume||50),waterWeight=3.9-fa;
+   setReadouts([["Вес в воздухе","3,90 Н"],["Вес в воде",data.submerged?waterWeight.toFixed(2).replace(".",",")+" Н":"ожидает"],["Сила Архимеда",data.submerged?fa.toFixed(2).replace(".",",")+" Н":"—"]]);
   }else if(id==="lever"){
    setReadouts([["Левое плечо",Number(data.l1||20).toFixed(1)+" см"],["Правое плечо",Number(data.l2||20).toFixed(1)+" см"],["Моменты",Math.abs((data.m1||200)*(data.l1||20)-(data.m2||200)*(data.l2||20))<20?"равны":"различаются"]]);
   }else if(id==="pendulum"){
    setReadouts([["Длина",animationState.length+" см"],["Время",Number(data.time||0).toFixed(2).replace(".",",")+" с"],["Колебаний",String(data.count||0)]]);
   }else if(id==="heat"){
-   setReadouts([["Вода до опыта","20 °C"],["Металл до опыта","90 °C"],["Итоговая температура",data.hotMetalIn?"32,6 °C":"ожидает"]]);
+   setReadouts([["Вода до опыта",Number(data.tw||20).toFixed(1).replace(".",",")+" °C"],["Металл до опыта",Number(data.tm||90).toFixed(1).replace(".",",")+" °C"],["Итоговая температура",data.hotMetalIn?Number(data.tf).toFixed(1).replace(".",",")+" °C":"ожидает"]]);
   }else if(id==="ohm"){
    const i=data.keyClosed?4.5/(5.7+data.rheostat):0,u=i*5.7;
    setReadouts([["Ключ",data.keyClosed?"замкнут":"разомкнут"],["Ток",i.toFixed(2).replace(".",",")+" А"],["Напряжение",u.toFixed(2).replace(".",",")+" В"],["Измерений",ohmReadings.length+" / 3"]]);
@@ -342,9 +350,10 @@ export async function mountThreeLab(host,id,options={}){
  };
  const updateDuringDrag=(object)=>{
   if(id==="archimedes"&&object===objects.body&&objects.bodyString){orientRod(objects.bodyString,[-1.3,2.35,0],[object.position.x,object.position.y+.35,object.position.z]);}
+  if(id==="motion"&&object===objects.cart&&object.userData.label)object.userData.label.position.set(object.position.x,1.42,.5);
   if(id==="spring"&&object===objects.weight){
-   const extension=Math.max(1,Math.min(12,(2.25-object.position.y)*10));
-   data={...data,mass:100,extension:extension};rebuildSpring();
+   const extension=Math.max(1,Math.min(12,(2.25-object.position.y)*10)),mass=extension*20;
+   data={...data,mass:mass,extension:extension};setLabel(object.userData.label,Math.round(mass)+" г");rebuildSpring();
   }
   if(object.userData.label)object.userData.label.position.set(object.position.x,object.position.y+.7,object.position.z+.42);
   if(id==="induction"&&object===objects.magnet&&objects.magnetLabels){objects.magnetLabels[0].position.set(object.position.x-.3,object.position.y+.45,object.position.z+.48);objects.magnetLabels[1].position.set(object.position.x+.35,object.position.y+.45,object.position.z+.48);}
@@ -381,11 +390,11 @@ export async function mountThreeLab(host,id,options={}){
   }else if(id==="motion"&&object===objects.cart){
    if(object.position.x>2.35){
     const elapsed=Math.max(.15,(performance.now()-motionStart)/1000);
-    object.position.x=2.65;setData({cartMoved:true,cartTime:elapsed,distance:1,time:elapsed},"Финиш! Время движения записано.");
+    object.position.x=2.65;motionState.running=false;setData({cartMoved:true,cartTime:elapsed,distance:1,time:elapsed},"Финиш! Время движения записано.");
    }else if(object.position.x< -2.2){object.position.x=-2.8;status("Тележка установлена на старт.");}
   }else if(id==="archimedes"&&object===objects.body){
    const submerged=object.position.x>.9&&object.position.y<1.55&&object.position.y>.45;
-   if(submerged){object.position.set(1.8,1.05,0);if(objects.bodyString)orientRod(objects.bodyString,[-1.3,2.35,0],[object.position.x,object.position.y+.35,object.position.z]);if(display.dyna)setLabel(display.dyna,"3,40 Н");setData({submerged:true,air:3.9,water:3.4},"Тело погружено. Динамометр показывает 3,40 Н.");}
+   if(submerged){const fa=.0098*Number(data.volume||50),water=3.9-fa;object.position.set(1.8,1.05,0);if(objects.bodyString)orientRod(objects.bodyString,[-1.3,2.35,0],[object.position.x,object.position.y+.35,object.position.z]);if(display.dyna)setLabel(display.dyna,water.toFixed(2).replace(".",",")+" Н");if(object.userData.label)object.userData.label.position.set(1.8,1.8,.52);setData({submerged:true,air:3.9,water:water,buoyancy:fa},"Тело погружено. Выталкивающая сила рассчитана по объёму вытесненной воды.");}
    else{object.position.set(-1.3,2.0,0);if(objects.bodyString)orientRod(objects.bodyString,[-1.3,2.35,0],[-1.3,2.36,0]);if(display.dyna)setLabel(display.dyna,"3,90 Н");setData({submerged:false},"Подвесь тело в воздухе или погрузи в сосуд.");}
   }else if(id==="lever"){
    emit("Положение грузов изменено. Сравни моменты сил.");
@@ -397,7 +406,7 @@ export async function mountThreeLab(host,id,options={}){
    data={...data,needle:0};if(objects.needle)objects.needle.rotation.z=0;if(display.galvanometer)setLabel(display.galvanometer,"0");
    emit("Наблюдение сохранено. После остановки магнита ток исчезает.");
   }else if(id==="heat"&&object===objects.hotMetal){
-   if(object.position.x>1.0&&object.position.y<1.5){object.position.set(2,1.0,0);setData({hotMetalIn:true,mw:100,mm:100,tw:20,tm:90,tf:32.6},"Металл перенесён в калориметр. Тепловое равновесие установлено.");}
+   if(object.position.x>1.0&&object.position.y<1.5){const mw=Number(data.mw||100),mm=Number(data.mm||100),tw=Number(data.tw||20),tm=Number(data.tm||90),tf=(mw*4.2*tw+mm*.92*tm)/(mw*4.2+mm*.92);object.position.set(2,1.0,0);setData({hotMetalIn:true,mw,mm,tw,tm,tf},"Металл перенесён в калориметр. Итоговая температура рассчитана по тепловому балансу.");}
    else status("Перенеси цилиндр в калориметр.");
   }else if(id==="uncertainty"&&object===objects.marker){
    emit("Положение указателя измерено.");
@@ -408,7 +417,26 @@ export async function mountThreeLab(host,id,options={}){
   emit();
  };
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),dragPlane=new THREE.Plane(),planeNormal=new THREE.Vector3(),hitPoint=new THREE.Vector3();
- let activePointer=null,dragObject=null,orbiting=false,lastX=0,lastY=0,pointers=new Map(),pinchStart=0,pinchRadius=radius;
+ let activePointer=null,dragObject=null,selectedObject=null,selectionHelper=null,orbiting=false,lastX=0,lastY=0,pointers=new Map(),pinchStart=0,pinchRadius=radius;
+ const selectObject=object=>{
+  if(selectionHelper){scene.remove(selectionHelper);selectionHelper.geometry.dispose();selectionHelper.material.dispose();selectionHelper=null;}
+  selectedObject=object;
+  if(!object){status("Выбор снят.");return;}
+  selectionHelper=new THREE.BoxHelper(object,0x7666f5);selectionHelper.material.depthTest=false;selectionHelper.material.transparent=true;selectionHelper.material.opacity=.95;selectionHelper.renderOrder=999;scene.add(selectionHelper);
+  status("Выбрано: "+(object.userData.role||"оборудование")+". Для точного перемещения используй стрелки и Page Up / Page Down.");
+ };
+ const onKeyDown=event=>{
+  if(!selectedObject)return;
+  const axis=selectedObject.userData.axis||"xyz",next=selectedObject.position.clone(),step=event.shiftKey?0.25:0.08;
+  if(event.key==="ArrowLeft"&&axis.includes("x"))next.x-=step;
+  else if(event.key==="ArrowRight"&&axis.includes("x"))next.x+=step;
+  else if(event.key==="ArrowUp"&&axis.includes("z"))next.z-=step;
+  else if(event.key==="ArrowDown"&&axis.includes("z"))next.z+=step;
+  else if(event.key==="PageUp"&&axis.includes("y"))next.y+=step;
+  else if(event.key==="PageDown"&&axis.includes("y"))next.y-=step;
+  else return;
+  event.preventDefault();setAxisPosition(selectedObject,next);updateDuringDrag(selectedObject);if(selectionHelper)selectionHelper.update();emit("Положение оборудования изменено с клавиатуры.");
+ };
  const pointerPosition=event=>{
   const rect=renderer.domElement.getBoundingClientRect();
   pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
@@ -424,7 +452,7 @@ export async function mountThreeLab(host,id,options={}){
   if(found){
    let obj=found.object;while(obj&&!obj.userData.draggable)obj=obj.parent;
    if(id==="friction"&&obj===objects.block&&!data.sliding){status("Увеличь силу тяги до начала скольжения.");return;}
-   dragObject=obj;activePointer=event.pointerId;
+   dragObject=obj;activePointer=event.pointerId;selectObject(obj);try{renderer.domElement.focus({preventScroll:true});}catch(error){renderer.domElement.focus();}
    planeNormal.copy(camera.getWorldDirection(new THREE.Vector3()));
    dragPlane.setFromNormalAndCoplanarPoint(planeNormal,obj.position);
    renderer.domElement.setPointerCapture(event.pointerId);
@@ -475,6 +503,7 @@ export async function mountThreeLab(host,id,options={}){
  const onWheel=event=>{radius=THREE.MathUtils.clamp(radius+event.deltaY*.008,5,17);updateCamera();event.preventDefault();};
  renderer.domElement.addEventListener("pointerdown",onPointerDown);
  renderer.domElement.addEventListener("pointermove",onPointerMove);
+ renderer.domElement.addEventListener("keydown",onKeyDown);
  renderer.domElement.addEventListener("pointerup",onPointerUp);
  renderer.domElement.addEventListener("pointercancel",onPointerUp);
  renderer.domElement.addEventListener("wheel",onWheel,{passive:false});
@@ -485,6 +514,23 @@ export async function mountThreeLab(host,id,options={}){
    const out=host.querySelector("[data-three-length]");if(out)out.textContent=animationState.length+" см";
    data={...data,length:animationState.length/100};if(!animationState.running)positionPendulum(0);
    emit();
+  }else if(control.dataset.threeControl==="speed"){
+   data={...data,speed:Number(control.value)};const out=host.querySelector("[data-three-speed]");if(out)out.textContent=Number(control.value).toFixed(2).replace(".",",")+" м/с";emit();
+  }else if(control.dataset.threeControl==="spring-mass"){
+   const mass=Number(control.value),extension=mass/20;if(objects.weight){objects.weight.position.y=2.25-extension/10;setLabel(objects.weight.userData.label,mass+" г");rebuildSpring();}
+   data={...data,mass:mass,extension:extension};const out=host.querySelector("[data-three-spring-mass]");if(out)out.textContent=mass+" г";emit();
+  }else if(control.dataset.threeControl==="volume"){
+   const volume=Number(control.value),fa=.0098*volume,water=3.9-fa;data={...data,volume:volume,buoyancy:fa,water:water};
+   const out=host.querySelector("[data-three-volume]");if(out)out.textContent=volume+" см³";
+   if(data.submerged&&display.dyna)setLabel(display.dyna,water.toFixed(2).replace(".",",")+" Н");emit();
+  }else if(control.dataset.threeControl==="water-mass"||control.dataset.threeControl==="metal-mass"||control.dataset.threeControl==="metal-temp"){
+   if(control.dataset.threeControl==="water-mass")data={...data,mw:Number(control.value)};
+   if(control.dataset.threeControl==="metal-mass")data={...data,mm:Number(control.value)};
+   if(control.dataset.threeControl==="metal-temp")data={...data,tm:Number(control.value)};
+   const tf=(Number(data.mw||100)*4.2*Number(data.tw||20)+Number(data.mm||100)*.92*Number(data.tm||90))/(Number(data.mw||100)*4.2+Number(data.mm||100)*.92);
+   data={...data,tf:tf};
+   const wm=host.querySelector("[data-three-water-mass]"),mm=host.querySelector("[data-three-metal-mass]"),mt=host.querySelector("[data-three-metal-temp]");
+   if(wm)wm.textContent=data.mw+" г";if(mm)mm.textContent=data.mm+" г";if(mt)mt.textContent=data.tm+" °C";emit();
   }else if(control.dataset.threeControl==="rheostat"){
    data={...data,rheostat:Number(control.value)};
    const out=host.querySelector("[data-three-rheostat]");if(out)out.textContent=Number(control.value).toFixed(1).replace(".",",")+" Ом";
@@ -513,6 +559,12 @@ export async function mountThreeLab(host,id,options={}){
   const button=event.target.closest("[data-three-action]");if(!button)return;
   const action=button.dataset.threeAction;
   if(action==="camera"){theta=Math.PI*.25;phi=1.02;radius=10;updateCamera();return;}
+  if(action==="view-top"){theta=0;phi=.24;radius=10;updateCamera();status("Вид сверху.");return;}
+  if(action==="view-front"){theta=0;phi=1.43;radius=10;updateCamera();status("Вид спереди.");return;}
+  if(action==="grid"){grid.visible=!grid.visible;button.textContent=grid.visible?"Сетка":"Сетка скрыта";return;}
+  if(action==="fullscreen"){try{const result=stage.requestFullscreen?.();result?.catch(()=>status("Полноэкранный режим недоступен."));}catch(error){status("Полноэкранный режим недоступен.");}return;}
+  if(action==="run-cart"&&id==="motion"){if(motionState.running)return;motionState.running=true;motionState.start=performance.now();motionState.startX=objects.cart.position.x;motionState.speed=Number(host.querySelector('[data-three-control="speed"]')?.value||.5);status("Тележка запущена. Движение равномерное, измерение завершится на финише.");return;}
+  if(action==="stop-cart"&&id==="motion"){motionState.running=false;status("Тележка остановлена.");return;}
   if(action==="reset"){mountThreeLab(host,id,options);return;}
   if(action==="retry"){mountThreeLab(host,id,options);return;}
   if(action==="pendulum-start"&&id==="pendulum"){
@@ -563,6 +615,12 @@ export async function mountThreeLab(host,id,options={}){
    const time=host.querySelector("[data-three-readouts]");
    if(time&&Math.floor(t*5)!==animate.lastTick){animate.lastTick=Math.floor(t*5);data={...data,time:t,count:animationState.cycles};updateMeters();}
   }
+  if(id==="motion"&&motionState.running){
+   const elapsed=(performance.now()-motionState.start)/1000,travelled=elapsed*motionState.speed,x=motionState.startX+travelled*5.45;
+   objects.cart.position.x=Math.min(2.65,x);if(objects.cart.userData.label)objects.cart.userData.label.position.set(objects.cart.position.x,1.42,.5);
+   if(x>=2.65){motionState.running=false;const distance=(2.65-motionState.startX)/5.45,duration=distance/motionState.speed;setData({cartMoved:true,cartTime:duration,distance:distance,time:duration,speed:motionState.speed},"Финиш! Путь "+distance.toFixed(2).replace(".",",")+" м пройден за "+duration.toFixed(2).replace(".",",")+" с.");}
+  }
+  if(selectionHelper)selectionHelper.update();
   if(id==="induction"&&objects.needle)objects.needle.rotation.z+=(0-objects.needle.rotation.z)*.04;
   renderer.render(scene,camera);
  };
@@ -579,10 +637,12 @@ export async function mountThreeLab(host,id,options={}){
   if(themeObserver)themeObserver.disconnect();
   renderer.domElement.removeEventListener("pointerdown",onPointerDown);
   renderer.domElement.removeEventListener("pointermove",onPointerMove);
+  renderer.domElement.removeEventListener("keydown",onKeyDown);
   renderer.domElement.removeEventListener("pointerup",onPointerUp);
   renderer.domElement.removeEventListener("pointercancel",onPointerUp);
   renderer.domElement.removeEventListener("wheel",onWheel);
   controls.removeEventListener("input",onControl);host.removeEventListener("click",onAction);
+  if(selectionHelper){scene.remove(selectionHelper);selectionHelper.geometry.dispose();selectionHelper.material.dispose();selectionHelper=null;}
   scene.traverse(object=>{if(object.geometry)object.geometry.dispose();if(object.material){const mats=Array.isArray(object.material)?object.material:[object.material];mats.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});}});
   renderer.dispose();renderer.forceContextLoss();host.innerHTML="";
  };
