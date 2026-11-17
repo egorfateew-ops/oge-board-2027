@@ -234,8 +234,9 @@ function instructionsMarkup(item) {
   return '<div class="vlab-procedure"><div><span class="eyebrow">ХОД ЭКСПЕРИМЕНТА</span><h3>Что нужно сделать</h3></div><ol>'+((steps[item.id]||[]).map((step,i)=>'<li><span>'+String(i+1)+'</span>'+esc(step)+'</li>').join(""))+'</ol><div class="vlab-safety"><b>Техника безопасности</b><p>'+esc(item.id==="ohm"?"Работай только с низким напряжением 4,5 В. Никогда не подключай схему к бытовой розетке.":item.id==="heat"?"В реальной лаборатории используй только тёплую воду и работай под наблюдением учителя.":item.id==="spring"||item.id==="lever"?"Не перегружай пружину и не располагай лицо под подвешенными грузами.": "Не роняй приборы и не допускай резких движений оборудования.")+'</p></div></div>';
 }
 function workspaceMarkup(item) {
-  return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
+  return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><div class="vlab-mode-switch" role="group" aria-label="Режим лаборатории"><button type="button" class="active" data-vlab-action="mode-2d" aria-pressed="true">2D</button><button type="button" data-vlab-action="mode-3d" aria-pressed="false">3D</button></div><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
     '<div class="vlab-workflow" aria-label="Этапы лабораторной работы"><span class="active"><i>01</i> Опыт</span><span><i>02</i> Измерения</span><span><i>03</i> Вывод</span></div>'+
+    '<div class="vlab-three-host" data-vlab-three-host hidden></div>'+
     '<div class="vlab-scene-scroll"><div class="vlab-scene-frame">'+sceneMarkup(item.id)+'</div></div>'+
     '<p class="vlab-touch-tip">Перетаскивай оборудование пальцем или мышью. На узком экране рабочий стол можно сдвигать по горизонтали.</p>'+
     '<div class="vlab-lower-grid">'+instructionsMarkup(item)+reportMarkup(item.id)+'</div>';
@@ -245,6 +246,7 @@ export function mountLabSimulator(container,id,options = {}) {
   const item = lab(id);
   container.dataset.labId=item.id;
   if (container._vlabTimer) { clearInterval(container._vlabTimer); container._vlabTimer=null; }
+  if (container._vlabThree && container._vlabThree.dispose) { container._vlabThree.dispose(); container._vlabThree=null; }
   if (container._vlabAbort) container._vlabAbort.abort();
   if (container._vlabResizeObserver) { container._vlabResizeObserver.disconnect(); container._vlabResizeObserver=null; }
   const controller = new AbortController();
@@ -567,6 +569,31 @@ export function mountLabSimulator(container,id,options = {}) {
     if(!button)return;
     const action=button.dataset.vlabAction;
     if(action==="reset"){mountLabSimulator(container,item.id,options);return;}
+    if(action==="mode-3d"){
+      const host3d=q("[data-vlab-three-host]"),scene2d=q(".vlab-scene-scroll"),tip=q(".vlab-touch-tip");
+      q(".vlab-workspace")?.classList.add("is-3d");
+      if(host3d)host3d.hidden=false;if(scene2d)scene2d.hidden=true;if(tip)tip.hidden=true;
+      q("[data-vlab-action=mode-3d]")?.classList.add("active");q("[data-vlab-action=mode-3d]")?.setAttribute("aria-pressed","true");
+      q("[data-vlab-action=mode-2d]")?.classList.remove("active");q("[data-vlab-action=mode-2d]")?.setAttribute("aria-pressed","false");
+      if(!container._vlabThree){
+        try{
+          const {mountThreeLab}=await import("./three-labs.js");
+          if(signal.aborted)return;
+          container._vlabThree=await mountThreeLab(host3d,item.id,{onUpdate:syncThree});
+          if(signal.aborted&&container._vlabThree?.dispose){container._vlabThree.dispose();container._vlabThree=null;}
+        }catch(error){showResult("Не удалось запустить 3D-лабораторию: "+esc(error?.message||error),false);}
+      }
+      return;
+    }
+    if(action==="mode-2d"){
+      if(container._vlabThree?.dispose)container._vlabThree.dispose();container._vlabThree=null;
+      q(".vlab-workspace")?.classList.remove("is-3d");
+      const host3d=q("[data-vlab-three-host]"),scene2d=q(".vlab-scene-scroll"),tip=q(".vlab-touch-tip");
+      if(host3d)host3d.hidden=true;if(scene2d)scene2d.hidden=false;if(tip)tip.hidden=false;
+      q("[data-vlab-action=mode-2d]")?.classList.add("active");q("[data-vlab-action=mode-2d]")?.setAttribute("aria-pressed","true");
+      q("[data-vlab-action=mode-3d]")?.classList.remove("active");q("[data-vlab-action=mode-3d]")?.setAttribute("aria-pressed","false");
+      return;
+    }
     if(action==="transfer"){transferReadings();return;}
     if(action==="toggle-switch"){state.keyClosed=!state.keyClosed;updateOhm();return;}
     if(action==="record-ohm"){
@@ -601,6 +628,45 @@ export function mountLabSimulator(container,id,options = {}) {
     }
     if(action==="calculate")calculate();
   },{signal});
+  const syncThree = payload => {
+    const put=(key,value)=>{
+      const input=q('[data-vlab-field="'+key+'"]');
+      if(input&&Number.isFinite(Number(value)))input.value=String(Number(Number(value).toFixed(3)));
+    };
+    if(item.id==="density"){
+      state.massMeasured=!!payload.massMeasured;state.submerged=!!payload.submerged;
+      put("mass",54);put("before",40);put("after",60);
+    }else if(item.id==="motion"){
+      state.cartMoved=!!payload.cartMoved;state.cartTime=Number(payload.cartTime||payload.time||0);
+      put("distance",1);if(state.cartMoved)put("time",state.cartTime);
+    }else if(item.id==="spring"){
+      state.mass=Number(payload.mass||100);put("mass",state.mass);put("extension",Number(payload.extension||5));
+    }else if(item.id==="archimedes"){
+      state.submerged=!!payload.submerged;put("air",3.9);if(state.submerged)put("water",3.4);
+    }else if(item.id==="lever"){
+      state.lever={m1:Number(payload.m1||200),l1:Number(payload.l1||20),m2:Number(payload.m2||200),l2:Number(payload.l2||20)};
+      put("m1",state.lever.m1);put("l1",state.lever.l1);put("m2",state.lever.m2);put("l2",state.lever.l2);
+    }else if(item.id==="pendulum"){
+      state.pendulumElapsed=Number(payload.time||0);
+      put("length",Number(payload.length||.5));put("time",state.pendulumElapsed);put("count",Number(payload.count||0));
+    }else if(item.id==="heat"){
+      state.hotMetalIn=!!payload.hotMetalIn;
+      put("mw",100);put("mm",100);put("tw",20);put("tm",90);if(state.hotMetalIn)put("tf",32.6);
+    }else if(item.id==="ohm"){
+      state.keyClosed=!!payload.keyClosed;state.rheostat=Number(payload.rheostat||9.3);state.readings=Array.isArray(payload.readings)?payload.readings.slice():[];
+    }else if(item.id==="induction"){
+      state.inductionLog=Array.isArray(payload.inductionLog)?payload.inductionLog.slice():[];
+      state.inductionObserved=Number(payload.inductionObserved||state.inductionLog.length||0);
+    }else if(item.id==="lens"){
+      state.lens={a:Number(payload.a||30),b:Number(payload.b||30),sharp:!!payload.sharp};put("a",state.lens.a);put("b",state.lens.b);
+    }else if(item.id==="uncertainty"){
+      state.measurements=Array.isArray(payload.measurements)?payload.measurements.slice():[];
+      state.measurements.forEach((value,index)=>put("x"+(index+1),value));
+    }else if(item.id==="friction"){
+      state.friction={mass:Number(payload.mass||.2),pull:Number(payload.pull||0),force:Number(payload.force||0),maxForce:.25*Number(payload.mass||.2)*10,sliding:!!payload.sliding};
+      put("mass",state.friction.mass);if(state.friction.sliding)put("force",state.friction.force);
+    }
+  };
   const calculate = async () => {
     let result={valid:false,score:0,maxScore:3,value:"",detail:""};
     const values={};
