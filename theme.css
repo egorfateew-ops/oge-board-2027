@@ -2358,3 +2358,6 @@ body[data-theme="dark"] .vlab-switch.closed{background:#1c3a33;border-color:#376
 .vlab-conclusion-field{display:grid;gap:5px;margin:10px 0;color:var(--muted);font-size:9px;font-weight:750}
 .vlab-conclusion-field textarea{width:100%;min-height:55px;padding:9px 10px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-weight:500;line-height:1.45}
 .vlab-conclusion-field textarea:focus{outline:2px solid var(--accentSoft);border-color:var(--accent)}
+
+.vlab-ohm-scene .vlab-circuit-svg{height:205px}
+.vlab-ohm-table-report{position:static;min-width:0;margin:8px 0 10px}
