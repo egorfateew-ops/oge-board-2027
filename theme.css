@@ -1457,3 +1457,35 @@ body[data-theme="dark"] .study-shortcuts button,body[data-theme="dark"] .tests-s
  .board-table{min-width:700px}
  .settings-card{padding:16px}
 }
+
+
+/* Final specificity and desktop-fit corrections */
+@media(min-width:1121px){
+ .header.topbar{grid-template-columns:minmax(205px,260px) minmax(180px,1fr) auto;gap:14px}
+ .topbar-search{width:min(100%,390px)}
+ .header.topbar .actions{gap:8px}
+ .header.topbar .actions .icon-button{width:44px;height:44px;flex-basis:44px}
+ .user-chip{gap:8px}
+ .user-chip-avatars i{width:35px;height:35px}
+ .user-chip-copy b{max-width:118px;font-size:13px}
+ .user-chip-copy small{font-size:10px}
+ .user-chip-chevron{font-size:19px}
+ .header.topbar .topbar-add{min-height:44px;padding:0 12px;font-size:12px}
+}
+#todoList .task{background:#ffedf2;border-color:#f8e0e8}
+#doingList .task{background:#f2eaff;border-color:#e9def7}
+#reviewList .task{background:#fff4d7;border-color:#f7ebc8}
+#doneList .task{background:#eaf4e9;border-color:#deebdd}
+body[data-theme="dark"] #todoList .task,
+body[data-theme="dark"] #doingList .task,
+body[data-theme="dark"] #reviewList .task,
+body[data-theme="dark"] #doneList .task{background:var(--soft)!important;border-color:var(--line)!important;color:var(--text)!important}
+body[data-theme="dark"] #todoList .task .tasktitle,
+body[data-theme="dark"] #doingList .task .tasktitle,
+body[data-theme="dark"] #reviewList .task .tasktitle,
+body[data-theme="dark"] #doneList .task .tasktitle{color:var(--text)!important}
+body[data-theme="dark"] #todoList .task .desc,
+body[data-theme="dark"] #doingList .task .desc,
+body[data-theme="dark"] #reviewList .task .desc,
+body[data-theme="dark"] #doneList .task .desc{color:var(--muted)!important}
+body[data-theme="dark"] .column-add:hover{background:var(--soft2)!important}
