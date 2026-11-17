@@ -2008,3 +2008,27 @@ body[data-theme="dark"] .duel-card.completed{border-left-color:#6aab86!important
  .topbar-search{grid-column:2;grid-row:1;justify-self:end}
  .header.topbar .actions{grid-column:1/-1;grid-row:2;justify-content:flex-end}
 }
+
+/* Dark theme safety net: any page panel follows the active surface tokens */
+body[data-theme="dark"] .workspace .panel{
+ background:var(--surface)!important;
+ border-color:var(--line)!important;
+ color:var(--text)!important;
+ box-shadow:none!important
+}
+body[data-theme="dark"] .workspace .panel .field,
+body[data-theme="dark"] .workspace .panel input:not([type="checkbox"]):not([type="radio"]),
+body[data-theme="dark"] .workspace .panel textarea,
+body[data-theme="dark"] .workspace .panel select{
+ background:var(--soft)!important;
+ border-color:var(--line2)!important;
+ color:var(--text)!important
+}
+body[data-theme="dark"] .workspace .panel .btn:not(.primary){
+ background:var(--soft)!important;
+ border-color:var(--line2)!important;
+ color:var(--text)!important
+}
+body[data-theme="dark"] .workspace .panel .sub,
+body[data-theme="dark"] .workspace .panel small{color:var(--muted)}
+body[data-theme="dark"] .workspace .panel .eyebrow{color:var(--accent)}
