@@ -923,9 +923,9 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   return {
     refresh() { render(); },
     dispose() {
-      disposed = true;
       if (saveTimer) clearTimeout(saveTimer);
       if (dirty) saveToCloud(activeBoard);
+      disposed = true;
       if (stopSnapshot) stopSnapshot();
       window.removeEventListener("keydown", handleGlobalKeydown);
     }
