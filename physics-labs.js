@@ -152,7 +152,7 @@ function lensScene() {
 function uncertaintyScene() {
   return '<div class="vlab-scene vlab-uncertainty-scene" data-scene="uncertainty">'+
     '<div class="vlab-scene-caption">ЛИНЕЙКА · ИЗМЕРИТЕЛЬНЫЙ УКАЗАТЕЛЬ</div>'+
-    '<div class="vlab-ruler-board"><div class="vlab-ruler-strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5 см</i></div><div class="vlab-ruler-object"></div><div class="vlab-ruler-marker vlab-drag" data-drag-object="marker" data-drag-axis="x" style="left:310px;top:125px"><span></span><b data-readout="ruler-value">3,0 см</b></div></div>'+
+    '<div class="vlab-ruler-board"><div class="vlab-ruler-strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5 см</i></div><div class="vlab-ruler-object"></div><div class="vlab-ruler-marker vlab-drag" data-drag-object="marker" data-drag-axis="x" style="left:380px;top:125px"><span></span><b data-readout="ruler-value">3,0 см</b></div></div>'+
     '<div class="vlab-uncertainty-actions"><button type="button" class="btn primary" data-vlab-action="record-measurement">＋ Записать измерение</button><span data-readout="measure-count">0 / 5 измерений</span></div>'+
     '<div class="vlab-measure-list" data-readout="measure-list">Сними пять показаний, немного меняя положение указателя.</div>'+
     '<div class="vlab-scene-note">Перетаскивай указатель по шкале. Запиши пять измерений одного и того же размера.</div>'+
@@ -208,10 +208,11 @@ function formulaFor(id) {
 function reportMarkup(id) {
   const fields = fieldsMarkup(id);
   const special = id === "ohm" ? '<p class="vlab-report-hint">Запиши три пары показаний с погрешностями: ΔI = ±0,02 А и ΔU = ±0,1 В. Для максимального балла отметь схему установки, единицы измерения и сформулируй вывод.</p><div class="vlab-ohm-table vlab-ohm-table-report" data-readout="ohm-table">Пока нет измерений</div>' :
-    id === "induction" ? '<p class="vlab-report-hint">Выполни три наблюдения: внесение магнита, удаление магнита, неподвижный магнит. Стрелка прибора покажет направление.</p>' :
+    id === "induction" ? '<p class="vlab-report-hint">Перемести магнит внутрь и наружу катушки. Зафиксируй направление отклонения стрелки при каждом движении и объясни, почему при остановке магнита ток исчезает.</p><div class="vlab-induction-log" data-readout="induction-log">Пока нет наблюдений. Проведи магнит через катушку.</div>' :
     '<div class="vlab-fields-grid">'+fields+'</div>';
-  return '<section class="vlab-report-panel"><div class="vlab-report-heading"><div><span class="eyebrow">ПРОТОКОЛ ОПЫТА</span><h3>Измерения и расчёт</h3><p>Сними показания с виртуальных приборов и перенеси их в поля.</p></div><div class="vlab-formula"><small>Формула</small><b>'+esc(formulaFor(id))+'</b></div></div>'+
-    special+reportChecks()+
+  const transfer = id === "ohm" || id === "induction" ? "" : '<button type="button" class="btn vlab-transfer" data-vlab-action="transfer">↘ Заполнить поля показаниями приборов</button>';
+  return '<section class="vlab-report-panel"><div class="vlab-report-heading"><div><span class="eyebrow">ПРОТОКОЛ ОПЫТА</span><h3>Измерения и расчёт</h3><p>Сними показания с виртуальных приборов. При необходимости перенеси их в поля одной кнопкой.</p></div><div class="vlab-formula"><small>Формула</small><b>'+esc(formulaFor(id))+'</b></div></div>'+
+    special+transfer+reportChecks()+
     '<button type="button" class="btn primary vlab-calculate" data-vlab-action="calculate">Проверить расчёт и отчёт</button>'+
     '<div class="vlab-result" data-vlab-result><span>После проверки появится результат эксперимента и оценка.</span></div></section>';
 }
@@ -243,14 +244,33 @@ export function mountLabSimulator(container,id,options = {}) {
   container.dataset.labId=item.id;
   if (container._vlabTimer) { clearInterval(container._vlabTimer); container._vlabTimer=null; }
   if (container._vlabAbort) container._vlabAbort.abort();
+  if (container._vlabResizeObserver) { container._vlabResizeObserver.disconnect(); container._vlabResizeObserver=null; }
   const controller = new AbortController();
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
-  let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:9.3,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
+  let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:9.3,magnetInside:false,needle:0,inductionObserved:0,inductionLog:[],measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
   const q = selector => container.querySelector(selector);
   const scene = q(".vlab-scene");
+  const sceneScroll = q(".vlab-scene-scroll");
+  const resizeScene = () => {
+    if(!scene||!sceneScroll)return;
+    const available=sceneScroll.clientWidth||760;
+    const scale=Math.min(1,Math.max(.58,available/760));
+    scene.dataset.scale=String(scale);
+    scene.style.transformOrigin="top left";
+    scene.style.transform=scale<.999?"scale("+scale+")":"";
+    sceneScroll.style.height=scale<.999?(scene.offsetHeight*scale)+"px":"";
+    sceneScroll.style.overflowX=scale<.999?"auto":"hidden";
+  };
+  if(scene&&sceneScroll){
+    resizeScene();
+    if(typeof ResizeObserver!=="undefined"){
+      container._vlabResizeObserver=new ResizeObserver(resizeScene);
+      container._vlabResizeObserver.observe(sceneScroll);
+    }else window.addEventListener("resize",resizeScene,{signal});
+  }
   const read = key => q('[data-readout="'+key+'"]');
   const setRead = (key,value) => { const node=read(key); if(node)node.textContent=value; };
   const fmt = (value,digits=2) => Number(value).toFixed(digits).replace(".",",");
@@ -336,6 +356,7 @@ export function mountLabSimulator(container,id,options = {}) {
     const needle=q("[data-readout='needle']");
     if(needle)needle.style.transform="rotate("+state.needle+"deg)";
     setRead("induction-state",state.needle>0?"Ток одного направления":state.needle<0?"Ток противоположного направления":"Нет изменения магнитного потока");
+    setRead("induction-log",state.inductionLog.length?state.inductionLog.map((entry,i)=>"<span><b>"+(i+1)+". "+esc(entry.action)+"</b><small>"+esc(entry.direction)+"</small></span>").join(""):"Пока нет наблюдений. Проведи магнит через катушку.");
   };
   const updateMotion = () => {
     setRead("time",state.cartTime?fmt(state.cartTime,2)+" с":"0,00 с");
@@ -368,8 +389,9 @@ export function mountLabSimulator(container,id,options = {}) {
     const massInput=q('[data-vlab-control="friction-mass"]'),pullInput=q('[data-vlab-control="pull-force"]');
     const mass=massInput?Number(massInput.value):200,pull=pullInput?Number(pullInput.value):0;
     const force=.25*(mass/1000)*10;
-    setRead("friction-mass",mass+" г");setRead("pull-force",fmt(pull,2)+" Н");setRead("friction-force",fmt(force,2)+" Н");
-    state.friction={mass:mass/1000,pull,force,sliding:pull>=force};
+    const measuredForce=Math.min(pull,force);
+    setRead("friction-mass",mass+" г");setRead("pull-force",fmt(pull,2)+" Н");setRead("friction-force",fmt(measuredForce,2)+" Н");
+    state.friction={mass:mass/1000,pull,force:measuredForce,maxForce:force,sliding:pull>=force};
     const block=q('[data-drag-object="frictionBlock"]');
     if(block)block.classList.toggle("sliding",pull>=force);
   };
@@ -394,16 +416,17 @@ export function mountLabSimulator(container,id,options = {}) {
       const object=event.target.closest("[data-drag-object]");
       if(!object)return;
       if(item.id==="density"&&object.dataset.dragObject==="sample"&&!state.massMeasured){/* weighing is optional until dropped on the scale */}
+      if(item.id==="friction"&&object.dataset.dragObject==="frictionBlock"&&!state.friction?.sliding){showResult("Сначала увеличь силу тяги до порога начала скольжения.",false);return;}
       event.preventDefault();
       const rect=scene.getBoundingClientRect();
-      drag={object,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,left:object.offsetLeft,top:object.offsetTop,sceneRect:rect};
+      drag={object,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,left:object.offsetLeft,top:object.offsetTop,sceneRect:rect,scale:Number(scene.dataset.scale||1)};
       object.classList.add("dragging");
       try{object.setPointerCapture(event.pointerId)}catch(error){}
       if(item.id==="motion"&&object.dataset.dragObject==="cart"&&!state.cartMoved){state.cartStarted=Date.now();state.cartTime=0;}
     },{signal});
     scene.addEventListener("pointermove",event=>{
       if(!drag||event.pointerId!==drag.pointerId)return;
-      const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY,obj=drag.object;
+      const dx=(event.clientX-drag.startX)/drag.scale,dy=(event.clientY-drag.startY)/drag.scale,obj=drag.object;
       let left=drag.left+dx,top=drag.top+dy;
       if(obj.dataset.dragAxis==="x")top=drag.top;
       if(obj.dataset.dragAxis==="y")left=drag.left;
@@ -414,7 +437,11 @@ export function mountLabSimulator(container,id,options = {}) {
         const coil=q('[data-dropzone="coil"]');
         const center=left+obj.offsetWidth/2;
         const inCoil=coil&&center>coil.offsetLeft&&center<coil.offsetLeft+coil.offsetWidth;
-        if(inCoil){state.needle=dx>=0?28:-28;if(!state.magnetInside)state.inductionObserved=(state.inductionObserved||0)+1;state.magnetInside=true;}else{if(state.magnetInside)state.inductionObserved=(state.inductionObserved||0)+1;state.needle=0;state.magnetInside=false;}
+        if(inCoil&&!state.magnetInside){state.inductionObserved++;state.inductionLog.push({action:"Магнит входит в катушку",direction:dx>=0?"Отклонение вправо":"Отклонение влево"});}
+        if(!inCoil&&state.magnetInside){state.inductionObserved++;state.inductionLog.push({action:"Магнит выходит из катушки",direction:dx>=0?"Отклонение влево":"Отклонение вправо"});}
+        if(inCoil)state.needle=dx>=0?28:-28;
+        else state.needle=state.magnetInside?(dx>=0?-28:28):0;
+        state.magnetInside=!!inCoil;
         updateInduction();
       }
       if(item.id==="friction"&&obj.dataset.dragObject==="frictionBlock"){state.frictionPosition=left;updateFriction();}
@@ -490,6 +517,38 @@ export function mountLabSimulator(container,id,options = {}) {
     },{signal});
     scene.addEventListener("pointercancel",()=>{if(drag){drag.object.classList.remove("dragging");drag=null;}},{signal});
   }
+  const transferReadings = () => {
+    const put=(key,value)=>{
+      const input=q('[data-vlab-field="'+key+'"]');
+      if(input&&value!==undefined&&value!==null&&Number.isFinite(Number(value)))input.value=String(Number(value).toFixed(3)).replace(/\.?0+$/,"");
+    };
+    let transferred=0;
+    if(item.id==="density"){
+      if(state.massMeasured){put("mass",54);transferred++;}
+      if(state.submerged){put("before",40);put("after",60);transferred+=2;}
+    }else if(item.id==="motion"&&state.cartMoved&&state.cartTime>0){
+      put("distance",1);put("time",state.cartTime);transferred=2;
+    }else if(item.id==="spring"&&state.mass>0){
+      put("mass",state.mass);put("extension",state.mass/20);transferred=2;
+    }else if(item.id==="archimedes"&&state.submerged){
+      put("air",3.9);put("water",3.4);transferred=2;
+    }else if(item.id==="lever"&&state.lever){
+      put("m1",state.lever.m1);put("l1",state.lever.l1);put("m2",state.lever.m2);put("l2",state.lever.l2);transferred=4;
+    }else if(item.id==="pendulum"&&state.pendulumElapsed>0){
+      const slider=q('[data-vlab-control="pendulum-length"]');
+      put("length",(slider?Number(slider.value):50)/100);put("time",state.pendulumElapsed);put("count",10);transferred=3;
+    }else if(item.id==="heat"&&state.hotMetalIn){
+      put("mw",100);put("mm",100);put("tw",20);put("tm",90);put("tf",32.6);transferred=5;
+    }else if(item.id==="lens"&&state.lens){
+      put("a",state.lens.a);put("b",state.lens.b);transferred=2;
+    }else if(item.id==="uncertainty"&&state.measurements.length===5){
+      state.measurements.forEach((value,index)=>put("x"+(index+1),value));transferred=5;
+    }else if(item.id==="friction"&&state.friction?.sliding){
+      put("mass",state.friction.mass);put("force",state.friction.force);transferred=2;
+    }
+    if(transferred)showResult("Показания перенесены в протокол. Проверь единицы измерения и сформулируй вывод.",true);
+    else showResult("Сначала закончи измерительную часть опыта: установи оборудование и сними показания.",false);
+  };
   container.addEventListener("input",event=>{
     const control=event.target.closest("[data-vlab-control]");
     if(!control)return;
@@ -501,6 +560,7 @@ export function mountLabSimulator(container,id,options = {}) {
     if(!button)return;
     const action=button.dataset.vlabAction;
     if(action==="reset"){mountLabSimulator(container,item.id,options);return;}
+    if(action==="transfer"){transferReadings();return;}
     if(action==="toggle-switch"){state.keyClosed=!state.keyClosed;updateOhm();return;}
     if(action==="record-ohm"){
       if(!state.keyClosed){showResult("Сначала замкни ключ цепи.",false);return;}
@@ -548,7 +608,7 @@ export function mountLabSimulator(container,id,options = {}) {
       values.mass=fieldValue("mass");values.extension=fieldValue("extension");
       if(!state.mass||!(values.mass>0&&values.extension>0)){showResult("Подвесь груз и внеси массу с удлинением по шкале.",false);return;}
       const k=(values.mass/1000*10)/(values.extension/100),ok=Math.abs(k-20)<2;
-      result={valid:true,score:ok?3:1,value:fmt(k,1)+" Н/м",detail:"F = mg = "+fmt(values.mass/1000*9.81,2)+" Н. k = F/Δl = "+fmt(k,1)+" Н/м. Сравни значение с жёсткостью пружины в установке."};
+      result={valid:true,score:ok?3:1,value:fmt(k,1)+" Н/м",detail:"F = mg = "+fmt(values.mass/1000*10,2)+" Н. k = F/Δl = "+fmt(k,1)+" Н/м. Сравни значение с жёсткостью пружины в установке."};
     } else if(item.id==="archimedes"){
       values.air=fieldValue("air");values.water=fieldValue("water");
       if(!state.submerged||!(values.air>values.water&&values.water>=0)){showResult("Погрузи тело в воду и запиши два показания динамометра.",false);return;}
@@ -578,7 +638,7 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="pendulum"){
       values.length=fieldValue("length");values.time=fieldValue("time");values.count=fieldValue("count");
       if(!(values.length>0&&values.time>0&&values.count>0)||!state.pendulumElapsed){showResult("Запусти маятник, останови секундомер и внеси длину, время и число колебаний.",false);return;}
-      const period=values.time/values.count,theory=2*Math.PI*Math.sqrt(values.length/9.81),ok=Math.abs(period-theory)<.15;
+      const period=values.time/values.count,theory=2*Math.PI*Math.sqrt(values.length/10),ok=Math.abs(period-theory)<.15;
       result={valid:true,score:ok?3:1,value:fmt(period,3)+" с",detail:"T = t/N = "+fmt(period,3)+" с. Теоретическое значение для этой длины около "+fmt(theory,3)+" с."};
     } else if(item.id==="heat"){
       values.mw=fieldValue("mw");values.mm=fieldValue("mm");values.tw=fieldValue("tw");values.tm=fieldValue("tm");values.tf=fieldValue("tf");
@@ -597,7 +657,7 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="friction"){
       values.mass=fieldValue("mass");values.force=fieldValue("force");
       if(!(values.mass>0&&values.force>0)||!state.friction?.sliding){showResult("Установи нагрузку, увеличь силу тяги до начала скольжения и внеси показания.",false);return;}
-      const mu=values.force/(values.mass*9.81),ok=Math.abs(mu-.25)<.06;
+      const mu=values.force/(values.mass*10),ok=Math.abs(mu-.25)<.06;
       result={valid:true,score:ok?3:1,value:"μ = "+fmt(mu,3),detail:"При равномерном движении сила тяги равна силе трения. μ = Fтр/(mg) = "+fmt(mu,3)+"."};
     }
     if(!result.valid)return;
