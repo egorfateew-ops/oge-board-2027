@@ -359,15 +359,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
           editRevision += 1;
           saveToCloud(boardId);
         } else {
-          setDoc(ref, {
-            boardId,
-            title: title || BOARD_NAMES[boardId].title,
-            elements: [],
-            deletedIds: [],
-            updatedBy: user.uid,
-            updatedByName: member ? member.name : "Ученик",
-            updatedAt: serverTimestamp ? serverTimestamp() : Date.now()
-          }, { merge: true }).catch(error => setStatus("Нет синхронизации", "offline"));
+          setStatus("Новая доска · готова к работе", "ok");
         }
         return;
       }
