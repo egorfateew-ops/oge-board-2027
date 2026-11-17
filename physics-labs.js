@@ -19,7 +19,7 @@ const lab = id => labCatalog.find(item => item.id === id) || labCatalog[0];
 export function renderLabCatalog(activeId, progress = {}) {
   return labCatalog.map((item, index) => {
     const saved = progress[item.id];
-    const status = saved && saved.completed ? '<span class="vlab-catalog-status done">✓ Пройдено</span>' : '<span class="vlab-catalog-status">Практика</span>';
+    const status = saved && saved.completed ? '<span class="vlab-catalog-status done">✓ '+esc(saved.score||0)+'/'+esc(saved.maxScore||3)+' балла · '+esc(saved.attempts||1)+' попыток</span>' : '<span class="vlab-catalog-status">Практика</span>';
     return '<button type="button" class="vlab-catalog-item '+(activeId === item.id ? "active" : "")+'" data-virtual-lab="'+esc(item.id)+'">'+
       '<span class="vlab-catalog-number">'+String(index + 1).padStart(2,"0")+'</span>'+
       '<span class="vlab-catalog-copy"><b>'+esc(item.title)+'</b><small>'+esc(item.kit)+' · '+esc(item.time)+'</small>'+status+'</span>'+
