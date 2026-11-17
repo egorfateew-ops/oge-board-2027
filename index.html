@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f6fa"><title>ОГЭ — Егор и Даниил</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--p:#142039;--p2:#192945;--line:#2b3e60;--t:#edf3ff;--m:#9aabc7;--b:#78aaff;--c:#63d9d0;--g:#63d6a4;--y:#f2c96d;--r:#ff8585}
@@ -362,7 +362,29 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
     <p class="sub">Завершённые сессии попадут в статистику.</p>
    </div>
   </div>
-</div></div></div></div>
+</div></div></div>
+<nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Мобильная навигация">
+ <button type="button" class="mobile-nav-link" data-tab="daily" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Главная</span></button>
+ <button type="button" class="mobile-nav-link active" data-tab="board" aria-label="Задания"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>Задания</span></button>
+ <button type="button" class="mobile-nav-link" data-tab="study" aria-label="Обучение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5"/></svg><span>Обучение</span></button>
+ <button type="button" class="mobile-nav-link" data-tab="labs" aria-label="Лабораторные"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 15h9"/></svg><span>Лабы</span></button>
+ <button type="button" class="mobile-nav-more" id="mobileMoreBtn" aria-expanded="false" aria-controls="mobileMorePanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>Ещё</span></button>
+</nav>
+<div class="mobile-more-backdrop hidden" id="mobileMoreBackdrop"></div>
+<section class="mobile-more-panel hidden" id="mobileMorePanel" role="dialog" aria-label="Дополнительные разделы">
+ <div class="mobile-more-head"><b>Все разделы</b><button type="button" id="mobileMoreClose" aria-label="Закрыть">×</button></div>
+ <div class="mobile-more-grid">
+  <button type="button" data-tab="tests"><span>✓</span>Тесты и пробники</button>
+  <button type="button" data-tab="subjects"><span>📘</span>Курс физики</button>
+  <button type="button" data-tab="knowledge"><span>◈</span>Карта знаний</button>
+  <button type="button" data-tab="mistakes"><span>↺</span>Мои ошибки</button>
+  <button type="button" data-tab="calendar"><span>▦</span>Календарь</button>
+  <button type="button" data-tab="stats"><span>▥</span>Прогресс</button>
+  <button type="button" data-tab="duels"><span>⚔</span>Дуэли</button>
+  <button type="button" data-tab="settings"><span>⚙</span>Настройки</button>
+ </div>
+</section>
+</div>
 <div class="modalbg" id="modalBg"><div class="panel modal"><h2 id="modalTitle">Новое задание</h2><form id="taskForm"><div class="formgrid">
  <div class="formrow full"><label for="title">Название задания *</label><input class="field" id="title" required maxlength="120" placeholder="Например: решить вариант № 3"></div>
  <div class="formrow"><label for="subject">Предмет</label><select class="field" id="subject"><option>Физика</option></select></div>
@@ -718,6 +740,17 @@ function renderReference(){
  root.innerHTML=shown.length?shown.map(x=>'<article class="reference-card"><div class="reference-card-top"><span>'+esc(x.subject)+' · '+esc(x.topic)+'</span><small>'+x.kind+'</small></div><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p><button type="button" class="small" data-ref-open="'+esc(x.topicId)+'" data-ref-subject="'+esc(x.subject)+'">Открыть тему →</button></article>').join(""):'<div class="study-empty">Ничего не найдено. Попробуй другое слово.</div>';
  if(!queryText&&all.length>shown.length)root.insertAdjacentHTML("beforeend",'<p class="reference-more">Показаны первые 8 материалов из '+all.length+'. Введи запрос, чтобы найти нужную формулу или правило.</p>');
 }
+function closeMobileMore(){
+ const panel=$("mobileMorePanel"),backdrop=$("mobileMoreBackdrop"),button=$("mobileMoreBtn");
+ panel?.classList.add("hidden");backdrop?.classList.add("hidden");button?.setAttribute("aria-expanded","false");
+}
+function toggleMobileMore(){
+ const panel=$("mobileMorePanel"),backdrop=$("mobileMoreBackdrop"),button=$("mobileMoreBtn");
+ if(!panel||!backdrop||!button)return;
+ const opening=panel.classList.contains("hidden");
+ panel.classList.toggle("hidden",!opening);backdrop.classList.toggle("hidden",!opening);
+ button.setAttribute("aria-expanded",String(opening));
+}
 function showTab(tab){
  const groups={board:"tasks",daily:"tasks",study:"learn",subjects:"learn",knowledge:"learn",labs:"learn",tests:"tests",mistakes:"tests",duels:"tests",stats:"progress",calendar:"progress",settings:"settings"};
  const group=groups[tab]||"tasks";
@@ -738,7 +771,12 @@ function showTab(tab){
  const copy=viewLabels[tab]||viewLabels.board;
  if($("viewTitle"))$("viewTitle").textContent=copy[0];
  if($("viewSubtitle"))$("viewSubtitle").textContent=copy[1];
+ document.body.dataset.currentTab=tab;
  document.querySelectorAll(".app-sidebar .sidebar-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ const mobileGroup={daily:"daily",board:"board",study:"study",subjects:"study",knowledge:"study",labs:"labs",tests:"tests",mistakes:"more",calendar:"more",stats:"more",duels:"more",settings:"more"}[tab]||"board";
+ document.querySelectorAll(".mobile-nav-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===mobileGroup));
+ $("mobileMoreBtn")?.classList.toggle("active",mobileGroup==="more");
+ closeMobileMore();
  const topSearch=document.querySelector(".topbar-search");
  if(topSearch)topSearch.classList.toggle("hidden",tab!=="board");
  document.querySelectorAll("#mainTabs .tab").forEach(x=>x.classList.toggle("active",x.dataset.group===group));
@@ -1705,6 +1743,17 @@ $('dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-dail
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
 document.querySelector(".app-sidebar").addEventListener("click",e=>{const b=e.target.closest(".sidebar-link[data-tab]");if(b)showTab(b.dataset.tab)});
+$("mobileBottomNav")?.addEventListener("click",e=>{
+ const more=e.target.closest("#mobileMoreBtn");
+ if(more){toggleMobileMore();return;}
+ const b=e.target.closest(".mobile-nav-link[data-tab]");
+ if(b)showTab(b.dataset.tab);
+});
+$("mobileMorePanel")?.addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+$("mobileMoreBackdrop")?.addEventListener("click",closeMobileMore);
+$("mobileMoreClose")?.addEventListener("click",closeMobileMore);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMobileMore()});
+
 document.querySelector(".workspace").addEventListener("click",e=>{const b=e.target.closest(".study-shortcuts [data-tab],.tests-shortcuts [data-tab]");if(b)showTab(b.dataset.tab)});
 $("sidebarAddBtn").addEventListener("click",()=>openModal());
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
