@@ -241,6 +241,7 @@ function workspaceMarkup(item) {
 
 export function mountLabSimulator(container,id,options = {}) {
   const item = lab(id);
+  container.dataset.labId=item.id;
   if (container._vlabTimer) { clearInterval(container._vlabTimer); container._vlabTimer=null; }
   if (container._vlabAbort) container._vlabAbort.abort();
   const controller = new AbortController();
