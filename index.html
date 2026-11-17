@@ -1070,7 +1070,8 @@ async function acceptDuel(id){
    if(!snap.exists())throw new Error("Вызов больше не существует");
    const current=snap.data();
    if(current.status!=="waiting")throw new Error("Этот вызов уже принят или завершён");
-   if(!(current.participants||[]).includes(member.id))throw new Error("Этот вызов предназначен не для твоего аккаунта");
+   const participants=Array.isArray(current.participants)&&current.participants.length?current.participants:["egor","daniil"];
+   if(!participants.includes(member.id))throw new Error("Этот вызов предназначен не для твоего аккаунта");
    if(current.createdById===member.id)throw new Error("Нельзя принять собственный вызов");
    tx.update(ref,{status:"active",acceptedBy:member.id,acceptedAt:serverTimestamp()});
   });
