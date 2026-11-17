@@ -117,7 +117,7 @@ function ohmScene() {
       '<path class="circuit-wire" d="M520 80 V125 M520 185 V220"/>'+
       '<g class="circuit-device"><path d="M100 145h40 M108 164h24"/><text x="120" y="198">4,5 В</text><text x="120" y="115">Источник</text></g>'+
       '<g class="circuit-device"><circle cx="275" cy="80" r="30"/><text x="275" y="87">A</text><text x="275" y="28">Амперметр</text></g>'+
-      '<g class="circuit-device"><path d="M430 80h13 M477 80h13 M443 80l25 -16" /><text x="460" y="42">Ключ</text></g>'+
+      '<g class="circuit-device"><path d="M430 80h13 M477 80h13 M443 80l25 -16" /><text x="460" y="112">Ключ</text></g>'+
       '<g class="circuit-device"><rect x="610" y="125" width="40" height="60" rx="5"/><path d="M616 155h28"/><text x="630" y="207">R2 · 5,7 Ом</text></g>'+
       '<g class="circuit-device"><circle cx="520" cy="155" r="25"/><text x="520" y="162">V</text><text x="520" y="112">Вольтметр</text></g>'+
       '<g class="circuit-device"><rect x="350" y="202" width="120" height="36" rx="6"/><path d="M360 220h100 M395 195l30 48" class="circuit-slider"/><text x="410" y="275">Реостат 10 Ом</text></g>'+
@@ -125,7 +125,6 @@ function ohmScene() {
     '<div class="vlab-ohm-controls"><div><span>Ключ</span><button type="button" class="vlab-switch" data-vlab-action="toggle-switch" aria-pressed="false">Разомкнут</button></div><label><span>Реостат: <b data-readout="rheostat">9,3 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-vlab-control="rheostat"></label></div>'+
     '<div class="vlab-meter-row"><div class="vlab-meter"><small>АМПЕРМЕТР</small><b data-readout="current">0,00 А</b></div><div class="vlab-meter"><small>ВОЛЬТМЕТР</small><b data-readout="voltage">0,00 В</b></div><div class="vlab-meter"><small>R2</small><b>5,7 Ом</b></div></div>'+
     '<div class="vlab-ohm-actions"><button type="button" class="btn primary" data-vlab-action="record-ohm">＋ Записать пару U и I</button><span data-readout="ohm-count">0 / 3 измерения</span></div>'+
-    '<div class="vlab-ohm-table" data-readout="ohm-table">Пока нет измерений</div>'+
     '<div class="vlab-scene-note">Замкни ключ. Реостатом установи ток 0,3 А, 0,4 А и 0,5 А. Погрешности: ΔI = ±0,02 А; ΔU = ±0,1 В.</div>'+
   '</div>';
 }
@@ -208,7 +207,7 @@ function formulaFor(id) {
 }
 function reportMarkup(id) {
   const fields = fieldsMarkup(id);
-  const special = id === "ohm" ? '<p class="vlab-report-hint">Запиши три пары показаний с погрешностями: ΔI = ±0,02 А и ΔU = ±0,1 В. Для максимального балла отметь схему установки, единицы измерения и вывод.</p>' :
+  const special = id === "ohm" ? '<p class="vlab-report-hint">Запиши три пары показаний с погрешностями: ΔI = ±0,02 А и ΔU = ±0,1 В. Для максимального балла отметь схему установки, единицы измерения и сформулируй вывод.</p><div class="vlab-ohm-table vlab-ohm-table-report" data-readout="ohm-table">Пока нет измерений</div>' :
     id === "induction" ? '<p class="vlab-report-hint">Выполни три наблюдения: внесение магнита, удаление магнита, неподвижный магнит. Стрелка прибора покажет направление.</p>' :
     '<div class="vlab-fields-grid">'+fields+'</div>';
   return '<section class="vlab-report-panel"><div class="vlab-report-heading"><div><span class="eyebrow">ПРОТОКОЛ ОПЫТА</span><h3>Измерения и расчёт</h3><p>Сними показания с виртуальных приборов и перенеси их в поля.</p></div><div class="vlab-formula"><small>Формула</small><b>'+esc(formulaFor(id))+'</b></div></div>'+
