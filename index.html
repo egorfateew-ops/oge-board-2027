@@ -1226,28 +1226,28 @@ function renderMockExamCards(){
   return '<article class="mock-exam-card"><div class="mock-exam-card-top"><span class="mock-number">0'+(i+1)+'</span><span class="mock-duration">180 минут</span></div><h4>'+esc(variant.title)+'</h4><p>'+esc(variant.description)+'</p><div class="mock-exam-card-meta"><span>22 задания</span><span>39 баллов</span><span>'+(best===null?"Пока не пройден": "Лучший: "+best+"/39")+'</span></div><button type="button" class="btn primary" data-start-full-exam="'+esc(variant.id)+'">Начать пробник →</button></article>';
  }).join("");
 }
+function hasFullExamAnswer(q,a){
+ if(!q||!a)return false;
+ if(q.type==="choice")return Boolean(a.value);
+ if(q.type==="number"||q.type==="sequence"||q.type==="two")return String(a.value||"").trim()!=="";
+ if(q.type==="text")return String(a.text||"").trim()!=="";
+ if(q.type==="solution")return Boolean(a.formula||String(a.intermediate||"").trim()||String(a.final||"").trim());
+ if(q.type==="lab")return Object.keys(a.values||{}).length>0||String(a.final||"").trim()!=="";
+ return false;
+}
 function fullExamAnsweredCount(){
  if(!fullExamSession)return 0;
- return Object.entries(fullExamSession.answers).filter(([index,a])=>{
-  const q=fullExamSession.variant.questions[Number(index)];
-  if(!q||!a)return false;
-  if(q.type==="choice")return Boolean(a.value);
-  if(q.type==="number"||q.type==="sequence"||q.type==="two")return String(a.value||"").trim()!=="";
-  if(q.type==="text")return String(a.text||"").trim()!=="";
-  if(q.type==="solution")return Boolean(a.formula||String(a.intermediate||"").trim()||String(a.final||"").trim());
-  if(q.type==="lab")return Object.keys(a.values||{}).length>0||String(a.final||"").trim()!=="";
-  return false;
- }).length;
+ return fullExamSession.variant.questions.filter((q,i)=>hasFullExamAnswer(q,fullExamSession.answers[i])).length;
 }
 function renderFullExamNav(){
  const root=$("fullExamQuestionNav");if(!root||!fullExamSession)return;
- root.innerHTML=fullExamSession.variant.questions.map((q,i)=>'<button type="button" class="test-nav-number '+(i===fullExamQuestionIndex?"active ":"")+(fullExamSession.answers[i]?"answered":"")+'" data-full-exam-jump="'+i+'">'+q.number+'</button>').join("");
+ root.innerHTML=fullExamSession.variant.questions.map((q,i)=>'<button type="button" class="test-nav-number '+(i===fullExamQuestionIndex?"active ":"")+(hasFullExamAnswer(q,fullExamSession.answers[i])?"answered":"")+'" data-full-exam-jump="'+i+'">'+q.number+'</button>').join("");
  $("fullExamAnswered").textContent="Отвечено: "+fullExamAnsweredCount()+" / 22";
 }
 function startFullExam(variantId){
  const variant=physicsExamVariants.find(x=>x.id===variantId);
  if(!variant){toast("Пробный вариант не найден");return}
- stopTestTimer();stopFullExamTimer();
+ stopTestTimer();stopFullExamTimer();testSession=null;
  showTab("tests");
  fullExamSession={variant,answers:{},startedAt:new Date().toISOString(),duration:physicsExamScoring.durationSeconds};
  fullExamQuestionIndex=0;fullExamSecondsLeft=physicsExamScoring.durationSeconds;
@@ -1391,6 +1391,7 @@ function updateExamModeUI(){
   :"Выбери предмет и нажми «Начать». После теста увидишь балл и разбор ошибок.";
 }
 function startTest(){
+ stopFullExamTimer();fullExamSession=null;$("fullExamRun").classList.add("hidden");$("fullExamResult").classList.add("hidden");
  const subject="Физика",bank=testBanks[subject]||[],examMode=$("examMode")?.checked||false;
  if(!bank.length){toast("Для этого предмета пока нет вопросов");return}
  const count=examMode?bank.length:Math.min(Number($("testCount").value)||10,bank.length),duration=examMode?45*60:(Number($("testDuration").value)||20)*60;
@@ -1652,7 +1653,7 @@ function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTask
 function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;if(!auth){$('loginMsg').textContent='Firebase не инициализирован. Обнови страницу; если ошибка повторится, проверь подключение к Firebase.';$('loginBtn').disabled=false;return}$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
-$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();stopFullExamTimer();focusPause();await signOut(auth)});
+$('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();stopFullExamTimer();fullExamSession=null;focusPause();await signOut(auth)});
 $('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:newTaskStatus,createdAt:serverTimestamp(),createdBy:user.uid,completedAt:newTaskStatus==='done'?serverTimestamp():null,completedBy:newTaskStatus==='done'?user.uid:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
 $('boardPage').addEventListener('click',async e=>{
