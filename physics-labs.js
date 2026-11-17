@@ -31,7 +31,7 @@ function field(key,label,unit,placeholder) {
   return '<label class="vlab-field"><span>'+esc(label)+'</span><div><input class="field" type="number" step="any" inputmode="decimal" data-vlab-field="'+esc(key)+'" placeholder="'+esc(placeholder || "Сними показание")+'"><small>'+esc(unit || "")+'</small></div></label>';
 }
 function reportChecks() {
-  return '<div class="vlab-report-checks"><label><input type="checkbox" data-vlab-check="scheme"> Нарисовал схему установки</label><label><input type="checkbox" data-vlab-check="units"> Указал единицы измерения</label><label><input type="checkbox" data-vlab-check="conclusion"> Записал вывод по опыту</label></div>';
+  return '<div class="vlab-report-checks"><label><input type="checkbox" data-vlab-check="scheme"> Перенёс схему установки в бланк</label><label><input type="checkbox" data-vlab-check="units"> Указал единицы и погрешности</label></div><label class="vlab-conclusion-field"><span>Вывод по эксперименту</span><textarea data-vlab-conclusion rows="2" placeholder="Что показал опыт? Как связаны измеренные величины?"></textarea></label>';
 }
 function densityScene() {
   return '<div class="vlab-scene vlab-density-scene" data-scene="density">'+
@@ -260,7 +260,7 @@ export function mountLabSimulator(container,id,options = {}) {
     const checks = {};
     container.querySelectorAll("[data-vlab-check]").forEach(input => { checks[input.dataset.vlabCheck]=input.checked; });
     const checkCount=Object.values(checks).filter(Boolean).length;
-    const report={labId:item.id,labTitle:item.title,score:result.score,maxScore:result.maxScore||3,result:result.value,detail:result.detail,values,readings,checks,checkCount,completed:true};
+    const report={labId:item.id,labTitle:item.title,score:result.score,maxScore:result.maxScore||3,result:result.value,detail:result.detail,values,readings,checks,checkCount,conclusion:q("[data-vlab-conclusion]")?.value.trim()||"",completed:true};
     try {
       if(options.onSave) await options.onSave(report);
       showResult('<b>Опыт проверен · '+result.score+'/'+(result.maxScore||3)+' балла</b><p>'+esc(result.value)+'</p><p>'+esc(result.detail)+'</p><small>Отчёт сохранён в личном прогрессе.</small>',true);
@@ -566,7 +566,7 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="ohm"){
       if(state.readings.length!==3){showResult("Нужно записать ровно три пары показаний при токах 0,3 А, 0,4 А и 0,5 А.",false);return;}
       const targetsI=[.3,.4,.5],targetsU=[1.7,2.3,2.9],matches=state.readings.filter((r,i)=>Math.abs(r.i-targetsI[i])<.025&&Math.abs(r.u-targetsU[i])<=.3&&Math.abs(r.u/r.i-5.7)<.6).length;
-      const scheme=q('[data-vlab-check="scheme"]')?.checked,units=q('[data-vlab-check="units"]')?.checked,conclusion=q('[data-vlab-check="conclusion"]')?.checked,allReport=scheme&&units&&conclusion;
+      const scheme=q('[data-vlab-check="scheme"]')?.checked,units=q('[data-vlab-check="units"]')?.checked,conclusionText=String(q("[data-vlab-conclusion]")?.value||"").toLowerCase(),conclusionOk=/ток/.test(conclusionText)&&(/напряж/.test(conclusionText)||/увелич/.test(conclusionText)||/пропорц/.test(conclusionText)),allReport=scheme&&units&&conclusionOk;
       result={valid:true,score:matches===3?(allReport?3:2):matches>=1?1:0,value:matches+"/3 измерений соответствуют закону Ома",detail:"Для R2 = 5,7 Ом отношение U/I остаётся примерно постоянным. Ориентиры демопроекта: 0,30 А — 1,7 В; 0,40 А — 2,3 В; 0,50 А — 2,9 В. Полные 3 балла требуют схемы, таблицы с погрешностями и правильного вывода."};
       values.readings=state.readings;
     } else if(item.id==="motion"){
