@@ -181,6 +181,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   let title = BOARD_NAMES[activeBoard].title;
   let elements = [];
   let deletedIds = new Set();
+  let restoredIds = new Set();
   let history = [[]];
   let historyIndex = 0;
   let currentTool = "select";
@@ -229,7 +230,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     if (redo) redo.disabled = historyIndex >= history.length - 1;
   }
   function saveLocalNow(boardId = activeBoard) {
-    rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], updatedAt: Date.now() });
+    rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], restoredIds: [...restoredIds], updatedAt: Date.now() });
   }
   function markDirty() {
     dirty = true;
@@ -243,8 +244,8 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   function commit(nextElements) {
     const previousIds = new Set(elements.map(item => item.id));
     const nextIds = new Set(nextElements.map(item => item.id));
-    previousIds.forEach(id => { if (!nextIds.has(id)) deletedIds.add(id); });
-    nextIds.forEach(id => deletedIds.delete(id));
+    previousIds.forEach(id => { if (!nextIds.has(id)) { deletedIds.add(id); restoredIds.delete(id); } });
+    nextIds.forEach(id => { if (deletedIds.has(id)) restoredIds.add(id); deletedIds.delete(id); });
     elements = nextElements;
     history = history.slice(0, historyIndex + 1);
     history.push(clone(elements));
@@ -259,8 +260,8 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     historyIndex -= 1;
     elements = clone(history[historyIndex]);
     const newIds = new Set(elements.map(item => item.id));
-    oldIds.forEach(id => { if (!newIds.has(id)) deletedIds.add(id); });
-    newIds.forEach(id => deletedIds.delete(id));
+    oldIds.forEach(id => { if (!newIds.has(id)) { deletedIds.add(id); restoredIds.delete(id); } });
+    newIds.forEach(id => { if (deletedIds.has(id)) restoredIds.add(id); deletedIds.delete(id); });
     markDirty();
     render();
   }
@@ -270,13 +271,14 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     historyIndex += 1;
     elements = clone(history[historyIndex]);
     const newIds = new Set(elements.map(item => item.id));
-    oldIds.forEach(id => { if (!newIds.has(id)) deletedIds.add(id); });
-    newIds.forEach(id => deletedIds.delete(id));
+    oldIds.forEach(id => { if (!newIds.has(id)) { deletedIds.add(id); restoredIds.delete(id); } });
+    newIds.forEach(id => { if (deletedIds.has(id)) restoredIds.add(id); deletedIds.delete(id); });
     markDirty();
     render();
   }
   function mergeElements(remoteElements, remoteDeleted) {
     const removed = new Set([...(remoteDeleted || []), ...deletedIds]);
+    restoredIds.forEach(id => removed.delete(id));
     const merged = new Map();
     (remoteElements || []).forEach(item => { if (item && item.id && !removed.has(item.id)) merged.set(item.id, item); });
     elements.forEach(item => { if (item && item.id && !removed.has(item.id)) merged.set(item.id, item); });
@@ -289,12 +291,13 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       title,
       elements: clone(elements),
       deletedIds: [...deletedIds],
+      restoredIds: [...restoredIds],
       updatedBy: user.uid,
       updatedByName: member ? member.name : "Ученик",
       updatedAt: serverTimestamp ? serverTimestamp() : Date.now()
     };
     localUpdatedAt = Date.now();
-    rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: localUpdatedAt });
+    rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, restoredIds: payload.restoredIds, updatedAt: localUpdatedAt });
     setStatus("Сохраняю…", "pending");
     try {
       if (runTransaction) {
@@ -305,6 +308,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
           const snap = await transaction.get(ref);
           const remote = snap.exists() ? snap.data() : {};
           const removed = new Set([...(remote.deletedIds || []), ...payload.deletedIds]);
+          (payload.restoredIds || []).forEach(id => removed.delete(id));
           const map = new Map();
           (remote.elements || []).forEach(item => { if (item && item.id && !removed.has(item.id)) map.set(item.id, item); });
           payload.elements.forEach(item => { if (item && item.id && !removed.has(item.id)) map.set(item.id, item); });
@@ -320,10 +324,11 @@ export function mountPhysicsWhiteboard(root, options = {}) {
             updatedAt: payload.updatedAt
           }, { merge: true });
         });
-        rememberLocal(boardId, { title: payload.title, elements: mergedResult || payload.elements, deletedIds: mergedDeletedResult || payload.deletedIds, updatedAt: 0 });
+        rememberLocal(boardId, { title: payload.title, elements: mergedResult || payload.elements, deletedIds: mergedDeletedResult || payload.deletedIds, restoredIds: [], updatedAt: 0 });
         if (activeBoard === boardId && revision === editRevision) {
           elements = mergedResult || elements;
           deletedIds = new Set(mergedDeletedResult || payload.deletedIds);
+          restoredIds.clear();
           dirty = false;
           localUpdatedAt = 0;
           resetHistory();
@@ -336,15 +341,16 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         }
       } else {
         await setDoc(boardRef(boardId), { boardId, ...payload }, { merge: true });
-        rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: 0 });
+        rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, restoredIds: [], updatedAt: 0 });
         if (activeBoard === boardId && revision === editRevision) {
           dirty = false;
+          restoredIds.clear();
           localUpdatedAt = 0;
           setStatus("Сохранено", "ok");
         }
       }
     } catch (error) {
-      rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: Date.now() });
+      rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, restoredIds: payload.restoredIds, updatedAt: Date.now() });
       if (activeBoard === boardId) setStatus("Сохранено на устройстве", "offline");
       console.warn("Whiteboard save failed:", error);
     }
@@ -386,18 +392,19 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       }
       if (dirty) {
         elements = mergeElements(remoteElements, remoteDeleted);
-        deletedIds = new Set([...remoteDeleted, ...deletedIds]);
+        deletedIds = new Set([...remoteDeleted, ...deletedIds].filter(id => !restoredIds.has(id)));
         render();
         if (saveTimer) clearTimeout(saveTimer);
         saveTimer = setTimeout(() => saveToCloud(boardId), 500);
       } else {
         elements = remoteElements.filter(item => item && item.id && !remoteDeleted.includes(item.id));
         deletedIds = new Set(remoteDeleted);
+        restoredIds = new Set();
         title = data.title || BOARD_NAMES[boardId].title;
         titleInput.value = title;
         resetHistory();
         localUpdatedAt = remoteUpdatedAt;
-        rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], updatedAt: remoteUpdatedAt });
+        rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], restoredIds: [], updatedAt: remoteUpdatedAt });
         render();
       }
       setStatus("Синхронизировано", "ok");
@@ -413,6 +420,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     localUpdatedAt = local ? Number(local.updatedAt || 0) : 0;
     elements = local ? local.elements : [];
     deletedIds = new Set(local && Array.isArray(local.deletedIds) ? local.deletedIds : []);
+    restoredIds = new Set(local && Array.isArray(local.restoredIds) ? local.restoredIds : []);
     title = local && local.title ? local.title : BOARD_NAMES[boardId].title;
     titleInput.value = title;
     dirty = false;
