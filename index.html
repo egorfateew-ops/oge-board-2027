@@ -70,7 +70,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 
  <section id="boardPage">
   <div class="page-intro"><div><h2>Все задания</h2><p>Общий список Егора и Даниила. Фильтруй по ученику или предмету и меняй статус по мере выполнения.</p></div><span class="page-note">Общая доска</span></div>
-  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn" id="seedBtn">Добавить план физики</button></div>
+  <div class="panel toolbar"><select class="field" id="personFilter"><option value="all">Все участники</option><option>Егор</option><option>Даниил</option><option>Вместе</option></select><select class="field" id="subjectFilter"><option value="all">Все предметы</option><option>Математика</option><option>Русский язык</option><option>Информатика</option><option>Английский язык</option><option>Физика</option><option>Обществознание</option><option>История</option><option>Биология</option><option>География</option><option>Химия</option><option>Литература</option><option>Другое</option></select><input class="field search" id="search" placeholder="Поиск по заданиям…"><div class="spacer"></div><button class="btn primary" id="seedBtn">Добавить курс физики · 6 недель</button></div>
   <main class="board"><section class="panel column"><div class="colhead"><span><i class="dot todo"></i>К выполнению</span><span class="count" id="todoCount">0</span></div><div class="tasklist" id="todoList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot doing"></i>В процессе</span><span class="count" id="doingCount">0</span></div><div class="tasklist" id="doingList"></div></section><section class="panel column"><div class="colhead"><span><i class="dot done"></i>Готово</span><span class="count" id="doneCount">0</span></div><div class="tasklist" id="doneList"></div></section></main>
  </section>
  <section id="dailyPage" class="hidden">
@@ -84,7 +84,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <section id="statsPage" class="hidden"><div class="page-intro"><div><h2>Ваш прогресс</h2><p>Личная динамика, готовность по предметам и следующие шаги.</p></div><span class="page-note" id="statsOwner">Егор и Даниил</span></div><div class="stats"><div class="panel stat"><span>Всего заданий</span><strong id="statTotal">0</strong></div><div class="panel stat"><span>Выполнено</span><strong id="statDone">0</strong></div><div class="panel stat"><span>Общий рейтинг XP</span><strong id="statXp">0</strong></div><div class="panel stat"><span>Время занятий</span><strong id="statStudyTime">0 мин</strong></div></div><div class="sectiongrid"><div class="panel section"><h3>Выполнено за последние 7 дней</h3><div class="chart" id="chart"></div></div><div class="panel section"><h3>Рейтинг</h3><div class="ranking" id="ranking"></div></div></div><div class="insight-grid"><section class="panel section"><div class="insight-heading"><div><span class="eyebrow">ПО ПРЕДМЕТАМ</span><h3>Готовность к ОГЭ</h3><p class="sub">Оценка по последним тестам и освоенным темам.</p></div></div><div id="readinessList" class="readiness-list"></div></section><section class="panel section"><div class="insight-heading"><div><span class="eyebrow">ПОСЛЕДНИЕ 7 ДНЕЙ</span><h3>Еженедельный отчёт</h3><p class="sub">Только твои результаты и задания, выполненные тобой или вместе.</p></div></div><div id="weeklyReport" class="weekly-report"></div></section></div><section class="panel section achievements-section"><div class="insight-heading"><div><span class="eyebrow">МАЛЕНЬКИЕ ПОБЕДЫ</span><h3>Достижения</h3><p class="sub">Открываются автоматически по реальным результатам.</p></div><span class="page-note" id="achievementCount">0 / 6</span></div><div id="achievementList" class="achievement-list"></div></section></section>
  
  <section id="studyPage" class="hidden">
-  <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">18 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 18 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
+  <div class="study-hero"><h2>Академия ОГЭ / Физика</h2><p>Шесть недель системной подготовки: теория простыми словами, формулы с пояснениями, разобранные примеры и задания для самостоятельной работы. Прогресс сохраняется отдельно у Егора и Даниила.</p><div class="study-kpis"><span class="study-kpi">6 учебных недель</span><span class="study-kpi">19 уроков</span><span class="study-kpi" id="studyProgressLabel">0 из 19 уроков</span></div><div class="study-progress"><div id="studyProgressBar" style="width:0%"></div></div><div class="study-sources"><a href="https://fipi.ru/oge/demoversii-specifikacii-kodifikatory" target="_blank" rel="noopener">Официальные документы ФИПИ · ОГЭ-2027 ↗</a><a href="https://fipi.ru/oge/otkrytyy-bank-zadaniy-oge" target="_blank" rel="noopener">Открытый банк заданий ОГЭ ↗</a></div></div>
   <div class="study-layout"><aside class="panel study-sidebar"><b style="display:block;margin:5px 5px 12px">Программа курса</b><div id="studyWeeks" class="study-week-wrap"></div></aside><div><div id="studyLessons" class="study-lesson-list"></div><article id="studyContent" class="panel study-content" style="margin-top:12px"><div class="study-empty">Выбери урок слева, чтобы открыть теорию и примеры.</div></article></div></div>
   <section class="labs-section"><div class="labs-heading"><div><span class="eyebrow">ВИРТУАЛЬНЫЙ КАБИНЕТ</span><h2>Лабораторные работы</h2><p>Меняй параметры установки и наблюдай, как меняется физический результат.</p></div></div><div id="labList" class="lab-grid"></div></section>
 
@@ -173,6 +173,27 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <div class="formrow full"><label for="description">Описание или материал</label><textarea class="field" id="description" maxlength="600" placeholder="Что нужно сделать…"></textarea></div>
  <div class="formrow full"><label><input id="daily" type="checkbox"> Ежедневное задание</label></div>
  </div><div class="modalactions"><button type="button" class="btn" id="cancel">Отмена</button><button class="btn primary">Сохранить</button></div></form></div></div>
+<div class="modalbg task-details-bg" id="taskDetailsBg" aria-hidden="true">
+ <article class="panel task-detail-modal" role="dialog" aria-modal="true" aria-labelledby="taskDetailTitle">
+  <div class="task-detail-head"><span class="tag" id="taskDetailSubject">Физика</span><button type="button" class="small" data-task-detail-action="close" aria-label="Закрыть">✕</button></div>
+  <h2 id="taskDetailTitle">Задание</h2>
+  <div class="task-detail-meta" id="taskDetailMeta"></div>
+  <div class="task-detail-description" id="taskDetailDesc"></div>
+  <section class="task-detail-course hidden" id="taskDetailCourse">
+   <div><span class="eyebrow">МАТЕРИАЛЫ КУРСА</span><p id="taskDetailCourseText"></p></div>
+   <div class="task-detail-course-actions">
+    <button type="button" class="btn" id="taskDetailOpenLesson" data-task-detail-action="open-lesson">Открыть урок</button>
+    <button type="button" class="btn primary" id="taskDetailPractice" data-task-detail-action="practice">Начать практику</button>
+   </div>
+  </section>
+  <div class="task-detail-actions">
+   <button type="button" class="btn primary" id="taskDetailStatus" data-task-detail-action="status">Начать</button>
+   <button type="button" class="btn" data-task-detail-action="edit">Изменить</button>
+   <button type="button" class="btn danger" data-task-detail-action="delete">Удалить</button>
+   <button type="button" class="btn" data-task-detail-action="close">Закрыть</button>
+  </div>
+ </article>
+</div>
 <div id="toast" class="toast"></div>
 <script type="module">
 import {firebaseConfig,members} from './config.js';
@@ -520,7 +541,7 @@ function renderCalendarDay(){
  $("calendarDayTitle").innerHTML='<span class="eyebrow">ВЫБРАННАЯ ДАТА</span><h3>'+d.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})+'</h3><p>'+arr.length+' '+(arr.length===1?"задание":arr.length>1&&arr.length<5?"задания":"заданий")+'</p>';
  $("calendarDayList").innerHTML=arr.length?arr.map(t=>{
   const label=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
-  return '<button type="button" class="calendar-task" data-cal-edit="'+esc(t.id)+'"><span class="calendar-task-dot '+esc(t.status||"todo")+'"></span><span class="calendar-task-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.subject||"Другое")+' · '+esc(t.person||"")+'</small></span><span class="calendar-task-status">'+label+'</span></button>';
+  return '<button type="button" class="calendar-task" data-cal-open="'+esc(t.id)+'"><span class="calendar-task-dot '+esc(t.status||"todo")+'"></span><span class="calendar-task-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.subject||"Другое")+' · '+esc(t.person||"")+'</small></span><span class="calendar-task-status">'+label+'</span></button>';
  }).join(""):'<div class="study-empty">На эту дату заданий нет. Можно добавить новое.</div>';
 }
 function renderCalendar(){
@@ -657,7 +678,7 @@ $("calPrev").addEventListener("click",()=>{calendarMonth=new Date(calendarMonth.
 $("calNext").addEventListener("click",()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);calendarSelectedDate=dateKey(calendarMonth);renderCalendar()});
 $("calToday").addEventListener("click",()=>{calendarSelectedDate=today();const d=dateFromKey(calendarSelectedDate);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()});
 $("calendarGrid").addEventListener("click",e=>{const cell=e.target.closest("[data-calendar-date]");if(!cell)return;calendarSelectedDate=cell.dataset.calendarDate;const d=dateFromKey(calendarSelectedDate);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()});
-$("calendarDayList").addEventListener("click",e=>{const b=e.target.closest("[data-cal-edit]");if(!b)return;const t=tasks.find(x=>x.id===b.dataset.calEdit);if(t)openModal(t)});
+$("calendarDayList").addEventListener("click",e=>{const b=e.target.closest("[data-cal-open]");if(!b)return;const t=tasks.find(x=>x.id===b.dataset.calOpen);if(t)openTaskDetails(t)});
 $("calendarAddBtn").addEventListener("click",()=>{openModal(null,false);$("due").value=calendarSelectedDate});
 
 $('studyWeeks').addEventListener('click',e=>{const item=e.target.closest('[data-week]');if(!item)return;studyWeekIndex=Number(item.dataset.week);studyLessonIndex=0;renderStudyWeeks();renderStudyLessons();renderStudyContent()});
@@ -1030,6 +1051,27 @@ function startTest(){
  $("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");
  renderTestQuestion();startTestTimer();
 }
+function startPhysicsCoursePractice(weekNumber,fullCourse=false){
+ let questions=[];
+ if(fullCourse){
+  const lessonSets=physicsWeeks.flatMap(w=>w.lessons.map(l=>(physicsPractice[l.id]||[]).map(q=>({...q,topic:l.title,topicId:l.id}))));
+  const first=lessonSets.map(set=>set[0]).filter(Boolean);
+  const rest=shuffle(lessonSets.flatMap(set=>set.slice(1)));
+  questions=[...first,...rest].slice(0,22);
+ }else{
+  const week=physicsWeeks[Number(weekNumber)-1];
+  if(!week){toast("Неделя курса не найдена");return}
+  questions=week.lessons.flatMap(l=>(physicsPractice[l.id]||[]).map(q=>({...q,topic:l.title,topicId:l.id})));
+ }
+ if(!questions.length){toast("Для этой части курса пока нет практических вопросов");return}
+ questions=questions.map(q=>({...q,...(q.options?{options:shuffle(q.options)}:{})}));
+ const duration=fullCourse?90*60:30*60;
+ testSession={subject:"Физика",questions,answers:{},startedAt:new Date().toISOString(),duration,examMode:false,source:"physics-course",courseWeek:fullCourse?null:Number(weekNumber),courseFinal:Boolean(fullCourse),courseLabel:fullCourse?"Итоговая тренировка курса":"Практика · неделя "+weekNumber};
+ testQuestionIndex=0;testSecondsLeft=duration;
+ showTab("tests");
+ $("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");
+ renderTestQuestion();startTestTimer();
+}
 function startTestTimer(){
  stopTestTimer();updateTestTimer();
  testTimerHandle=setInterval(()=>{testSecondsLeft=Math.max(0,testSecondsLeft-1);updateTestTimer();if(testSecondsLeft<=0)finishTest(true)},1000);
@@ -1045,7 +1087,7 @@ function renderTestQuestion(){
  if(!testSession)return;
  const q=testSession.questions[testQuestionIndex],total=testSession.questions.length,answered=Object.keys(testSession.answers).length;
  $("testRunSubject").textContent=testSession.subject.toUpperCase();
- $("testRunTitle").textContent=testSession.duelId?"Дуэль · общий вариант":testSession.mistakeId?"Повтор ошибки":testSession.examMode?"Экзаменационная тренировка":"Тренировочный вариант";
+ $("testRunTitle").textContent=testSession.courseLabel||(testSession.duelId?"Дуэль · общий вариант":testSession.mistakeId?"Повтор ошибки":testSession.examMode?"Экзаменационная тренировка":"Тренировочный вариант");
  $("testRunProgress").textContent="Вопрос "+(testQuestionIndex+1)+" из "+total;
  $("testProgressFill").style.width=((testQuestionIndex+1)/total*100)+"%";
  $("testAnsweredLabel").textContent="Отвечено: "+answered+" / "+total;
@@ -1081,7 +1123,7 @@ async function finishTest(timeExpired=false){
  testSession=null;
  $("testRun").classList.add("hidden");$("testResult").classList.remove("hidden");
  $("testResult").innerHTML='<div class="panel test-result-hero"><span class="eyebrow">'+(session.examMode?"ЭКЗАМЕНАЦИОННАЯ ТРЕНИРОВКА":"ТЕСТ ЗАВЕРШЁН")+(timeExpired?" · ВРЕМЯ ВЫШЛО":"")+'</span><div class="test-result-score '+(percent>=70?"score-good":percent>=40?"score-mid":"score-low")+'">'+percent+'%</div><h2>'+correct+' из '+total+' правильных ответов</h2><p>'+ (percent>=85?"Отличный результат.":percent>=60?"Хорошая работа. Есть темы для повторения.":"Разбери ошибки и попробуй ещё раз.")+'</p><div class="test-result-actions"><button class="btn primary" id="retryTestBtn">Пройти новый вариант</button><button class="btn" id="testBackBtn">К выбору предмета</button></div></div><div class="test-review"><div class="test-review-head"><h3>Разбор ответов</h3><span>'+details.filter(x=>!x.correct).length+' ошибок</span></div>'+details.map((x,i)=>'<article class="test-review-item '+(x.correct?"review-correct":"review-wrong")+'"><div class="review-item-head"><b>Вопрос '+(i+1)+'</b><span>'+(x.correct?"Верно":"Ошибка")+'</span></div><p>'+esc(x.prompt)+'</p><div class="review-answer"><span>Твой ответ</span><b>'+(x.given!==""?esc(x.given):"Нет ответа")+'</b></div><div class="review-answer"><span>Правильный ответ</span><b>'+esc(x.answer)+'</b></div><div class="review-explain">'+esc(x.explain)+'</div></article>').join("")+'</div>';
- $("retryTestBtn").addEventListener("click",()=>{ $("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");startTest()});
+ $("retryTestBtn").addEventListener("click",()=>{ $("testResult").classList.add("hidden");if(session.source==="physics-course"){startPhysicsCoursePractice(session.courseWeek,Boolean(session.courseFinal))}else{$("testsSetup").classList.remove("hidden");startTest()}});
  $("testBackBtn").addEventListener("click",()=>{$("testResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");renderTestHistory()});
  try{await addDoc(testResultsCol(),{...result,createdAt:serverTimestamp()});toast("Результат сохранён в истории")}catch(e){toast("Тест завершён, но история не сохранена: "+e.message)}
  renderTestHistory();if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
@@ -1091,9 +1133,72 @@ function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===n
 function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
 function filtered(){const p=$('personFilter').value,s=$('subjectFilter').value,q=$('search').value.toLowerCase().trim();return tasks.filter(t=>(p==='all'||t.person===p)&&(s==='all'||t.subject===s)&&(!q||(t.title+' '+(t.desc||'')+' '+t.subject+' '+t.person).toLowerCase().includes(q)))}
-function card(t){const next=t.status==='todo'?'doing':t.status==='doing'?'done':'todo',label=t.status==='todo'?'Начать':t.status==='doing'?'Готово':'Вернуть';return '<article class="task"><div class="tasktitle">'+esc(t.title)+'</div><span class="tag">'+esc(t.subject||'Другое')+'</span>'+(t.daily?'<span class="tag daily">Ежедневное</span>':'')+(t.desc?'<div class="desc">'+esc(t.desc)+'</div>':'')+'<div class="meta"><span>👤 '+esc(t.person)+'</span><span>📅 '+dueText(t.date)+'</span><span>⭐ '+(Number(t.points)||0)+' XP</span></div><div class="taskactions"><button class="small" data-action="move" data-id="'+esc(t.id)+'">'+label+'</button><button class="small" data-action="edit" data-id="'+esc(t.id)+'">Изменить</button><button class="small del" data-action="delete" data-id="'+esc(t.id)+'">Удалить</button></div></article>'}
+let taskDetailsCurrentId=null;
+function card(t){
+ const next=t.status==="todo"?"doing":t.status==="doing"?"done":"todo";
+ const label=t.status==="todo"?"Начать":t.status==="doing"?"Готово":"Вернуть";
+ const status=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
+ const course=t.courseWeek?'<span class="task-course-chip">Курс · неделя '+Number(t.courseWeek)+'</span>':'';
+ return '<article class="task"><div class="task-card-top"><span class="tag">'+esc(t.subject||"Другое")+'</span>'+course+'<span class="task-xp">★ '+(Number(t.points)||0)+' XP</span></div><button type="button" class="task-open" data-action="open" data-id="'+esc(t.id)+'"><span class="tasktitle">'+esc(t.title)+'</span>'+(t.desc?'<span class="desc">'+esc(t.desc)+'</span>':'<span class="desc">Открой задание, чтобы посмотреть подробности.</span>')+'<span class="task-open-link">Открыть задание <span aria-hidden="true">→</span></span></button><div class="meta"><span>👤 '+esc(t.person)+'</span><span>📅 '+dueText(t.date)+'</span><span class="task-status-label">'+status+'</span></div><div class="taskactions"><button type="button" class="small" data-action="move" data-id="'+esc(t.id)+'">'+label+'</button><button type="button" class="small" data-action="edit" data-id="'+esc(t.id)+'">Изменить</button></div></article>';
+}
+function findPhysicsLessonForTask(t){
+ for(let wi=0;wi<physicsWeeks.length;wi++){
+  for(let li=0;li<physicsWeeks[wi].lessons.length;li++){
+   const lesson=physicsWeeks[wi].lessons[li];
+   if(t.courseLessonId&&t.courseLessonId===lesson.id)return {weekIndex:wi,lessonIndex:li,lesson};
+   if(t.subject==="Физика"&&t.title&&t.title.toLowerCase().includes(lesson.title.toLowerCase()))return {weekIndex:wi,lessonIndex:li,lesson};
+  }
+ }
+ return null;
+}
+function openTaskDetails(t){
+ if(!t)return;
+ taskDetailsCurrentId=t.id;
+ $("taskDetailSubject").textContent=t.subject||"Другое";
+ $("taskDetailTitle").textContent=t.title||"Задание";
+ $("taskDetailDesc").textContent=t.desc||"Подробное описание для этого задания пока не добавлено.";
+ const status=t.status==="done"?"Готово":t.status==="doing"?"В процессе":"К выполнению";
+ $("taskDetailMeta").innerHTML='<span>👤 '+esc(t.person||"Не назначено")+'</span><span>📅 '+esc(dueText(t.date))+'</span><span>★ '+(Number(t.points)||0)+' XP</span><span>'+status+'</span>';
+ $("taskDetailStatus").textContent=t.status==="todo"?"Начать задание":t.status==="doing"?"Отметить выполненным":"Вернуть в работу";
+ const lesson=findPhysicsLessonForTask(t),course=$("taskDetailCourse"),openLesson=$("taskDetailOpenLesson"),practiceBtn=$("taskDetailPractice");
+ course.classList.add("hidden");openLesson.classList.add("hidden");practiceBtn.classList.add("hidden");
+ if(t.subject==="Физика"&&t.courseWeek){
+  course.classList.remove("hidden");
+  if(lesson){
+   $("taskDetailCourseText").textContent="Неделя "+t.courseWeek+" · "+lesson.lesson.title+". Теория, формулы, разобранный пример и самостоятельная практика.";
+   openLesson.classList.remove("hidden");
+   openLesson.dataset.lessonId=lesson.lesson.id;
+  }else{
+   const isFinal=t.courseType==="final-test";
+   $("taskDetailCourseText").textContent=isFinal?"Итоговая тренировка по всем разделам курса. Это авторская подборка для повторения, а не официальный вариант ФИПИ.":"Повтори темы недели и проверь, насколько уверенно решаешь задачи без подсказок.";
+   practiceBtn.classList.remove("hidden");
+   practiceBtn.dataset.week=String(t.courseWeek);
+   practiceBtn.dataset.full=String(isFinal);
+   practiceBtn.textContent=isFinal?"Итоговая тренировка · 22 вопроса":"Начать тренировку недели";
+  }
+ }
+ $("taskDetailsBg").classList.add("show");
+ $("taskDetailsBg").setAttribute("aria-hidden","false");
+}
+function closeTaskDetails(){
+ $("taskDetailsBg").classList.remove("show");
+ $("taskDetailsBg").setAttribute("aria-hidden","true");
+ taskDetailsCurrentId=null;
+}
+function openPhysicsLesson(id){
+ for(let wi=0;wi<physicsWeeks.length;wi++){
+  const li=physicsWeeks[wi].lessons.findIndex(x=>x.id===id);
+  if(li>=0){closeTaskDetails();studyWeekIndex=wi;studyLessonIndex=li;showTab("study");renderStudyWeeks();renderStudyLessons();renderStudyContent();return}
+ }
+ toast("Урок не найден в программе курса");
+}
 function renderBoard(){const arr=filtered();[['todo','todoList','todoCount'],['doing','doingList','doingCount'],['done','doneList','doneCount']].forEach(([st,list,count])=>{const a=arr.filter(t=>t.status===st);$(list).innerHTML=a.length?a.map(card).join(''):'<div class="empty">Пока пусто</div>';$ (count).textContent=a.length})}
-function renderDaily(){const a=tasks.filter(t=>t.daily||t.date===today()),done=a.filter(t=>t.status==='done').length;$('todayCount').textContent=done+' / '+a.length;$('dateLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});$('dailyList').innerHTML=a.length?a.map(t=>'<label class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==='done'?'checked':'')+'><span><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></span><span class="points">+'+(Number(t.points)||0)+' XP</span></label>').join(''):'<div class="empty">На сегодня заданий пока нет</div>'}
+function renderDaily(){
+ const arr=tasks.filter(t=>t.daily||t.date===today()),done=arr.filter(t=>t.status==="done").length;
+ $("todayCount").textContent=done+" / "+arr.length;
+ $("dateLabel").textContent=new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+ $("dailyList").innerHTML=arr.length?arr.map(t=>'<div class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==="done"?"checked":"")+'><button type="button" class="dailyitem-open" data-daily-open="'+esc(t.id)+'"><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></button><span class="points">+'+(Number(t.points)||0)+' XP</span></div>').join(""):'<div class="empty">На сегодня заданий пока нет</div>';
+}
 
 function renderReadiness(){
  const root=$("readinessList");if(!root)return;
@@ -1166,10 +1271,39 @@ function closeModal(){$('modalBg').classList.remove('show')}
 async function updateTask(id,data){await updateDoc(taskDoc(id),data)}
 $('login').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').textContent='Входим…';try{await signInWithEmailAndPassword(auth,$('email').value.trim().toLowerCase(),$('password').value)}catch(err){const map={'auth/invalid-credential':'Неверная почта или пароль','auth/too-many-requests':'Слишком много попыток, попробуй позже','auth/network-request-failed':'Проверь интернет'};$('loginMsg').textContent=map[err.code]||err.message;$('loginBtn').disabled=false}});
 $('logout').addEventListener('click',async()=>{if(stopTasks)stopTasks();if(stopProgress)stopProgress();if(stopTestHistory)stopTestHistory();if(stopMistakes)stopMistakes();if(stopDuels)stopDuels();if(stopDailyPlan)stopDailyPlan();if(stopStudySessions)stopStudySessions();stopTestTimer();focusPause();await signOut(auth)});
-$('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+$('addBtn').addEventListener('click',()=>openModal());$('dailyAdd').addEventListener('click',()=>openModal(null,true));$('cancel').addEventListener('click',closeModal);$('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTaskDetails()}});
 $('taskForm').addEventListener('submit',async e=>{e.preventDefault();const data={title:$('title').value.trim(),subject:$('subject').value,person:$('person').value,date:$('due').value,points:Math.max(1,Math.min(100,Number($('points').value)||10)),desc:$('description').value.trim(),daily:$('daily').checked};if(!data.title)return;try{if(editing)await updateTask(editing,data);else await addDoc(tasksCol(),{...data,status:'todo',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});closeModal();toast(editing?'Задание обновлено':'Задание добавлено')}catch(err){toast('Ошибка сохранения: '+err.message)}});
-$('boardPage').addEventListener('click',async e=>{const b=e.target.closest('[data-action]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;try{if(b.dataset.action==='edit')openModal(t);if(b.dataset.action==='delete'&&confirm('Удалить задание?'))await deleteDoc(taskDoc(t.id));if(b.dataset.action==='move'){const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён')}}catch(err){toast('Не удалось изменить: '+err.message)}});
+$('boardPage').addEventListener('click',async e=>{
+ const b=e.target.closest('[data-action]');if(!b)return;
+ const t=tasks.find(x=>x.id===b.dataset.id);if(!t)return;
+ try{
+  if(b.dataset.action==='open')openTaskDetails(t);
+  if(b.dataset.action==='edit')openModal(t);
+  if(b.dataset.action==='move'){
+   const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';
+   await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});
+   toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён');
+  }
+ }catch(err){toast('Не удалось изменить: '+err.message)}
+});
+$('taskDetailsBg').addEventListener('click',async e=>{
+ if(e.target.id==='taskDetailsBg'||e.target.closest('[data-task-detail-action="close"]')){closeTaskDetails();return}
+ const b=e.target.closest('[data-task-detail-action]');if(!b)return;
+ const t=tasks.find(x=>x.id===taskDetailsCurrentId);if(!t)return;
+ try{
+  const action=b.dataset.taskDetailAction;
+  if(action==='status'){
+   const st=t.status==='todo'?'doing':t.status==='doing'?'done':'todo';
+   await updateTask(t.id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null});
+   closeTaskDetails();toast(st==='done'?'Задание выполнено · XP начислены':'Статус обновлён');
+  }else if(action==='edit'){closeTaskDetails();openModal(t)}
+  else if(action==='delete'){if(confirm('Удалить задание?')){await deleteDoc(taskDoc(t.id));closeTaskDetails();toast('Задание удалено')}}
+  else if(action==='open-lesson'){openPhysicsLesson(b.dataset.lessonId)}
+  else if(action==='practice'){startPhysicsCoursePractice(Number(b.dataset.week),b.dataset.full==='true');closeTaskDetails()}
+ }catch(err){toast('Не удалось выполнить действие: '+(err?.message||err))}
+});
 $('dailyList').addEventListener('change',async e=>{const id=e.target.dataset.daily;if(!id)return;const st=e.target.checked?'done':'todo';try{await updateTask(id,{status:st,completedAt:st==='done'?serverTimestamp():null,completedBy:st==='done'?user.uid:null})}catch(err){toast(err.message)}});
+$('dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-daily-open]');if(!b)return;const t=tasks.find(x=>x.id===b.dataset.dailyOpen);if(t)openTaskDetails(t)});
 ['personFilter','subjectFilter','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderBoard));
 document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)});
 $("subTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
@@ -1198,7 +1332,64 @@ $("testPrevBtn").addEventListener("click",()=>{if(testSession&&testQuestionIndex
 $("testNextBtn").addEventListener("click",()=>{if(!testSession)return;if(testQuestionIndex<testSession.questions.length-1){testQuestionIndex++;renderTestQuestion()}else finishTest(false)});
 $("finishTestBtn").addEventListener("click",()=>{if(testSession&&confirm("Завершить тест и проверить ответы?"))finishTest(false)});
 
-$('seedBtn').addEventListener('click',async()=>{if(!confirm('Добавить задания по физике за первую неделю для Егора и Даниила?'))return;try{for(const t of starter){if(!tasks.some(x=>x.title===t.title&&x.person===t.person)){const {id,...data}=t;await addDoc(tasksCol(),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null})}}toast('Задания по физике добавлены')}catch(err){toast(err.message)}});
+function buildPhysicsCourseSchedule(){
+ const schedule=[];
+ const cursor=new Date();cursor.setDate(cursor.getDate()+1);
+ for(let wi=0;wi<physicsWeeks.length;wi++){
+  const week=physicsWeeks[wi];
+  for(let di=0;di<5;di++){
+   const date=dateKey(cursor);
+   let item;
+   if(di<week.lessons.length){
+    const lesson=week.lessons[di];
+    item={courseType:"lesson",courseLessonId:lesson.id,title:"Физика · Неделя "+(wi+1)+" · Урок "+(di+1)+": "+lesson.title,desc:"План занятия:\n1. Открой «Обучение → Физика» и перейди к этому уроку.\n2. Прочитай теорию и выпиши основные формулы.\n3. Разбери пример пошагово.\n4. Реши все задания в блоке «Практика по теме».\n5. Запиши ошибки и вопросы, которые остались.",points:12};
+   }else if(wi===physicsWeeks.length-1){
+    item={courseType:"final-test",title:"Физика · Итоговая тренировка по всему курсу",desc:"Итоговая авторская тренировка: 22 вопроса по всем пройденным разделам курса. Время — 90 минут. После завершения обязательно разбери каждую ошибку. Это тренировочная подборка, а не официальный вариант ФИПИ.",points:25};
+   }else if(di===3){
+    item={courseType:"review",title:"Физика · Неделя "+(wi+1)+" · Повторение и практика",desc:"Повтори уроки этой недели: "+week.lessons.map(l=>l.title).join("; ")+". Затем запусти тренировку недели и реши вопросы без подсказок. Отдельно выпиши формулы, которые пока приходится вспоминать.",points:15};
+   }else{
+    item={courseType:"weekly-test",title:"Физика · Неделя "+(wi+1)+" · Контрольная тренировка",desc:"Проверь, что усвоил за неделю. Пройди смешанную тренировку по всем урокам этой недели, не открывая конспект. После проверки разбери ошибки и вернись к соответствующему уроку.",points:18};
+   }
+   schedule.push({...item,date,courseWeek:wi+1,courseDay:di+1,courseLessonIds:week.lessons.map(l=>l.id)});
+   cursor.setDate(cursor.getDate()+1);
+  }
+  if(wi<physicsWeeks.length-1)while(cursor.getDay()!==1)cursor.setDate(cursor.getDate()+1);
+ }
+ return schedule;
+}
+async function generatePhysicsCoursePlan(){
+ const button=$("seedBtn");
+ if(!confirm("Добавить полный курс физики на 6 недель? Для Егора и Даниила появятся отдельные задания на 30 учебных дней. Уже выполненные задания сохранят свой статус."))return;
+ button.disabled=true;const oldLabel=button.textContent;button.textContent="Формируем календарь…";
+ try{
+  const schedule=buildPhysicsCourseSchedule();
+  const people=[{name:"Егор",slug:"egor"},{name:"Даниил",slug:"daniil"}];
+  const writes=[];
+  schedule.forEach(item=>people.forEach(person=>{
+   const id="physics-w"+item.courseWeek+"-d"+item.courseDay+"-"+person.slug;
+   const data={...item,id:undefined,subject:"Физика",person:person.name,daily:false};
+   delete data.id;
+   writes.push({id,data});
+  }));
+  for(let i=0;i<writes.length;i+=8){
+   await Promise.all(writes.slice(i,i+8).map(async entry=>{
+    const existing=tasks.find(t=>t.id===entry.id);
+    if(existing)await updateDoc(taskDoc(entry.id),entry.data);
+    else await setDoc(taskDoc(entry.id),{...entry.data,status:"todo",createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});
+   }));
+  }
+  const first=dateFromKey(schedule[0].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
+  const last=dateFromKey(schedule[schedule.length-1].date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
+  toast("Курс добавлен в календарь: 6 недель · 30 дней · 60 личных заданий ("+first+" — "+last+")");
+  renderCalendar();renderBoard();renderDaily();
+ }catch(err){
+  console.error("Ошибка создания плана физики:",err);
+  toast("Не удалось добавить курс: "+(err?.message||"ошибка Firebase"));
+ }finally{
+  button.disabled=false;button.textContent=oldLabel;
+ }
+}
+$('seedBtn').addEventListener('click',generatePhysicsCoursePlan);
 
 function applyTheme(theme){
  const next=theme==="dark"?"dark":"light";
