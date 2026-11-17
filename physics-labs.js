@@ -236,7 +236,7 @@ function instructionsMarkup(item) {
 function workspaceMarkup(item) {
   return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
     '<div class="vlab-workflow" aria-label="Этапы лабораторной работы"><span class="active"><i>01</i> Опыт</span><span><i>02</i> Измерения</span><span><i>03</i> Вывод</span></div>'+
-    '<div class="vlab-scene-scroll">'+sceneMarkup(item.id)+'</div>'+
+    '<div class="vlab-scene-scroll"><div class="vlab-scene-frame">'+sceneMarkup(item.id)+'</div></div>'+
     '<p class="vlab-touch-tip">Перетаскивай оборудование пальцем или мышью. На узком экране рабочий стол можно сдвигать по горизонтали.</p>'+
     '<div class="vlab-lower-grid">'+instructionsMarkup(item)+reportMarkup(item.id)+'</div>';
 }
@@ -256,14 +256,19 @@ export function mountLabSimulator(container,id,options = {}) {
   const q = selector => container.querySelector(selector);
   const scene = q(".vlab-scene");
   const sceneScroll = q(".vlab-scene-scroll");
+  const sceneFrame = q(".vlab-scene-frame");
   const resizeScene = () => {
-    if(!scene||!sceneScroll)return;
+    if(!scene||!sceneScroll||!sceneFrame)return;
     const available=sceneScroll.clientWidth||760;
-    const scale=Math.min(1,Math.max(.58,available/760));
+    const baseWidth=Math.max(760,available);
+    const scale=Math.min(1,Math.max(.62,available/760));
     scene.dataset.scale=String(scale);
+    scene.style.width=baseWidth+"px";
     scene.style.transformOrigin="top left";
     scene.style.transform=scale<.999?"scale("+scale+")":"";
-    sceneScroll.style.height=scale<.999?(scene.offsetHeight*scale)+"px":"";
+    sceneFrame.style.width=(baseWidth*scale)+"px";
+    sceneFrame.style.height=(scene.offsetHeight*scale)+"px";
+    sceneScroll.style.height=(scene.offsetHeight*scale)+"px";
     sceneScroll.style.overflowX=scale<.999?"auto":"hidden";
   };
   if(scene&&sceneScroll){
