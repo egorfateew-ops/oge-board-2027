@@ -299,6 +299,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     try {
       if (runTransaction) {
         let mergedResult = null;
+        let mergedDeletedResult = null;
         await runTransaction(db, async transaction => {
           const ref = boardRef(boardId);
           const snap = await transaction.get(ref);
@@ -308,21 +309,23 @@ export function mountPhysicsWhiteboard(root, options = {}) {
           (remote.elements || []).forEach(item => { if (item && item.id && !removed.has(item.id)) map.set(item.id, item); });
           payload.elements.forEach(item => { if (item && item.id && !removed.has(item.id)) map.set(item.id, item); });
           mergedResult = [...map.values()].slice(-500);
+          mergedDeletedResult = [...removed].slice(-1200);
           transaction.set(ref, {
             boardId,
             title: payload.title,
             elements: mergedResult,
-            deletedIds: [...removed].slice(-1200),
+            deletedIds: mergedDeletedResult,
             updatedBy: payload.updatedBy,
             updatedByName: payload.updatedByName,
             updatedAt: payload.updatedAt
           }, { merge: true });
         });
+        rememberLocal(boardId, { title: payload.title, elements: mergedResult || payload.elements, deletedIds: mergedDeletedResult || payload.deletedIds, updatedAt: 0 });
         if (activeBoard === boardId && revision === editRevision) {
           elements = mergedResult || elements;
-          deletedIds = new Set(payload.deletedIds);
+          deletedIds = new Set(mergedDeletedResult || payload.deletedIds);
           dirty = false;
-          localUpdatedAt = Date.now();
+          localUpdatedAt = 0;
           resetHistory();
           render();
           setStatus("Сохранено", "ok");
@@ -333,8 +336,10 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         }
       } else {
         await setDoc(boardRef(boardId), { boardId, ...payload }, { merge: true });
+        rememberLocal(boardId, { title: payload.title, elements: payload.elements, deletedIds: payload.deletedIds, updatedAt: 0 });
         if (activeBoard === boardId && revision === editRevision) {
           dirty = false;
+          localUpdatedAt = 0;
           setStatus("Сохранено", "ok");
         }
       }
@@ -354,7 +359,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     stopSnapshot = onSnapshot(ref, snap => {
       if (disposed || activeBoard !== boardId) return;
       if (!snap.exists()) {
-        if (elements.length || deletedIds.size) {
+        if (dirty || elements.length || deletedIds.size) {
           dirty = true;
           editRevision += 1;
           saveToCloud(boardId);
