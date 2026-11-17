@@ -248,7 +248,7 @@ export function mountLabSimulator(container,id,options = {}) {
   container._vlabAbort = controller;
   const signal = controller.signal;
   const saved = options.saved || {};
-  let state = {massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:10,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
+  let state = {mass:0,massMeasured:false,submerged:false,readings:[],keyClosed:false,rheostat:10,magnetInside:false,needle:0,inductionObserved:0,measurements:[],pendulumStarted:0,pendulumElapsed:0,pendulumTimer:null,cartStarted:0,cartTime:0,cartMoved:false,hotMetalIn:false,frictionMoving:false,frictionPosition:170};
   container.innerHTML = workspaceMarkup(item);
   const q = selector => container.querySelector(selector);
   const scene = q(".vlab-scene");
