@@ -1001,7 +1001,19 @@ function openPlanAction(id){
 }
 function listenDuels(){
  if(stopDuels)stopDuels();
- stopDuels=onSnapshot(duelsCol(),snap=>{duels=snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>(d.participants||[]).includes(member.id)).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));if(!$("duelsPage").classList.contains("hidden"))renderDuels()},err=>toast("Не удалось загрузить дуэли: "+err.message));
+ stopDuels=onSnapshot(duelsCol(),snap=>{
+  const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  duels=all.filter(d=>{
+   const participants=Array.isArray(d.participants)?d.participants:[];
+   // Keep older challenges visible even if they predate the participants field.
+   return !participants.length||participants.includes(member.id)||d.createdById===member.id||d.acceptedBy===member.id;
+  }).sort((a,b)=>{
+   const at=a.createdAt?.toMillis?.()||new Date(a.createdAt||0).getTime()||0;
+   const bt=b.createdAt?.toMillis?.()||new Date(b.createdAt||0).getTime()||0;
+   return bt-at;
+  });
+  if(!$("duelsPage").classList.contains("hidden"))renderDuels();
+ },err=>toast("Не удалось загрузить дуэли: "+err.message));
 }
 function renderDuels(){
  const root=$("duelList");if(!root)return;
@@ -1014,7 +1026,7 @@ function renderDuels(){
   else if(d.status==="active"&&my===undefined){status="Дуэль началась · "+(other!==undefined?"Соперник уже ответил":"Оба решают один вариант");action='<button class="btn primary" data-duel-start="'+esc(d.id)+'">Начать вариант</button>'}
   else if(d.status==="active"){status="Твой результат: "+my+"% · ждём соперника";action='<span class="duel-waiting">Ответ отправлен</span>'}
   else{const winner=my>other?member.name:other>my?opponent:"Ничья";status="Завершена · "+(winner==="Ничья"?"ничья":"победитель — "+winner);action='<div class="duel-scores"><b>'+member.name+": "+my+"%</b><b>"+opponent+": "+other+"%</b></div>" }
-  return '<article class="panel duel-card"><div class="duel-card-main"><span class="eyebrow">'+esc(d.subject)+' · '+(d.questionCount||d.questions?.length||5)+' вопросов</span><h3>'+esc(d.createdByName||"Участник")+' <span>vs</span> '+opponent+'</h3><p>'+esc(status)+'</p></div><div class="duel-card-action">'+action+'</div></article>';
+  return '<article class="panel duel-card '+esc(d.status||"waiting")+'"><div class="duel-card-main"><span class="eyebrow">'+esc(d.subject)+' · '+(d.questionCount||d.questions?.length||5)+' вопросов</span><h3>'+esc(d.createdByName||"Участник")+' <span>vs</span> '+opponent+'</h3><p>'+esc(status)+'</p></div><div class="duel-card-action">'+action+'</div></article>';
  }).join(""):'<div class="study-empty">Пока дуэлей нет. Создай вызов — второй ученик увидит его в своём аккаунте.</div>';
 }
 async function createDuel(){
