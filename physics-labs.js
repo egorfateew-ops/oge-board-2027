@@ -71,11 +71,11 @@ function springScene() {
 function archimedesScene() {
   return '<div class="vlab-scene vlab-arch-scene" data-scene="archimedes">'+
     '<div class="vlab-scene-caption">ДИНАМОМЕТР · ТЕЛО · СОСУД С ВОДОЙ</div>'+
-    '<div class="vlab-dynamometer"><div class="vlab-dyna-top"></div><div class="vlab-dyna-glass"><span data-readout="dyna-value">1,96 Н</span><div class="vlab-dyna-scale"></div><div class="vlab-dyna-spring"></div></div><small>ДИНАМОМЕТР</small></div>'+
+    '<div class="vlab-dynamometer"><div class="vlab-dyna-top"></div><div class="vlab-dyna-glass"><span data-readout="dyna-value">3,90 Н</span><div class="vlab-dyna-scale"></div><div class="vlab-dyna-spring"></div></div><small>ДИНАМОМЕТР</small></div>'+
     '<div class="vlab-beaker vlab-drag" data-drag-object="beaker" style="left:455px;top:142px"><div class="vlab-beaker-rim"></div><div class="vlab-beaker-water"></div><div class="vlab-beaker-markings">100<br>75<br>50<br>25 мл</div><small>ВОДА</small></div>'+
-    '<div class="vlab-hanging-body vlab-drag" data-drag-object="body" style="left:280px;top:95px"><span></span><b>тело</b></div>'+
+    '<div class="vlab-hanging-body vlab-drag" data-drag-object="body" style="left:280px;top:95px"><span></span><b>сталь</b></div>'+
     '<div class="vlab-scene-note">Перетащи тело в воду, не касаясь дна и стенок. Показание динамометра уменьшится.</div>'+
-    '<div class="vlab-readout-pills"><span>В воздухе: <b>1,96 Н</b></span><span>В воде: <b data-readout="water-force">ожидает погружения</b></span></div>'+
+    '<div class="vlab-readout-pills"><span>В воздухе: <b>3,90 Н</b></span><span>В воде: <b data-readout="water-force">ожидает погружения</b></span></div>'+
   '</div>';
 }
 function leverScene() {
@@ -111,23 +111,22 @@ function heatScene() {
 }
 function ohmScene() {
   return '<div class="vlab-scene vlab-ohm-scene" data-scene="ohm">'+
-    '<div class="vlab-scene-caption">НИЗКОВОЛЬТНАЯ ЦЕПЬ ПО СХЕМЕ ЗАДАНИЯ № 17</div>'+
-    '<svg class="vlab-circuit-svg" viewBox="0 0 760 300" role="img" aria-label="Электрическая цепь с источником, ключом, амперметром, резистором, реостатом и вольтметром">'+
-      '<path class="circuit-wire" d="M110 75 H245 M305 75 H420 M480 75 H635 V220 H520 M430 220 H110 V75"/>'+
-      '<path class="circuit-wire" d="M420 75 V130 H520 V220 M420 130 H520"/>'+
-      '<path class="circuit-wire" d="M420 130 H520"/>'+
-      '<g class="circuit-device"><rect x="48" y="112" width="90" height="68" rx="10"/><path d="M78 132v28 M108 140v12"/><text x="93" y="198">Источник 4,5 В</text></g>'+
-      '<g class="circuit-device"><circle cx="275" cy="75" r="30"/><text x="275" y="82">A</text><text x="275" y="28">Амперметр</text></g>'+
-      '<g class="circuit-device"><rect x="420" y="55" width="60" height="40" rx="6"/><path d="M430 75h40"/><text x="450" y="38">Ключ</text></g>'+
-      '<g class="circuit-device"><rect x="620" y="120" width="30" height="62" rx="5"/><path d="M625 150h20"/><text x="635" y="200">R2 = 5,7 Ом</text></g>'+
-      '<g class="circuit-device"><rect x="300" y="202" width="130" height="36" rx="6"/><path d="M315 220h100"/><path d="M360 195l30 48" class="circuit-slider"/><text x="365" y="275">Реостат</text></g>'+
-      '<g class="circuit-device"><circle cx="470" cy="130" r="25"/><text x="470" y="137">V</text><text x="470" y="104">Вольтметр</text></g>'+
+    '<div class="vlab-scene-caption">ЭКСПЕРИМЕНТ ПО ДЕМОПРОЕКТУ ОГЭ-2027 · КОМПЛЕКТ № 3</div>'+
+    '<svg class="vlab-circuit-svg" viewBox="0 0 760 300" role="img" aria-label="Источник 4,5 вольта, ключ, амперметр, реостат и резистор R2 с вольтметром параллельно">'+
+      '<path class="circuit-wire" d="M120 80 V125 M120 185 V220 H350 M470 220 H630 V185 M630 125 V80 H480 M430 80 H305 M245 80 H120"/>'+
+      '<path class="circuit-wire" d="M520 80 V125 M520 185 V220"/>'+
+      '<g class="circuit-device"><path d="M100 145h40 M108 164h24"/><text x="120" y="198">4,5 В</text><text x="120" y="115">Источник</text></g>'+
+      '<g class="circuit-device"><circle cx="275" cy="80" r="30"/><text x="275" y="87">A</text><text x="275" y="28">Амперметр</text></g>'+
+      '<g class="circuit-device"><path d="M430 80h13 M477 80h13 M443 80l25 -16" /><text x="460" y="42">Ключ</text></g>'+
+      '<g class="circuit-device"><rect x="610" y="125" width="40" height="60" rx="5"/><path d="M616 155h28"/><text x="630" y="207">R2 · 5,7 Ом</text></g>'+
+      '<g class="circuit-device"><circle cx="520" cy="155" r="25"/><text x="520" y="162">V</text><text x="520" y="112">Вольтметр</text></g>'+
+      '<g class="circuit-device"><rect x="350" y="202" width="120" height="36" rx="6"/><path d="M360 220h100 M395 195l30 48" class="circuit-slider"/><text x="410" y="275">Реостат 10 Ом</text></g>'+
     '</svg>'+
-    '<div class="vlab-ohm-controls"><div><span>Ключ</span><button type="button" class="vlab-switch" data-vlab-action="toggle-switch" aria-pressed="false">Разомкнут</button></div><label><span>Реостат: <b data-readout="rheostat">10,0 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-vlab-control="rheostat"></label></div>'+
-    '<div class="vlab-meter-row"><div class="vlab-meter"><small>АМПЕРМЕТР</small><b data-readout="current">0,00 А</b></div><div class="vlab-meter"><small>ВОЛЬТМЕТР</small><b data-readout="voltage">0,00 В</b></div><div class="vlab-meter"><small>СОПРОТИВЛЕНИЕ</small><b>5,7 Ом</b></div></div>'+
+    '<div class="vlab-ohm-controls"><div><span>Ключ</span><button type="button" class="vlab-switch" data-vlab-action="toggle-switch" aria-pressed="false">Разомкнут</button></div><label><span>Реостат: <b data-readout="rheostat">9,3 Ом</b></span><input type="range" min="3.3" max="9.3" step="0.05" value="9.3" data-vlab-control="rheostat"></label></div>'+
+    '<div class="vlab-meter-row"><div class="vlab-meter"><small>АМПЕРМЕТР</small><b data-readout="current">0,00 А</b></div><div class="vlab-meter"><small>ВОЛЬТМЕТР</small><b data-readout="voltage">0,00 В</b></div><div class="vlab-meter"><small>R2</small><b>5,7 Ом</b></div></div>'+
     '<div class="vlab-ohm-actions"><button type="button" class="btn primary" data-vlab-action="record-ohm">＋ Записать пару U и I</button><span data-readout="ohm-count">0 / 3 измерения</span></div>'+
     '<div class="vlab-ohm-table" data-readout="ohm-table">Пока нет измерений</div>'+
-    '<div class="vlab-scene-note">Замкни ключ. Передвигай ползунок реостата, чтобы получить ток 0,3 А, 0,4 А и 0,5 А. После каждого значения запиши показания.</div>'+
+    '<div class="vlab-scene-note">Замкни ключ. Реостатом установи ток 0,3 А, 0,4 А и 0,5 А. Погрешности: ΔI = ±0,02 А; ΔU = ±0,1 В.</div>'+
   '</div>';
 }
 function inductionScene() {
@@ -209,7 +208,7 @@ function formulaFor(id) {
 }
 function reportMarkup(id) {
   const fields = fieldsMarkup(id);
-  const special = id === "ohm" ? '<p class="vlab-report-hint">Для этой работы используй три пары U и I, записанные в таблице над схемой.</p>' :
+  const special = id === "ohm" ? '<p class="vlab-report-hint">Запиши три пары показаний с погрешностями: ΔI = ±0,02 А и ΔU = ±0,1 В. Для максимального балла отметь схему установки, единицы измерения и вывод.</p>' :
     id === "induction" ? '<p class="vlab-report-hint">Выполни три наблюдения: внесение магнита, удаление магнита, неподвижный магнит. Стрелка прибора покажет направление.</p>' :
     '<div class="vlab-fields-grid">'+fields+'</div>';
   return '<section class="vlab-report-panel"><div class="vlab-report-heading"><div><span class="eyebrow">ПРОТОКОЛ ОПЫТА</span><h3>Измерения и расчёт</h3><p>Сними показания с виртуальных приборов и перенеси их в поля.</p></div><div class="vlab-formula"><small>Формула</small><b>'+esc(formulaFor(id))+'</b></div></div>'+
@@ -232,7 +231,7 @@ function instructionsMarkup(item) {
     uncertainty:["Передвинь указатель на шкале.","Запиши показание.","Повтори измерение пять раз, меняя положение указателя на доли деления.","Найди среднее значение и разброс."],
     friction:["Установи массу бруска с грузом.","Настрой силу тяги динамометра.","Перетащи брусок по поверхности.","Запиши силу трения при равномерном движении."]
   };
-  return '<div class="vlab-procedure"><div><span class="eyebrow">ХОД ЭКСПЕРИМЕНТА</span><h3>Что нужно сделать</h3></div><ol>'+((steps[item.id]||[]).map((step,i)=>'<li><span>'+String(i+1)+'</span>'+esc(step)+'</li>').join(""))+'</ol><div class="vlab-safety"><b>Техника безопасности</b><p>'+esc(item.id==="ohm"?"Работай только с низким напряжением до 6 В. Никогда не подключай схему к бытовой розетке.":item.id==="heat"?"В реальной лаборатории используй только тёплую воду и работай под наблюдением учителя.":item.id==="spring"||item.id==="lever"?"Не перегружай пружину и не располагай лицо под подвешенными грузами.": "Не роняй приборы и не допускай резких движений оборудования.")+'</p></div></div>';
+  return '<div class="vlab-procedure"><div><span class="eyebrow">ХОД ЭКСПЕРИМЕНТА</span><h3>Что нужно сделать</h3></div><ol>'+((steps[item.id]||[]).map((step,i)=>'<li><span>'+String(i+1)+'</span>'+esc(step)+'</li>').join(""))+'</ol><div class="vlab-safety"><b>Техника безопасности</b><p>'+esc(item.id==="ohm"?"Работай только с низким напряжением 4,5 В. Никогда не подключай схему к бытовой розетке.":item.id==="heat"?"В реальной лаборатории используй только тёплую воду и работай под наблюдением учителя.":item.id==="spring"||item.id==="lever"?"Не перегружай пружину и не располагай лицо под подвешенными грузами.": "Не роняй приборы и не допускай резких движений оборудования.")+'</p></div></div>';
 }
 function workspaceMarkup(item) {
   return '<div class="vlab-workspace-head"><div><span class="eyebrow">'+esc(item.kit)+' · '+esc(item.group)+'</span><h2>'+esc(item.title)+'</h2><p>'+esc(item.goal)+'</p></div><div class="vlab-workspace-actions"><span class="vlab-time">◷ '+esc(item.time)+'</span><button type="button" class="btn" data-vlab-action="reset">↻ Сбросить опыт</button></div></div>'+
@@ -291,8 +290,8 @@ export function mountLabSimulator(container,id,options = {}) {
     if(weight&&state.mass){weight.style.left=(hook.offsetLeft+18)+"px";weight.style.top=(hook.offsetTop+25)+"px";}
   };
   const updateArch = () => {
-    setRead("dyna-value",state.submerged?"1,47 Н":"1,96 Н");
-    setRead("water-force",state.submerged?"1,47 Н":"ожидает погружения");
+    setRead("dyna-value",state.submerged?"3,41 Н":"3,90 Н");
+    setRead("water-force",state.submerged?"3,41 Н":"ожидает погружения");
     const body=q('[data-drag-object="body"]');
     if(body)body.classList.toggle("in-water",state.submerged);
   };
@@ -330,7 +329,7 @@ export function mountLabSimulator(container,id,options = {}) {
     if(button){button.textContent=state.keyClosed?"Замкнут":"Разомкнут";button.classList.toggle("closed",state.keyClosed);button.setAttribute("aria-pressed",String(state.keyClosed));}
     setRead("ohm-count",state.readings.length+" / 3 измерения");
     const table=q('[data-readout="ohm-table"]');
-    if(table)table.innerHTML=state.readings.length?'<table><thead><tr><th>№</th><th>I, А</th><th>U, В</th><th>R = U/I, Ом</th></tr></thead><tbody>'+state.readings.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+fmt(r.i,2)+'</td><td>'+fmt(r.u,2)+'</td><td>'+fmt(r.u/r.i,2)+'</td></tr>').join("")+'</tbody></table>':"Пока нет измерений";
+    if(table)table.innerHTML=state.readings.length?'<table><thead><tr><th>№</th><th>I, А</th><th>U, В</th><th>R = U/I, Ом</th></tr></thead><tbody>'+state.readings.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+fmt(r.i,2)+' ± 0,02</td><td>'+fmt(r.u,1)+' ± 0,1</td><td>'+fmt(r.u/r.i,2)+'</td></tr>').join("")+'</tbody></table>':"Пока нет измерений";
   };
   const updateInduction = () => {
     const needle=q("[data-readout='needle']");
@@ -353,8 +352,8 @@ export function mountLabSimulator(container,id,options = {}) {
     state.pendulumPeriod=period;
   };
   const updateHeat = () => {
-    setRead("thermometer",state.hotMetalIn?"32,4 °C":"20,0 °C");
-    setRead("final-temp",state.hotMetalIn?"32,4 °C":"ожидает опыта");
+    setRead("thermometer",state.hotMetalIn?"32,6 °C":"20,0 °C");
+    setRead("final-temp",state.hotMetalIn?"32,6 °C":"ожидает опыта");
   };
   const updateUncertainty = () => {
     const marker=q('[data-drag-object="marker"]');
@@ -567,7 +566,8 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="ohm"){
       if(state.readings.length!==3){showResult("Нужно записать ровно три пары показаний при токах 0,3 А, 0,4 А и 0,5 А.",false);return;}
       const targetsI=[.3,.4,.5],targetsU=[1.7,2.3,2.9],matches=state.readings.filter((r,i)=>Math.abs(r.i-targetsI[i])<.025&&Math.abs(r.u-targetsU[i])<=.3&&Math.abs(r.u/r.i-5.7)<.6).length;
-      result={valid:true,score:matches===3?3:matches===2?2:matches===1?1:0,value:matches+"/3 измерений соответствуют закону Ома",detail:"Для резистора R2 = 5,7 Ом отношение U/I должно оставаться примерно постоянным. В демоверсии ориентировочные пары: 0,30 А — 1,7 В; 0,40 А — 2,3 В; 0,50 А — 2,9 В. Сравни три пары измерений в таблице."};
+      const scheme=q('[data-vlab-check="scheme"]')?.checked,units=q('[data-vlab-check="units"]')?.checked,conclusion=q('[data-vlab-check="conclusion"]')?.checked,allReport=scheme&&units&&conclusion;
+      result={valid:true,score:matches===3?(allReport?3:2):matches>=1?1:0,value:matches+"/3 измерений соответствуют закону Ома",detail:"Для R2 = 5,7 Ом отношение U/I остаётся примерно постоянным. Ориентиры демопроекта: 0,30 А — 1,7 В; 0,40 А — 2,3 В; 0,50 А — 2,9 В. Полные 3 балла требуют схемы, таблицы с погрешностями и правильного вывода."};
       values.readings=state.readings;
     } else if(item.id==="motion"){
       values.distance=fieldValue("distance");values.time=fieldValue("time");
@@ -582,7 +582,7 @@ export function mountLabSimulator(container,id,options = {}) {
     } else if(item.id==="heat"){
       values.mw=fieldValue("mw");values.mm=fieldValue("mm");values.tw=fieldValue("tw");values.tm=fieldValue("tm");values.tf=fieldValue("tf");
       if(!state.hotMetalIn||!(values.mw>0&&values.mm>0&&values.tf>values.tw&&values.tm>values.tf)){showResult("Перенеси металл в калориметр и проверь массы и температуры.",false);return;}
-      const den=(values.mm/1000)*(values.tm-values.tf),num=4200*(values.mw/1000)*(values.tf-values.tw),c=num/den,ok=Math.abs(c-900)<180;
+      const den=(values.mm/1000)*(values.tm-values.tf),num=4200*(values.mw/1000)*(values.tf-values.tw),c=num/den,ok=Math.abs(c-920)<180;
       result={valid:true,score:ok?3:1,value:Math.round(c)+" Дж/(кг·°C)",detail:"Qводы = cmΔt = "+Math.round(num)+" Дж. По тепловому балансу Qметалла = Qводы; cметалла ≈ "+Math.round(c)+" Дж/(кг·°C)."};
     } else if(item.id==="induction"){
       if(!state.inductionObserved){showResult("Проведи магнитом через катушку, чтобы увидеть отклонение гальванометра.",false);return;}
