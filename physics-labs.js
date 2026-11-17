@@ -292,8 +292,9 @@ export function mountLabSimulator(container,id,options = {}) {
   const updateArch = () => {
     setRead("dyna-value",state.submerged?"3,40 Н":"3,90 Н");
     setRead("water-force",state.submerged?"3,40 Н":"ожидает погружения");
-    const body=q('[data-drag-object="body"]');
+    const body=q('[data-drag-object="body"]'),water=q(".vlab-beaker-water");
     if(body)body.classList.toggle("in-water",state.submerged);
+    if(water)water.style.height=state.submerged?"100px":"85px";
   };
   const updateLever = () => {
     const left=q('[data-drag-object="leftWeight"]'),right=q('[data-drag-object="rightWeight"]');
@@ -347,8 +348,8 @@ export function mountLabSimulator(container,id,options = {}) {
     setRead("pendulum-length",length+" см");
     if(!state.pendulumStarted)setRead("pendulum-time",state.pendulumElapsed?fmt(state.pendulumElapsed,2)+" с":"0,00 с");
     const string=q("[data-pendulum-string]"),bob=q('[data-drag-object="bob"]');
-    if(string)string.style.height=(length*1.25)+"px";
-    if(bob&&!state.pendulumStarted)bob.style.top=(75+length*1.25)+"px";
+    if(string){string.style.height=(length*1.25)+"px";string.style.animationDuration=(period/2)+"s";}
+    if(bob){bob.style.animationDuration=(period/2)+"s";if(!state.pendulumStarted)bob.style.top=(75+length*1.25)+"px";}
     state.pendulumPeriod=period;
   };
   const updateHeat = () => {
@@ -428,7 +429,7 @@ export function mountLabSimulator(container,id,options = {}) {
         if(inside(centerX,centerY,scale)){
           state.massMeasured=true;state.submerged=false;
           obj.style.left=(scale.offsetLeft+58)+"px";obj.style.top=(scale.offsetTop-28)+"px";
-        }else if(inside(centerX,centerY,cylinder)){
+        }else if(inside(centerX,centerY,cylinder)&&centerX>cylinder.offsetLeft+25&&centerX<cylinder.offsetLeft+95&&centerY>cylinder.offsetTop+20&&centerY<cylinder.offsetTop+205){
           state.submerged=true;
           obj.style.left=(cylinder.offsetLeft+47)+"px";obj.style.top=(cylinder.offsetTop+128)+"px";
         }else state.submerged=false;
