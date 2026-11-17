@@ -284,6 +284,16 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     elements.forEach(item => { if (item && item.id && !removed.has(item.id)) merged.set(item.id, item); });
     return [...merged.values()].slice(-500);
   }
+  function mergeRemoteIntoHistory(remoteOnly) {
+    if (!remoteOnly.length) return;
+    history = history.map(snapshot => {
+      const map = new Map(snapshot.map(item => [item.id, item]));
+      remoteOnly.forEach(item => { if (!deletedIds.has(item.id) && !map.has(item.id)) map.set(item.id, item); });
+      return [...map.values()];
+    });
+    if (historyIndex >= 0) history[historyIndex] = clone(elements);
+    updateHistoryButtons();
+  }
   async function saveToCloud(boardId = activeBoard) {
     if (disposed || !db || !user || !dirty) return;
     const revision = editRevision;
@@ -326,12 +336,14 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         });
         rememberLocal(boardId, { title: payload.title, elements: mergedResult || payload.elements, deletedIds: mergedDeletedResult || payload.deletedIds, restoredIds: [], updatedAt: 0 });
         if (activeBoard === boardId && revision === editRevision) {
+          const localIds = new Set(payload.elements.map(item => item.id));
+          const remoteOnly = (mergedResult || []).filter(item => !localIds.has(item.id));
           elements = mergedResult || elements;
           deletedIds = new Set(mergedDeletedResult || payload.deletedIds);
           restoredIds.clear();
+          mergeRemoteIntoHistory(remoteOnly);
           dirty = false;
           localUpdatedAt = 0;
-          resetHistory();
           render();
           setStatus("Сохранено", "ok");
         } else if (activeBoard === boardId) {
@@ -379,11 +391,23 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       const remoteElements = Array.isArray(data.elements) ? data.elements : [];
       const remoteDeleted = Array.isArray(data.deletedIds) ? data.deletedIds : [];
       const remoteUpdatedAt = data.updatedAt && typeof data.updatedAt.toMillis === "function" ? data.updatedAt.toMillis() : Number(data.updatedAt || 0);
+      if (!dirty && data.updatedBy === user.uid &&
+          JSON.stringify(remoteElements) === JSON.stringify(elements) &&
+          JSON.stringify([...remoteDeleted].sort()) === JSON.stringify([...deletedIds].sort()) &&
+          (data.title || BOARD_NAMES[boardId].title) === title) {
+        localUpdatedAt = remoteUpdatedAt;
+        rememberLocal(boardId, { title, elements, deletedIds: [...deletedIds], restoredIds: [...restoredIds], updatedAt: remoteUpdatedAt });
+        setStatus("Сохранено · синхронно", "ok");
+        return;
+      }
       if (!dirty && localUpdatedAt > remoteUpdatedAt) {
         dirty = true;
         editRevision += 1;
+        const localIds = new Set(elements.map(item => item.id));
+        const remoteOnly = remoteElements.filter(item => !localIds.has(item.id) && !remoteDeleted.includes(item.id));
         elements = mergeElements(remoteElements, remoteDeleted);
-        deletedIds = new Set([...remoteDeleted, ...deletedIds]);
+        deletedIds = new Set([...remoteDeleted, ...deletedIds].filter(id => !restoredIds.has(id)));
+        mergeRemoteIntoHistory(remoteOnly);
         if (saveTimer) clearTimeout(saveTimer);
         saveTimer = setTimeout(() => saveToCloud(boardId), 250);
         render();
@@ -391,8 +415,11 @@ export function mountPhysicsWhiteboard(root, options = {}) {
         return;
       }
       if (dirty) {
+        const localIds = new Set(elements.map(item => item.id));
+        const remoteOnly = remoteElements.filter(item => !localIds.has(item.id) && !remoteDeleted.includes(item.id));
         elements = mergeElements(remoteElements, remoteDeleted);
         deletedIds = new Set([...remoteDeleted, ...deletedIds].filter(id => !restoredIds.has(id)));
+        mergeRemoteIntoHistory(remoteOnly);
         render();
         if (saveTimer) clearTimeout(saveTimer);
         saveTimer = setTimeout(() => saveToCloud(boardId), 500);
