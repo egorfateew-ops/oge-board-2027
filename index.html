@@ -476,6 +476,7 @@ let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResul
 let studyNotes={},activeSubjectName="",activeTopicId="";
 let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1),calendarSelectedDate=today();
 let testSession=null,testTimerHandle=null,testSecondsLeft=0,testHistory=[],testQuestionIndex=0;
+let fullExamSession=null,fullExamTimerHandle=null,fullExamSecondsLeft=0,fullExamQuestionIndex=0;
 const testResultsCol=()=>collection(db,"rooms","oge2027","testResults");
 let stopTestHistory=null;
 let completedTopics=new Set(),topicPracticeResults={};
@@ -1127,7 +1128,164 @@ function renderTestSetup(){
  const select=$("testSubject");
  select.innerHTML='<option value="Физика">Физика</option>';
  select.value="Физика";
+ renderMockExamCards();
  renderTestHistory();
+}
+function renderMockExamCards(){
+ const root=$("mockExamCards");if(!root)return;
+ root.innerHTML=physicsExamVariants.map((variant,i)=>{
+  const completed=testHistory.filter(t=>t.fullMock&&t.variantId===variant.id);
+  const best=completed.length?Math.max(...completed.map(x=>Number(x.score)||0)):null;
+  return '<article class="mock-exam-card"><div class="mock-exam-card-top"><span class="mock-number">0'+(i+1)+'</span><span class="mock-duration">180 минут</span></div><h4>'+esc(variant.title)+'</h4><p>'+esc(variant.description)+'</p><div class="mock-exam-card-meta"><span>22 задания</span><span>39 баллов</span><span>'+(best===null?"Пока не пройден": "Лучший: "+best+"/39")+'</span></div><button type="button" class="btn primary" data-start-full-exam="'+esc(variant.id)+'">Начать пробник →</button></article>';
+ }).join("");
+}
+function fullExamAnsweredCount(){
+ if(!fullExamSession)return 0;
+ return Object.entries(fullExamSession.answers).filter(([index,a])=>{
+  const q=fullExamSession.variant.questions[Number(index)];
+  if(!q||!a)return false;
+  if(q.type==="choice")return Boolean(a.value);
+  if(q.type==="number"||q.type==="sequence"||q.type==="two")return String(a.value||"").trim()!=="";
+  if(q.type==="text")return String(a.text||"").trim()!=="";
+  if(q.type==="solution")return Boolean(a.formula||String(a.intermediate||"").trim()||String(a.final||"").trim());
+  if(q.type==="lab")return Object.keys(a.values||{}).length>0||String(a.final||"").trim()!=="";
+  return false;
+ }).length;
+}
+function renderFullExamNav(){
+ const root=$("fullExamQuestionNav");if(!root||!fullExamSession)return;
+ root.innerHTML=fullExamSession.variant.questions.map((q,i)=>'<button type="button" class="test-nav-number '+(i===fullExamQuestionIndex?"active ":"")+(fullExamSession.answers[i]?"answered":"")+'" data-full-exam-jump="'+i+'">'+q.number+'</button>').join("");
+ $("fullExamAnswered").textContent="Отвечено: "+fullExamAnsweredCount()+" / 22";
+}
+function startFullExam(variantId){
+ const variant=physicsExamVariants.find(x=>x.id===variantId);
+ if(!variant){toast("Пробный вариант не найден");return}
+ stopTestTimer();stopFullExamTimer();
+ showTab("tests");
+ fullExamSession={variant,answers:{},startedAt:new Date().toISOString(),duration:physicsExamScoring.durationSeconds};
+ fullExamQuestionIndex=0;fullExamSecondsLeft=physicsExamScoring.durationSeconds;
+ $("testsSetup").classList.add("hidden");$("testRun").classList.add("hidden");$("testResult").classList.add("hidden");$("fullExamResult").classList.add("hidden");$("fullExamRun").classList.remove("hidden");
+ renderFullExamQuestion();startFullExamTimer();
+}
+function stopFullExamTimer(){if(fullExamTimerHandle){clearInterval(fullExamTimerHandle);fullExamTimerHandle=null}}
+function updateFullExamTimer(){
+ const el=$("fullExamTimer");if(!el)return;
+ const m=Math.floor(fullExamSecondsLeft/60),s=fullExamSecondsLeft%60;
+ el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ el.classList.toggle("urgent",fullExamSecondsLeft<=300);
+}
+function startFullExamTimer(){
+ stopFullExamTimer();updateFullExamTimer();
+ fullExamTimerHandle=setInterval(()=>{fullExamSecondsLeft=Math.max(0,fullExamSecondsLeft-1);updateFullExamTimer();if(fullExamSecondsLeft<=0)finishFullExam(true)},1000);
+}
+function renderFullExamQuestion(){
+ if(!fullExamSession)return;
+ const q=fullExamSession.variant.questions[fullExamQuestionIndex],a=fullExamSession.answers[fullExamQuestionIndex]||{},total=fullExamSession.variant.questions.length;
+ $("fullExamVariantLabel").textContent="ПОЛНЫЙ ПРОБНИК · "+fullExamSession.variant.id.toUpperCase();
+ $("fullExamTitle").textContent=fullExamSession.variant.title;
+ $("fullExamProgress").textContent="Задание "+q.number+" из "+total+" · "+q.points+" "+(q.points===1?"балл":q.points<5?"балла":"баллов");
+ $("fullExamProgressFill").style.width=((fullExamQuestionIndex+1)/total*100)+"%";
+ $("fullExamPointsLabel").textContent="Максимум: 39 баллов";
+ let control="";
+ if(q.type==="choice"){
+  control='<div class="test-options">'+q.options.map((o,i)=>'<button type="button" class="test-option '+(a.value===o?"selected":"")+'" data-full-exam-option="'+esc(o)+'"><span>'+String.fromCharCode(65+i)+'</span>'+esc(o)+'</button>').join("")+'</div>';
+ }else if(q.type==="number"){
+  control='<label class="test-number-answer">Числовой ответ<input class="field" type="text" inputmode="decimal" data-exam-field="value" value="'+esc(a.value||"")+'" placeholder="Введи число"><small>'+esc(q.unit||"Запиши число без единицы измерения")+'</small></label>';
+ }else if(q.type==="sequence"||q.type==="two"){
+  control='<label class="test-number-answer">'+(q.type==="two"?"Две цифры выбранных утверждений":"Последовательность цифр")+'<input class="field" type="text" inputmode="numeric" maxlength="8" data-exam-field="value" value="'+esc(a.value||"")+'" placeholder="'+(q.type==="two"?"Например: 24":"Например: 1234")+'"><small>'+(q.type==="two"?"Введи ровно две цифры без пробелов.":"Вводи цифры в порядке, указанном в условии.")+'</small></label>';
+ }else if(q.type==="text"){
+  control='<label class="test-number-answer">Развёрнутый ответ<textarea class="field" rows="4" data-exam-field="text" placeholder="Объясни явление своими словами…">'+esc(a.text||"")+'</textarea><small>Автопроверка ищет ключевые элементы объяснения. После проверки сверь формулировку с разбором.</small></label>';
+ }else if(q.type==="solution"){
+  control='<div class="exam-solution-fields"><label>Выбери основной закон или формулу<select class="field" data-exam-field="formula"><option value="">Выбери формулу…</option>'+q.formulaOptions.map(x=>'<option value="'+esc(x)+'" '+(a.formula===x?"selected":"")+'>'+esc(x)+'</option>').join("")+'</select></label><label>'+esc(q.intermediatePrompt)+'<input class="field" type="text" inputmode="decimal" data-exam-field="intermediate" value="'+esc(a.intermediate||"")+'" placeholder="Промежуточный результат"></label><label>'+esc(q.finalPrompt)+'<input class="field" type="text" inputmode="decimal" data-exam-field="final" value="'+esc(a.final||"")+'" placeholder="Итоговый ответ"></label><small>Каждый правильно выполненный этап приносит 1 балл: формула, промежуточный результат, итог.</small></div>';
+ }else if(q.type==="lab"){
+  const lab=physicsLabById[q.labId];
+  const fields=lab?lab.fields.map(f=>'<label class="lab-measure-field"><span>'+esc(f.label)+'</span><div><input class="field" type="number" step="any" inputmode="decimal" data-exam-lab-field="'+esc(f.key)+'" value="'+esc(a.values?.[f.key]??"")+'" placeholder="Реальное измерение"><small>'+esc(f.unit)+'</small></div></label>').join(""):"";
+  const checks=a.checks||{};
+  control=lab?'<div class="exam-lab-box"><div class="exam-lab-info"><b>'+esc(lab.title)+'</b><p>Оборудование: '+esc(lab.equipment.join(", "))+'</p><p><b>Безопасность:</b> '+esc(lab.safety)+'</p><ol>'+lab.steps.map(x=>"<li>"+esc(x)+"</li>").join("")+'</ol></div><div class="lab-measure-grid">'+fields+'</div><label class="test-number-answer">Результат вычисления<input class="field" type="text" inputmode="decimal" data-exam-lab-final value="'+esc(a.final||"")+'" placeholder="Введи рассчитанное значение"><small>'+esc(lab.formula)+'</small></label><div class="lab-checklist"><label><input type="checkbox" data-exam-lab-check="scheme" '+(checks.scheme?"checked":"")+'> Схема установки нарисована</label><label><input type="checkbox" data-exam-lab-check="uncertainty" '+(checks.uncertainty?"checked":"")+'> Единицы и погрешность записаны</label><label><input type="checkbox" data-exam-lab-check="conclusion" '+(checks.conclusion?"checked":"")+'> Вывод сформулирован</label></div><small>Измерения должны быть получены на настоящем оборудовании. Сайт проверит расчёт, а схему и вывод — по твоему чек-листу.</small></div>':'<p>Лабораторная работа не найдена.</p>';
+ }
+ $("fullExamQuestionCard").innerHTML='<div class="test-question-kicker">ЗАДАНИЕ '+q.number+' <span>'+esc(q.topic)+'</span><b>'+q.points+' б.</b></div><h2>'+esc(q.prompt)+'</h2>'+control+'<div class="test-question-footer"><span>Ответы сохраняются при переходе между заданиями</span><span>'+fullExamAnsweredCount()+' / 22 отвечено</span></div>';
+ $("fullExamPrevBtn").disabled=fullExamQuestionIndex===0;
+ $("fullExamNextBtn").textContent=fullExamQuestionIndex===total-1?"Проверить ответы →":"Следующее →";
+ renderFullExamNav();
+ updateFullExamTimer();
+}
+function captureFullExamInput(target){
+ if(!fullExamSession||!target)return;
+ const q=fullExamSession.variant.questions[fullExamQuestionIndex],a=fullExamSession.answers[fullExamQuestionIndex]||{};
+ if(q.type==="lab"){
+  a.values={...(a.values||{})};
+  $("fullExamQuestionCard").querySelectorAll("[data-exam-lab-field]").forEach(input=>{if(input.value.trim()!=="")a.values[input.dataset.examLabField]=Number(input.value.replace(",","."));else delete a.values[input.dataset.examLabField]});
+  const final=$("fullExamQuestionCard").querySelector("[data-exam-lab-final]");a.final=final?.value||"";
+  a.checks={scheme:$("fullExamQuestionCard").querySelector('[data-exam-lab-check="scheme"]')?.checked||false,uncertainty:$("fullExamQuestionCard").querySelector('[data-exam-lab-check="uncertainty"]')?.checked||false,conclusion:$("fullExamQuestionCard").querySelector('[data-exam-lab-check="conclusion"]')?.checked||false};
+ }else{
+  const field=target.dataset.examField;
+  if(field)a[field]=target.value;
+ }
+ fullExamSession.answers[fullExamQuestionIndex]=a;
+ renderFullExamNav();
+}
+function gradeFullExamQuestion(q,a){
+ a=a||{};
+ if(q.type==="choice"){const ok=a.value===q.answer;return {earned:ok?q.points:0,max:q.points,correctAnswer:q.answer,feedback:ok?"Верно.":q.explain};}
+ if(q.type==="number"){
+  const n=Number(String(a.value||"").trim().replace(",",".")),ok=Number.isFinite(n)&&Math.abs(n-q.answer)<=(q.tolerance||0.01);
+  return {earned:ok?1:0,max:1,correctAnswer:String(q.answer)+(q.unit?" "+q.unit:""),feedback:ok?"Числовой ответ верный.":q.explain};
+ }
+ if(q.type==="sequence"){
+  const got=String(a.value||"").replace(/\s/g,""),expected=String(q.answer);
+  if(got===expected)return {earned:2,max:2,correctAnswer:expected,feedback:"Все позиции указаны верно."};
+  const diff=got.length===expected.length?[...got].filter((x,i)=>x!==expected[i]).length:99;
+  return {earned:diff===1?1:0,max:2,correctAnswer:expected,feedback:q.explain};
+ }
+ if(q.type==="two"){
+  const got=String(a.value||"").replace(/\s/g,"").split("");
+  const expected=String(q.answer).split("");
+  if(got.length!==2||new Set(got).size!==2)return {earned:0,max:2,correctAnswer:expected.join(" и "),feedback:"Нужно указать ровно две разные цифры. "+q.explain};
+  const count=got.filter(x=>expected.includes(x)).length;
+  return {earned:count,max:2,correctAnswer:expected.join(" и "),feedback:count===2?"Оба утверждения выбраны верно.":q.explain};
+ }
+ if(q.type==="text"){
+  const response=String(a.text||"").toLowerCase().replace(/ё/g,"е");
+  const matched=q.criteria.map(c=>({label:c.label,ok:c.keywords.some(k=>response.includes(k.toLowerCase().replace(/ё/g,"е")))}));
+  const earned=matched.filter(x=>x.ok).length;
+  return {earned,max:2,correctAnswer:q.explain,feedback:matched.map(x=>(x.ok?"✓ ":"✗ ")+x.label).join("; ")+" — "+q.explain};
+ }
+ if(q.type==="solution"){
+  const formula=a.formula===q.formula?1:0;
+  const mid=Number(String(a.intermediate||"").replace(",",".")),final=Number(String(a.final||"").replace(",","."));
+  const midOk=Number.isFinite(mid)&&Math.abs(mid-q.intermediateAnswer)<=Math.max(0.02,Math.abs(q.intermediateAnswer)*0.02);
+  const finalOk=Number.isFinite(final)&&Math.abs(final-q.finalAnswer)<=(q.tolerance||0.02);
+  return {earned:formula+(midOk?1:0)+(finalOk?1:0),max:3,correctAnswer:"Промежуточный результат: "+q.intermediateAnswer+"; итог: "+q.finalAnswer+" "+q.unit,feedback:q.explain};
+ }
+ if(q.type==="lab"){
+  const lab=physicsLabById[q.labId],values=a.values||{};
+  if(!lab)return {earned:0,max:3,correctAnswer:"Лабораторная не найдена",feedback:"Проверь вариант."};
+  const valid=lab.fields.every(f=>Number.isFinite(values[f.key]))?lab.calculate(values):{valid:false};
+  if(!valid.valid)return {earned:0,max:3,correctAnswer:"Заполни измерения и вычисли результат",feedback:valid.error||"Не все измерения заполнены или данные противоречат условию."};
+  const final=Number(String(a.final||"").replace(",","."));
+  const tol=Math.max(0.02,Math.abs(valid.numeric||0)*0.03);
+  const calcOk=Number.isFinite(final)&&Math.abs(final-valid.numeric)<=tol;
+  const checks=a.checks||{},reportOk=Boolean(checks.scheme&&checks.uncertainty&&checks.conclusion);
+  return {earned:1+(calcOk?1:0)+(reportOk?1:0),max:3,correctAnswer:valid.value,feedback:valid.detail+" "+(calcOk?"Расчёт совпадает с введёнными измерениями.":"Проверь вычисление по своим измерениям.")+" "+(reportOk?"Чек-лист отчёта заполнен.":"Дополни схему, погрешность и вывод.")};
+ }
+ return {earned:0,max:q.points||0,correctAnswer:"",feedback:"Тип задания не поддерживается."};
+}
+async function finishFullExam(timeExpired=false){
+ if(!fullExamSession)return;
+ captureFullExamInput($("fullExamQuestionCard").querySelector("[data-exam-field], [data-exam-lab-field], [data-exam-lab-final], [data-exam-lab-check]"));
+ stopFullExamTimer();
+ const session=fullExamSession,details=session.variant.questions.map((q,i)=>({number:q.number,prompt:q.prompt,topic:q.topic,given:session.answers[i]||{},...gradeFullExamQuestion(q,session.answers[i])}));
+ const score=details.reduce((n,x)=>n+x.earned,0),max=details.reduce((n,x)=>n+x.max,0),percent=Math.round(score/max*100);
+ const result={subject:"Физика · Полный пробник",total:max,correct:score,score,maxPoints:max,percent,fullMock:true,variantId:session.variant.id,variantTitle:session.variant.title,answers:details,duration:physicsExamScoring.durationSeconds,secondsLeft:fullExamSecondsLeft,timeExpired,startedAt:session.startedAt,finishedAt:new Date().toISOString(),userId:user.uid,userName:member.name};
+ try{await Promise.all(details.filter(x=>x.earned<x.max).map(x=>recordMistake({subject:"Физика",topic:x.topic,prompt:x.prompt,given:JSON.stringify(x.given),answer:x.correctAnswer,explain:x.feedback,source:"full-mock"})))}catch(e){toast("Не все ошибки удалось добавить в журнал: "+e.message)}
+ fullExamSession=null;
+ $("fullExamRun").classList.add("hidden");$("fullExamResult").classList.remove("hidden");
+ const band=score>=30?"Ориентир пятёрки по шкале 2026 года достигнут.":score>=20?"Ориентир четвёрки по шкале 2026 года.":"Нужно укрепить базу и повторить темы с ошибками.";
+ $("fullExamResult").innerHTML='<div class="panel full-exam-result-hero"><span class="eyebrow">ПРОБНИК ЗАВЕРШЁН'+(timeExpired?" · ВРЕМЯ ВЫШЛО":"")+'</span><div class="full-exam-score">'+score+'<small> / '+max+'</small></div><h2>'+esc(session.variant.title)+'</h2><p>'+band+'</p><p class="sub">Шкала 2027 года ещё может быть уточнена. 30 баллов — ориентир по рекомендациям 2026 года, а не гарантия оценки на экзамене.</p><div class="test-result-actions"><button class="btn primary" id="fullExamRetryBtn">Пройти этот вариант ещё раз</button><button class="btn" id="fullExamBackBtn">К пробникам</button></div></div><div class="test-review"><div class="test-review-head"><h3>Разбор всех 22 заданий</h3><span>'+score+' / '+max+' баллов</span></div>'+details.map(x=>'<article class="test-review-item '+(x.earned===x.max?"review-correct":x.earned>0?"review-partial":"review-wrong")+'"><div class="review-item-head"><b>Задание '+x.number+' · '+esc(x.topic)+'</b><span>'+x.earned+' / '+x.max+' б.</span></div><p>'+esc(x.prompt)+'</p><div class="review-explain">'+esc(x.feedback)+'</div></article>').join("")+'</div>';
+ $("fullExamRetryBtn").addEventListener("click",()=>startFullExam(session.variant.id));
+ $("fullExamBackBtn").addEventListener("click",()=>{$("fullExamResult").classList.add("hidden");$("testsSetup").classList.remove("hidden");renderTestSetup()});
+ try{await addDoc(testResultsCol(),{...result,createdAt:serverTimestamp()});toast("Пробник сохранён: "+score+" из "+max+" баллов")}catch(e){toast("Пробник проверен, но результат не удалось сохранить: "+e.message)}
+ renderTestHistory();renderMockExamCards();renderStats();if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
 }
 function renderTestHistory(){
  $("testHistoryCount").textContent=testHistory.length+" "+(testHistory.length===1?"попытка":testHistory.length>1&&testHistory.length<5?"попытки":"попыток");
