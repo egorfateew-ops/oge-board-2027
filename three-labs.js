@@ -173,7 +173,7 @@ export async function mountThreeLab(host,id,options={}){
   box(.12,.55,.8,materials.green,-3.2,.7,0);box(.12,.55,.8,materials.red,3.2,.7,0);
   const cart=new THREE.Group();cart.position.set(-2.8,.62,0);scene.add(cart);
   box(.95,.2,.48,materials.blue,0,.12,0,cart);box(.35,.23,.38,materials.white,.05,.34,0,cart);
-  for(const x of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,x,0,0,cart).rotation.y=Math.PI/2;
+  for(const z of [-.3,.3])add(new THREE.TorusGeometry(.13,.055,10,24),materials.rubber,0,0,z,cart);
   addDrag(cart,"cart","x");objects.cart=cart;
   setReadouts([["Путь","0,00 м"],["Время","0,00 с"],["Скорость","—"]]);
   setData({cartMoved:false,cartTime:0,distance:1});
@@ -543,7 +543,7 @@ export async function mountThreeLab(host,id,options={}){
  const themeObserver=typeof MutationObserver!=="undefined"?new MutationObserver(()=>{
   const tone=sceneTone();scene.background.set(tone);scene.fog.color.set(tone);
   floor.material.color.set(isDark()?"#202f43":"#d9e1eb");table.material.color.set(isDark()?"#2c3c52":"#e6ebf2");
-  if(Array.isArray(grid.material)){grid.material[0].color.set(isDark()?"#63758b":"#a8b6c8");grid.material[1].color.set(isDark()?"#3b4c62":"#d0d9e4");}
+  if(Array.isArray(grid.material)){grid.material[0].color.set(isDark()?"#63758b":"#a8b6c8");grid.material[1].color.set(isDark()?"#3b4c62":"#d0d9e4");}else if(grid.material?.color){grid.material.color.set(isDark()?"#66788e":"#b6c2d1");}
  }):null;
  if(themeObserver)themeObserver.observe(document.body,{attributes:true,attributeFilter:["data-theme"]});
  resize();loading.classList.add("hidden");
