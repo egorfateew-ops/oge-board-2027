@@ -570,7 +570,7 @@ async function saveSubjectNote(){
 }
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function dateFromKey(key){const p=key.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])}
-function tasksOnDate(key){return tasks.filter(t=>t.date===key)}
+function tasksOnDate(key){return tasks.filter(t=>t.subject==="Физика"&&t.date===key)}
 function renderCalendarDay(){
  const d=dateFromKey(calendarSelectedDate),arr=tasksOnDate(calendarSelectedDate);
  $("calendarDayTitle").innerHTML='<span class="eyebrow">ВЫБРАННАЯ ДАТА</span><h3>'+d.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})+'</h3><p>'+arr.length+' '+(arr.length===1?"задание":arr.length>1&&arr.length<5?"задания":"заданий")+'</p>';
@@ -860,7 +860,7 @@ function repeatMistake(id){
  testQuestionIndex=0;testSecondsLeft=5*60;showTab("tests");$("testsSetup").classList.add("hidden");$("testResult").classList.add("hidden");$("testRun").classList.remove("hidden");startTestTimer();renderTestQuestion();
 }
 function allKnowledgeTopics(){
- const names=["Физика","Математика","Русский язык","Информатика"];
+ const names=["Физика"];
  return names.flatMap(name=>subjectTopics(name).map(topic=>({subject:name,...topic})));
 }
 function knowledgeStatus(subject,topic){
@@ -873,7 +873,7 @@ function knowledgeStatus(subject,topic){
  return {key:"new",label:"Не начато",count:0};
 }
 function renderKnowledgeMap(){
- const names=["Физика","Математика","Русский язык","Информатика"],all=allKnowledgeTopics();
+ const names=["Физика"],all=allKnowledgeTopics();
  const mastered=all.filter(t=>knowledgeStatus(t.subject,t).key==="done").length;
  $("knowledgeSummary").textContent=mastered+" из "+all.length+" тем освоено";
  $("knowledgeMap").innerHTML=names.map(name=>{
@@ -910,16 +910,15 @@ function renderDailyPlan(){
 }
 async function generateDailyPlan(){
  const items=[];
- const assigned=tasks.filter(t=>t.status!=="done"&&(t.person===member.name||t.person==="Вместе")).sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999"));
+ const assigned=tasks.filter(t=>t.subject==="Физика"&&t.status!=="done"&&(t.person===member.name||t.person==="Вместе")).sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999"));
  if(assigned.length){const t=assigned[0];items.push({id:"task-"+t.id,kind:"task",refId:t.id,subject:t.subject,title:t.title,detail:"Задание на доске · "+(t.date||"без срока")})}
  const weak=mistakes.filter(m=>!m.resolved).reduce((acc,m)=>{const key=(m.subject||"Другое")+"|"+(m.topic||"Общая тема");acc[key]=(acc[key]||0)+1;return acc},{}),weakEntry=Object.entries(weak).sort((a,b)=>b[1]-a[1])[0];
  if(weakEntry){const [key,count]=weakEntry,parts=key.split("|");items.push({id:"review-"+today(),kind:"mistake",subject:parts[0],title:"Повтори: "+parts[1],detail:"В журнале "+count+" неразобранных "+(count===1?"ошибка":count<5?"ошибки":"ошибок")+" по этой теме."})}
  const nextPhysics=subjectTopics("Физика").find(t=>!completedLessons.has(t.id));
- const nextOther=["Математика","Русский язык","Информатика"].map(n=>({name:n,topic:subjectTopics(n).find(t=>!completedTopics.has(t.id))})).find(x=>x.topic);
- const next=nextPhysics?{subject:"Физика",topic:nextPhysics}:nextOther?{subject:nextOther.name,topic:nextOther.topic}:null;
+ const next=nextPhysics?{subject:"Физика",topic:nextPhysics}:null;
  if(next&&!items.some(x=>x.kind==="lesson"&&x.refId===next.topic.id))items.push({id:"lesson-"+next.topic.id,kind:"lesson",refId:next.topic.id,subject:next.subject,title:"Урок: "+next.topic.title,detail:"Пройди теорию, пример и закрепление."});
- const preferred=weakEntry?weakEntry[0].split("|")[0]:(next?.subject||"Физика");
- const testSubject=testBanks[preferred]?.length?preferred:"Физика";
+ const preferred="Физика";
+ const testSubject="Физика";
  items.push({id:"test-"+today(),kind:"test",subject:testSubject,title:"Короткая практика · "+testSubject,detail:"Реши 5 вопросов и проверь, что запомнил."});
  const finalItems=items.slice(0,4);
  try{
@@ -1090,9 +1089,9 @@ function focusStart(){
 
 function shuffle(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function renderTestSetup(){
- const select=$("testSubject"),current=select.value;
- select.innerHTML=Object.keys(testBanks).map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join("");
- if(current&&testBanks[current])select.value=current;
+ const select=$("testSubject");
+ select.innerHTML='<option value="Физика">Физика</option>';
+ select.value="Физика";
  renderTestHistory();
 }
 function renderTestHistory(){
@@ -1110,7 +1109,7 @@ function updateExamModeUI(){
   :"Выбери предмет и нажми «Начать». После теста увидишь балл и разбор ошибок.";
 }
 function startTest(){
- const subject=$("testSubject").value,bank=testBanks[subject]||[],examMode=$("examMode").checked;
+ const subject="Физика",bank=testBanks[subject]||[],examMode=$("examMode")?.checked||false;
  if(!bank.length){toast("Для этого предмета пока нет вопросов");return}
  const count=examMode?bank.length:Math.min(Number($("testCount").value)||10,bank.length),duration=examMode?45*60:(Number($("testDuration").value)||20)*60;
  const selected=(examMode?[...bank]:shuffle(bank).slice(0,count)).map(q=>({...q,options:q.type==="choice"?shuffle(q.options):undefined}));
@@ -1197,10 +1196,10 @@ async function finishTest(timeExpired=false){
  renderTestHistory();if(!$("mistakesPage").classList.contains("hidden"))renderMistakes();
 }
 
-function pointsFor(name){return tasks.filter(t=>t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
-function progress(name){const own=tasks.filter(t=>t.person===name||t.person==='Вместе'),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
+function pointsFor(name){return tasks.filter(t=>t.subject==="Физика"&&t.status==='done'&&(t.person===name||t.person==='Вместе')).reduce((n,t)=>n+(Number(t.points)||0),0)}
+function progress(name){const own=tasks.filter(t=>t.subject==="Физика"&&(t.person===name||t.person==='Вместе')),done=own.filter(t=>t.status==='done').length;return own.length?Math.round(done/own.length*100):0}
 function dueText(v){if(!v)return 'Без срока';const d=new Date(v+'T00:00:00');return isNaN(d)?'Без срока':d.toLocaleDateString('ru-RU')}
-function filtered(){const p=$('personFilter').value,s=$('subjectFilter').value,q=$('search').value.toLowerCase().trim();return tasks.filter(t=>(p==='all'||t.person===p)&&(s==='all'||t.subject===s)&&(!q||(t.title+' '+(t.desc||'')+' '+t.subject+' '+t.person).toLowerCase().includes(q)))}
+function filtered(){const p=$('personFilter').value,q=$('search').value.toLowerCase().trim();return tasks.filter(t=>t.subject==="Физика"&&(p==='all'||t.person===p)&&(!q||(t.title+' '+(t.desc||'')+' '+t.subject+' '+t.person).toLowerCase().includes(q)))}
 let boardViewMode='board';
 function taskStatusLabel(status){return status==='doing'?'В процессе':status==='review'?'На проверке':status==='done'?'Готово':'К выполнению'}
 function nextTaskStatus(status){return status==='todo'?'doing':status==='doing'?'review':status==='review'?'done':'todo'}
@@ -1290,7 +1289,7 @@ function renderBoard(){
 }
 
 function renderDaily(){
- const arr=tasks.filter(t=>t.daily||t.date===today()),done=arr.filter(t=>t.status==="done").length;
+ const arr=tasks.filter(t=>t.subject==="Физика"&&(t.daily||t.date===today())),done=arr.filter(t=>t.status==="done").length;
  $("todayCount").textContent=done+" / "+arr.length;
  $("dateLabel").textContent=new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
  $("dailyList").innerHTML=arr.length?arr.map(t=>'<div class="dailyitem"><input type="checkbox" data-daily="'+esc(t.id)+'" '+(t.status==="done"?"checked":"")+'><button type="button" class="dailyitem-open" data-daily-open="'+esc(t.id)+'"><strong>'+esc(t.title)+'</strong><small>'+esc(t.subject)+' · '+esc(t.person)+'</small></button><span class="points">+'+(Number(t.points)||0)+' XP</span></div>').join(""):'<div class="empty">На сегодня заданий пока нет</div>';
@@ -1298,7 +1297,7 @@ function renderDaily(){
 
 function renderReadiness(){
  const root=$("readinessList");if(!root)return;
- const names=["Физика","Математика","Русский язык","Информатика"];
+ const names=["Физика"];
  root.innerHTML=names.map(name=>{
   const topics=subjectTopics(name),done=topics.filter(t=>name==="Физика"?completedLessons.has(t.id):completedTopics.has(t.id)).length;
   const coverage=Math.round(done/Math.max(1,topics.length)*100);
@@ -1312,10 +1311,10 @@ function renderReadiness(){
 function renderWeeklyReport(){
  const root=$("weeklyReport");if(!root)return;
  const cutoff=Date.now()-7*86400000,recent=value=>{const d=dateValue(value);return d&&d.getTime()>=cutoff};
- const ownTasks=tasks.filter(t=>t.status==="done"&&(t.person===member.name||t.person==="Вместе")&&recent(t.completedAt));
- const tests=testHistory.filter(t=>recent(t.createdAt));
+ const ownTasks=tasks.filter(t=>t.subject==="Физика"&&t.status==="done"&&(t.person===member.name||t.person==="Вместе")&&recent(t.completedAt));
+ const tests=testHistory.filter(t=>t.subject?.includes("Физика")&&recent(t.createdAt));
  const sessions=studySessions.filter(s=>recent(s.createdAt));
- const errors=mistakes.filter(m=>recent(m.createdAt));
+ const errors=mistakes.filter(m=>m.subject==="Физика"&&recent(m.createdAt));
  const minutes=Math.round(sessions.reduce((n,s)=>n+(Number(s.durationSeconds)||0),0)/60);
  const avg=tests.length?Math.round(tests.reduce((n,t)=>n+(Number(t.percent)||0),0)/tests.length):null;
  const metrics=[["Заданий",ownTasks.length],["Тестов",tests.length],["Время",minutes>=60?Math.floor(minutes/60)+" ч "+minutes%60+" мин":minutes+" мин"],["Ошибок",errors.length]];
@@ -1347,8 +1346,8 @@ function renderAchievements(){
  root.innerHTML=badges.map(x=>'<article class="achievement-card '+(x.ok?"unlocked":"")+'"><span class="achievement-icon">'+x.icon+'</span><div><b>'+x.title+'</b><small>'+x.desc+'</small><span>'+(x.ok?"Открыто":"Прогресс: "+Math.min(x.progress,x.target)+" / "+x.target)+'</span></div></article>').join("");
 }
 function renderStats(){
- const done=tasks.filter(t=>t.status==="done");
- $("statTotal").textContent=tasks.length;$("statDone").textContent=done.length;$("statXp").textContent=pointsFor("Егор")+pointsFor("Даниил");
+ const physicsTasks=tasks.filter(t=>t.subject==="Физика"),done=physicsTasks.filter(t=>t.status==="done");
+ $("statTotal").textContent=physicsTasks.length;$("statDone").textContent=done.length;$("statXp").textContent=pointsFor("Егор")+pointsFor("Даниил");
  const minutes=Math.round(studySessions.reduce((n,x)=>n+(Number(x.durationSeconds)||0),0)/60);
  if($("statStudyTime"))$("statStudyTime").textContent=minutes>=60?Math.floor(minutes/60)+" ч "+minutes%60+" мин":minutes+" мин";
  if($("statsOwner"))$("statsOwner").textContent="Личный прогресс · "+member.name;
