@@ -2522,3 +2522,8 @@ body[data-theme="dark"] .vlab-scene{box-shadow:0 12px 28px #0003,inset 0 1px 0 #
 @media(prefers-reduced-motion:reduce){
  .mobile-bottom-nav,.mobile-more-panel,.vlab-catalog-item{scroll-behavior:auto;transition:none}
 }
+
+/* Let the bench pan horizontally on phones; draggable instruments keep pointer control. */
+.vlab-scene-scroll{touch-action:pan-x pan-y pinch-zoom}
+.vlab-scene{touch-action:pan-x pan-y pinch-zoom}
+.vlab-drag{touch-action:none}
