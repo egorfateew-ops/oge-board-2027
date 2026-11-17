@@ -2351,3 +2351,6 @@ body[data-theme="dark"] .vlab-switch.closed{background:#1c3a33;border-color:#376
 }
 
 .vlab-track-mark.finish{left:675px}
+
+.vlab-scope-note{display:block;margin-top:10px;color:var(--muted);font-size:9px}
+.vlab-spring-readouts{right:285px;justify-content:flex-start}
