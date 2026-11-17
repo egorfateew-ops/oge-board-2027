@@ -371,7 +371,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  <button type="button" class="mobile-nav-more" id="mobileMoreBtn" aria-expanded="false" aria-controls="mobileMorePanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>Ещё</span></button>
 </nav>
 <div class="mobile-more-backdrop hidden" id="mobileMoreBackdrop"></div>
-<section class="mobile-more-panel hidden" id="mobileMorePanel" role="dialog" aria-label="Дополнительные разделы">
+<section class="mobile-more-panel hidden" id="mobileMorePanel" role="dialog" aria-modal="true" aria-label="Дополнительные разделы">
  <div class="mobile-more-head"><b>Все разделы</b><button type="button" id="mobileMoreClose" aria-label="Закрыть">×</button></div>
  <div class="mobile-more-grid">
   <button type="button" data-tab="tests"><span>✓</span>Тесты и пробники</button>
@@ -774,7 +774,7 @@ function showTab(tab){
  document.body.dataset.currentTab=tab;
  document.querySelectorAll(".app-sidebar .sidebar-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
  const mobileGroup={daily:"daily",board:"board",study:"study",subjects:"study",knowledge:"study",labs:"labs",tests:"tests",mistakes:"more",calendar:"more",stats:"more",duels:"more",settings:"more"}[tab]||"board";
- document.querySelectorAll(".mobile-nav-link").forEach(x=>x.classList.toggle("active",x.dataset.tab===mobileGroup));
+ document.querySelectorAll(".mobile-nav-link").forEach(x=>{const active=x.dataset.tab===mobileGroup;x.classList.toggle("active",active);if(active)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current")});
  $("mobileMoreBtn")?.classList.toggle("active",mobileGroup==="more");
  closeMobileMore();
  const topSearch=document.querySelector(".topbar-search");
