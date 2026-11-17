@@ -50,6 +50,7 @@ export async function mountThreeLab(host,id,options={}){
   host._threeLab={dispose:()=>{host.innerHTML=""}};return host._threeLab;
  }
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
+ renderer.domElement.setAttribute("aria-label","Интерактивная трёхмерная физическая лаборатория");renderer.domElement.tabIndex=0;
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace;
