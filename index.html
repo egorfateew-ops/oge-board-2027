@@ -1880,7 +1880,7 @@ function courseScheduleNeedsUpdate(existingTasks){
  }));
  const legacyNeeds=existingTasks.some(t=>{
   if(t.subject!=="Физика")return false;
-  const match=String(t.id||"").match(/^physics-w(\\d+)-d(\\d+)-([a-z0-9]+)$/i);
+  const match=String(t.id||"").match(/^physics-w(\d+)-d(\d+)-([a-z0-9]+)$/i);
   if(!match)return false;
   const student=students.find(s=>s.id===match[3]||s.name===t.person);
   return Boolean(student&&byDay.has(Number(match[1])+"-"+Number(match[2])));
