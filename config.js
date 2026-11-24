@@ -18,5 +18,6 @@ export const students = [
 // Аккаунты Firebase Authentication, которым разрешён вход.
 export const members = {
   "egor.fateew@icloud.com": { id: "egor", name: "Егор" },
-  "egorfateew@yandex.ru": { id: "daniil", name: "Даниил" }
+  "egorfateew@yandex.ru": { id: "daniil", name: "Даниил" },
+  "bgnatenko025@gmail.com": { id: "bogdan", name: "Богдан" }
 };
