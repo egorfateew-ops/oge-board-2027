@@ -110,7 +110,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
 @media(max-width:560px){.mock-exams-head,.full-exam-head{align-items:flex-start;flex-direction:column}.mock-exam-meta{grid-template-columns:auto auto;text-align:left}.full-exam-clock{font-size:22px}.lab-measure-grid{grid-template-columns:1fr}.full-exam-question h2{font-size:18px}}
 
 </style>
-  <link rel="stylesheet" href="./theme.css?v=20261117-whiteboard5">
+  <link rel="stylesheet" href="./theme.css?v=20261125-course-dates1">
 </head>
 <body>
 <div id="auth" class="auth"><div class="panel authbox">
@@ -280,7 +280,7 @@ body{background:radial-gradient(900px 560px at 10% -12%,#243e70 0%,transparent 6
  </section>
  <section id="calendarPage" class="hidden">
   <div class="panel calendar-intro">
-   <div><span class="eyebrow">12 НЕДЕЛЬ · 72 УЧЕБНЫХ ДНЯ</span><h2>Календарь курса физики</h2><p>Курс автоматически добавится в календарь при первом входе: три или четыре урока в неделю, практика, интерактивная лабораторная в отдельном разделе и контрольная. Шесть учебных дней в неделю, воскресенье — отдых. Полные пробники — после 4-й, 8-й и 12-й недели. Кнопка ниже позволяет пересобрать расписание.</p><button class="btn primary" id="generatePhysicsPlanBtn">＋ Сформировать полный курс</button></div>
+   <div><span class="eyebrow">12 НЕДЕЛЬ · 72 УЧЕБНЫХ ДНЯ</span><h2>Календарь курса физики</h2><p>Курс начинается завтра. В каждой учебной неделе — шесть дней занятий подряд и один день отдыха. В программе: уроки, практика, 12 интерактивных лабораторных, контрольные и полные пробники после 4-й, 8-й и 12-й недели. Новые даты применяются ко всем трём ученикам; выполненные отметки сохраняются.</p><div class="course-date-range" id="courseDateRange"></div><button class="btn primary" id="generatePhysicsPlanBtn">↻ Пересобрать расписание</button></div>
    <div class="calendar-nav"><button class="btn" id="calPrev" aria-label="Предыдущий месяц">←</button><strong id="calendarMonthLabel"></strong><button class="btn" id="calNext" aria-label="Следующий месяц">→</button><button class="btn" id="calToday">Сегодня</button></div>
   </div>
   <div class="calendar-layout">
@@ -611,7 +611,7 @@ function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove(
 
 let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
 let studyNotes={},activeSubjectName="",activeTopicId="";
-let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1),calendarSelectedDate=today();
+let calendarMonth=(()=>{const d=dateFromKey(courseStartDate());return new Date(d.getFullYear(),d.getMonth(),1)})(),calendarSelectedDate=courseStartDate();
 let testSession=null,testTimerHandle=null,testSecondsLeft=0,testHistory=[],testQuestionIndex=0;
 let fullExamSession=null,fullExamTimerHandle=null,fullExamSecondsLeft=0,fullExamQuestionIndex=0;
 const testResultsCol=()=>collection(db,"rooms","oge2027","testResults");
@@ -709,28 +709,38 @@ async function saveSubjectNote(){
 }
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function dateFromKey(key){const p=key.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])}
+function courseStartDate(){const d=dateFromKey(today());d.setDate(d.getDate()+1);return dateKey(d)}
+function isCourseRestDay(key){
+ const start=dateFromKey(courseStartDate()),date=dateFromKey(key);
+ const offset=Math.round((date-start)/86400000);
+ return offset>=0&&offset<83&&offset%7===6;
+}
+function formatCourseDate(key){return dateFromKey(key).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}
 function isPhysicsTask(t){
  const id=String(t?.id||"");
  return t?.subject==="Физика"&&!(id.startsWith("physics-w")&&!id.startsWith("physics-2027-w"));
 }
 function tasksOnDate(key){return tasks.filter(t=>isPhysicsTask(t)&&t.date===key)}
 function renderCalendarDay(){
- const d=dateFromKey(calendarSelectedDate),arr=tasksOnDate(calendarSelectedDate);
+ const d=dateFromKey(calendarSelectedDate),arr=tasksOnDate(calendarSelectedDate),restDay=isCourseRestDay(calendarSelectedDate);
  $("calendarDayTitle").innerHTML='<span class="eyebrow">ВЫБРАННАЯ ДАТА</span><h3>'+d.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})+'</h3><p>'+arr.length+' '+(arr.length===1?"задание":arr.length>1&&arr.length<5?"задания":"заданий")+'</p>';
  $("calendarDayList").innerHTML=arr.length?arr.map(t=>{
   const label=taskStatusLabel(t.status);
   return '<button type="button" class="calendar-task" data-cal-open="'+esc(t.id)+'"><span class="calendar-task-dot '+esc(t.status||"todo")+'"></span><span class="calendar-task-copy"><b>'+esc(t.title)+'</b><small>'+esc(t.subject||"Другое")+' · '+esc(t.person||"")+'</small></span><span class="calendar-task-status">'+label+'</span></button>';
- }).join(""):'<div class="study-empty">На эту дату заданий нет. Можно добавить новое.</div>';
+ }).join(""):(restDay?'<div class="study-empty"><b>День отдыха</b><br>Сегодня восстановление после шести учебных дней. По желанию можно повторить формулы или разобрать ошибки.</div>':'<div class="study-empty">На эту дату заданий нет. Можно добавить новое.</div>');
 }
 function renderCalendar(){
  const grid=$("calendarGrid");if(!grid)return;
  const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth(),first=new Date(year,month,1),offset=(first.getDay()+6)%7,total=new Date(year,month+1,0).getDate();
  $("calendarMonthLabel").textContent=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const courseSchedule=buildPhysicsCourseSchedule();
+ const dateRange=$("courseDateRange");
+ if(dateRange&&courseSchedule.length)dateRange.textContent="Старт: "+formatCourseDate(courseSchedule[0].date)+" · Завершение: "+formatCourseDate(courseSchedule[courseSchedule.length-1].date);
  let cells=Array(offset).fill('<div class="calendar-cell calendar-cell-empty"></div>');
  for(let day=1;day<=total;day++){
-  const d=new Date(year,month,day),key=dateKey(d),arr=tasksOnDate(key),selected=key===calendarSelectedDate,isToday=key===today();
+  const d=new Date(year,month,day),key=dateKey(d),arr=tasksOnDate(key),selected=key===calendarSelectedDate,isToday=key===today(),restDay=isCourseRestDay(key);
   const dots=arr.slice(0,4).map(t=>'<i class="calendar-dot '+esc(t.status||"todo")+'"></i>').join("");
-  cells.push('<button type="button" class="calendar-cell '+(selected?"selected ":"")+(isToday?"is-today":"")+'" data-calendar-date="'+key+'"><span class="calendar-day-number">'+day+'</span>'+(arr.length?'<span class="calendar-event-count">'+arr.length+'</span>':'')+'<span class="calendar-dots">'+dots+'</span></button>');
+  cells.push('<button type="button" class="calendar-cell '+(selected?"selected ":"")+(isToday?"is-today":"")+(restDay?" course-rest-day":"")+'" data-calendar-date="'+key+'"><span class="calendar-day-number">'+day+'</span>'+(arr.length?'<span class="calendar-event-count">'+arr.length+'</span>':'')+'<span class="calendar-dots">'+dots+'</span>'+(restDay?'<span class="calendar-rest-label">Отдых</span>':'')+'</button>');
  }
  while(cells.length%7)cells.push('<div class="calendar-cell calendar-cell-empty"></div>');
  grid.innerHTML=cells.join("");renderCalendarDay();
@@ -1719,7 +1729,7 @@ function renderStats(){
 }
 function render(){renderBoard();renderDaily();renderStats();renderSubjects();renderStudentCards();if(!$('calendarPage').classList.contains('hidden'))renderCalendar()}
 async function seed(){const ref=doc(db,'rooms','oge2027','settings','initialSeed');await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())return;tx.set(ref,{version:1,createdAt:serverTimestamp()});starter.forEach(t=>{const {id,...data}=t;tx.set(taskDoc(id),{...data,date:data.date||'',createdAt:serverTimestamp(),createdBy:'system',completedAt:null,completedBy:null})})})}
-function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});if(tasks.filter(t=>t.courseVersion===2).length<72*students.length&&!autoCourseStarted){autoCourseStarted=true;generatePhysicsCoursePlan(true)}},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
+function listen(){if(stopTasks)stopTasks();stopTasks=onSnapshot(tasksCol(),snap=>{tasks=snap.docs.map(d=>({id:d.id,...d.data()}));render();renderDailyPlan();$('sync').textContent='Онлайн · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});if(!autoCourseStarted&&courseScheduleNeedsUpdate(tasks)){autoCourseStarted=true;generatePhysicsCoursePlan(true)}},err=>{$('sync').textContent='Ошибка синхронизации: '+err.message;toast('Не удалось загрузить задания')})}
 let newTaskStatus='todo';
 function openModal(t=null,daily=false,status='todo'){editing=t?.id||null;newTaskStatus=t?.status||status;$('modalTitle').textContent=t?'Изменить задание':daily?'Новое ежедневное задание':'Новое задание';$('title').value=t?.title||'';$('subject').value=t?.subject||'Физика';$('person').value=t?.person||'Егор';$('due').value=t?.date|| (daily?today():'');$('points').value=t?.points??10;$('description').value=t?.desc||'';$('daily').checked=t?.daily??daily;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
@@ -1832,9 +1842,7 @@ $("finishTestBtn").addEventListener("click",()=>{if(testSession&&confirm("Зав
 
 function buildPhysicsCourseSchedule(){
  const schedule=[];
- const cursor=new Date();cursor.setHours(12,0,0,0);
- const daysUntilMonday=(8-cursor.getDay())%7||7;
- cursor.setDate(cursor.getDate()+daysUntilMonday);
+ const cursor=dateFromKey(courseStartDate());cursor.setHours(12,0,0,0);
  for(let wi=0;wi<physicsWeeks.length;wi++){
   const week=physicsWeeks[wi],labOrder=["density","motion","spring","archimedes","lever","pendulum","heat","ohm","induction","lens","uncertainty","friction"],lab=physicsLabById[labOrder[wi]];
   for(let di=0;di<6;di++){
@@ -1853,12 +1861,21 @@ function buildPhysicsCourseSchedule(){
    }else{
     item={courseType:"weekly-test",title:"Физика · Неделя "+(wi+1)+" · Контрольная работа",desc:"Контрольная по всем темам недели. Время — 35 минут. Реши вопросы без конспекта, затем разбери каждую ошибку и повтори слабые места.",points:20};
    }
-   schedule.push({...item,date,courseWeek:wi+1,courseDay:di+1,courseVersion:2,courseLessonIds:week.lessons.map(l=>l.id)});
+   schedule.push({...item,date,courseWeek:wi+1,courseDay:di+1,courseVersion:2,courseScheduleVersion:3,courseLessonIds:week.lessons.map(l=>l.id)});
    cursor.setDate(cursor.getDate()+1);
   }
-  if(wi<physicsWeeks.length-1)while(cursor.getDay()!==1)cursor.setDate(cursor.getDate()+1);
+  if(wi<physicsWeeks.length-1)cursor.setDate(cursor.getDate()+1);
  }
  return schedule;
+}
+function courseScheduleNeedsUpdate(existingTasks){
+ const schedule=buildPhysicsCourseSchedule();
+ const byId=new Map(existingTasks.filter(t=>t.courseVersion===2).map(t=>[t.id,t]));
+ return schedule.some(item=>students.some(student=>{
+  const id="physics-2027-w"+item.courseWeek+"-d"+item.courseDay+"-"+student.id;
+  const saved=byId.get(id);
+  return !saved||saved.date!==item.date||saved.courseScheduleVersion!==3;
+ }));
 }
 async function generatePhysicsCoursePlan(silent=false){
  const button=$("generatePhysicsPlanBtn");
