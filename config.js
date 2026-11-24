@@ -8,7 +8,7 @@ export const firebaseConfig = {
   appId: "1:724192963087:web:dffbcd20963a43ab1a117a"
 };
 
-// Профили участников. Для входа Богдана добавим его email после подтверждения.
+// Профили участников и подтверждённые адреса аккаунтов Firebase Authentication.
 export const students = [
   { id: "egor", name: "Егор", initial: "Е", tone: "blue" },
   { id: "daniil", name: "Даниил", initial: "Д", tone: "purple" },
