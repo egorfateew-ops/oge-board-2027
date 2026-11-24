@@ -5,6 +5,10 @@ const bobr = (title, url, duration = "") => ({ title, url, duration, source: "О
 
 const videos = {
   formulas: bobr("Как решать уравнения и работать с формулами в физике", "https://bobr.video/watch/329bca4b-577e-48ab-87aa-4d18e570d22a", "15:45"),
+  newton2027: bobr("Динамика: законы Ньютона и силы в природе — теория и разбор", "https://bobr.video/watch/170d4ae0-0939-4a6d-b47b-adefedecdfea", "01:36:32"),
+  momentum2027: bobr("Импульс и закон сохранения импульса — теория и разбор заданий", "https://bobr.video/watch/dc6c3258-06c9-4cbe-8bb8-6c442981ba8a"),
+  overview2027: bobr("Как уничтожить ОГЭ 2027 по физике? — обзор подготовки", "https://bobr.video/watch/3b51446e-e156-4ef1-9a1a-ad06494be1b1", "54:02"),
+  course2027: bobr("Подборка «Летний курс подготовки к ОГЭ 2027 по физике»", "https://bobr.video/channel/492a2fb2-6abc-4fd6-a3c2-ceaff9ff8f53/3b97f632-c43e-4cac-92a2-fafd2035bff0", "Подборка 2027"),
   instruments: bobr("Разбор измерительных приборов и заданий № 5 ФИПИ", "https://bobr.video/watch/ee0d78c0-805c-45cd-a5b0-44a7ad8cc359", "34:00"),
   kinematics: bobr("Вся теория по кинематике для ОГЭ", "https://bobr.video/watch/9f4c25c3-0e37-4fc7-89ff-e697c61179ef", "13:50"),
   mechanics: bobr("Вся механика для ОГЭ по физике", "https://bobr.video/watch/0e5aa4d0-bd82-48d2-ac9a-830aacca90a8", "01:22:26"),
@@ -37,13 +41,13 @@ export const physicsVideos = {
   "phy-motion-graphs": [videos.kinematics],
   "phy-03-acceleration": [videos.kinematics],
   "phy-04-density-forces": [videos.mechanics, videos.densityLab],
-  "phy-05-newton": [videos.newton],
+  "phy-05-newton": [videos.newton2027, videos.newton],
   "phy-friction-elasticity": [videos.newton, videos.frictionLab],
   "phy-pressure-detail": [videos.pressure],
   "phy-06-pressure-archimedes": [videos.pressure, videos.archimedesLab],
   "phy-hydrostatics": [videos.pressure, videos.archimedesLab],
   "phy-07-work-energy": [videos.work],
-  "phy-08-machines-impulse": [videos.blocks, videos.momentum],
+  "phy-08-machines-impulse": [videos.blocks, videos.momentum2027, videos.momentum],
   "phy-energy-conservation": [videos.energy],
   "phy-09-oscillations": [videos.waves],
   "phy-waves": [videos.waves],
@@ -64,7 +68,7 @@ export const physicsVideos = {
   "phy-16-atom": [videos.nuclear],
   "phy-nuclear-reactions": [videos.nuclear],
   "phy-17-experiment": [videos.archimedesLab, videos.densityLab, videos.frictionLab, videos.resistanceLab],
-  "phy-18-exam-method": [videos.examWriting, videos.demo],
+  "phy-18-exam-method": [videos.overview2027, videos.course2027, videos.examWriting, videos.demo],
   "phy-qualitative-tasks": [videos.mechanics, videos.pressure],
-  "phy-combined-tasks": [videos.demo, videos.examWriting]
+  "phy-combined-tasks": [videos.overview2027, videos.course2027, videos.demo, videos.examWriting]
 };
