@@ -3,6 +3,7 @@ const BOARD_HEIGHT = 1000;
 const BOARD_NAMES = {
   egor: { label: "Егор", title: "Доска Егора" },
   daniil: { label: "Даниил", title: "Доска Даниила" },
+  bogdan: { label: "Богдан", title: "Доска Богдана" },
   shared: { label: "Совместная", title: "Общая доска" }
 };
 const SYMBOLS = ["Δ","ρ","μ","Ω","π","α","β","λ","φ","θ","√","∑","≈","≠","≤","≥","→","⇄","·","×","²","³","₀","₁","ₙ","°","±","∞"];
@@ -115,9 +116,11 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       '<header class="wb-header">',
         '<div class="wb-heading"><span class="eyebrow">PHYSICS WORKSPACE</span><h2>Интерактивная доска</h2><p>Рисуй схемы, строй графики и оформляй решения задач в одном месте.</p></div>',
         '<div class="wb-header-tools">',
-          '<label class="wb-board-select"><span>Рабочая область</span><select data-wb-board><option value="egor">Доска Егора</option><option value="daniil">Доска Даниила</option><option value="shared">Совместная доска</option></select></label>',
+          '<label class="wb-board-select"><span>Рабочая область</span><select data-wb-board><option value="egor">Доска Егора</option><option value="daniil">Доска Даниила</option><option value="bogdan">Доска Богдана</option><option value="shared">Совместная доска</option></select></label>',
           '<span class="wb-save-state" data-wb-save-state><i></i> Подключение…</span>',
+          '<button type="button" class="wb-button" data-wb-action="add-image">＋ Фото задачи</button>',
           '<button type="button" class="wb-button wb-button-primary" data-wb-action="export">↓ PNG</button>',
+          '<input type="file" accept="image/*" data-wb-image-input hidden>',
         '</div>',
       '</header>',
       '<div class="wb-toolbar" role="toolbar" aria-label="Инструменты доски">',
@@ -185,8 +188,10 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   const saveLabel = q("[data-wb-save-state]");
   const noteInput = q("[data-wb-note]");
   const pointDraft = [];
+  const imageCache = new Map();
+  const imageInput = q("[data-wb-image-input]");
   const localKey = id => "oge-whiteboard-v1-" + id;
-  let activeBoard = member && member.id === "daniil" ? "daniil" : "egor";
+  let activeBoard = member && BOARD_NAMES[member.id] ? member.id : "egor";
   let title = BOARD_NAMES[activeBoard].title;
   let elements = [];
   let deletedIds = new Set();
@@ -643,6 +648,27 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       } else if (item.shape === "ellipse") {
         context.beginPath(); context.ellipse((item.x1 + item.x2) / 2, (item.y1 + item.y2) / 2, Math.max(1, Math.abs(item.x2 - item.x1) / 2), Math.max(1, Math.abs(item.y2 - item.y1) / 2), 0, 0, Math.PI * 2); context.stroke();
       }
+    } else if (item.type === "image") {
+      let image = imageCache.get(item.id);
+      if (!image) {
+        image = new Image();
+        imageCache.set(item.id, image);
+        image.onload = () => { if (!disposed) render(); };
+        image.onerror = () => imageCache.delete(item.id);
+        image.src = item.src;
+      }
+      if (image.complete && image.naturalWidth) {
+        context.drawImage(image, item.x, item.y, item.w, item.h);
+        context.strokeStyle = "#cbd5e1";
+        context.lineWidth = 2;
+        context.strokeRect(item.x, item.y, item.w, item.h);
+      } else {
+        context.fillStyle = "#f1f5f9";
+        context.fillRect(item.x, item.y, item.w, item.h);
+        context.fillStyle = "#64748b";
+        context.font = "600 22px Inter, Arial, sans-serif";
+        context.fillText("Загружаю фото…", item.x + 20, item.y + 34);
+      }
     } else if (item.type === "text") {
       context.fillStyle = item.color || "#25324a";
       context.font = (item.bold ? "700 " : "500 ") + (item.size || 30) + "px Inter, Arial, sans-serif";
@@ -821,14 +847,74 @@ export function mountPhysicsWhiteboard(root, options = {}) {
     const text = window.prompt("Текст или формула для доски:");
     if (text && text.trim()) addObject({ type: "text", x: point.x, y: point.y, text: text.trim().slice(0, 500), color: currentColor, size: 30 });
   }
-  function exportPng() {
+  function loadCanvasImage(item) {
+    return new Promise(resolve => {
+      let image = imageCache.get(item.id);
+      if (image && image.complete) { resolve(image.naturalWidth ? image : null); return; }
+      if (!image) { image = new Image(); imageCache.set(item.id, image); }
+      image.onload = () => resolve(image);
+      image.onerror = () => resolve(null);
+      if (image.src !== item.src) image.src = item.src;
+    });
+  }
+  async function exportPng() {
     try {
+      await Promise.all(elements.filter(item => item.type === "image").map(loadCanvasImage));
+      render();
       const link = document.createElement("a");
       link.download = "physics-board-" + activeBoard + ".png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-      toast("Изображение доски подготовлено.");
+      toast("Доска с фотографиями экспортирована в PNG.");
     } catch (error) { toast("Не удалось экспортировать доску."); }
+  }
+  async function addImageFile(file) {
+    if (!file) return;
+    if (!file.type || !file.type.startsWith("image/")) { toast("Выбери изображение JPG, PNG или HEIC."); return; }
+    if (file.size > 12 * 1024 * 1024) { toast("Фото слишком большое. Максимальный исходный размер — 12 МБ."); return; }
+    const currentImageSize = elements.filter(item => item.type === "image").reduce((sum, item) => sum + String(item.src || "").length, 0);
+    if (currentImageSize >= 460000) { toast("На доске уже много фото. Удали старое изображение перед добавлением нового."); return; }
+    let objectUrl = "";
+    try {
+      objectUrl = URL.createObjectURL(file);
+      const source = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("Не удалось открыть изображение."));
+        img.src = objectUrl;
+      });
+      const maxW = 1200, maxH = 820;
+      let scale = Math.min(1, maxW / source.naturalWidth, maxH / source.naturalHeight);
+      let dataUrl = "";
+      let outWidth = 0, outHeight = 0;
+      for (let attempt = 0; attempt < 7; attempt++) {
+        outWidth = Math.max(1, Math.round(source.naturalWidth * scale));
+        outHeight = Math.max(1, Math.round(source.naturalHeight * scale));
+        const temp = document.createElement("canvas");
+        temp.width = outWidth; temp.height = outHeight;
+        const tempCtx = temp.getContext("2d");
+        tempCtx.fillStyle = "#ffffff";
+        tempCtx.fillRect(0, 0, outWidth, outHeight);
+        tempCtx.drawImage(source, 0, 0, outWidth, outHeight);
+        dataUrl = temp.toDataURL("image/jpeg", Math.max(.42, .68 - attempt * .045));
+        if (dataUrl.length <= 165000) break;
+        scale *= .82;
+      }
+      if (dataUrl.length > 180000) throw new Error("Фото не удалось достаточно сжать. Попробуй снимок меньшего размера.");
+      if (currentImageSize + dataUrl.length > 480000) throw new Error("Общий размер фотографий на доске слишком большой. Удали одно из старых фото.");
+      const displayW = Math.min(780, outWidth);
+      const displayH = Math.min(620, displayW * outHeight / outWidth);
+      const w = displayH < displayW * outHeight / outWidth ? displayH * outWidth / outHeight : displayW;
+      const h = w * outHeight / outWidth;
+      const offset = elements.filter(item => item.type === "image").length * 24;
+      addObject({ type: "image", src: dataUrl, x: Math.max(30, (BOARD_WIDTH - w) / 2 + offset), y: Math.max(30, (BOARD_HEIGHT - h) / 2 + offset), w, h, name: String(file.name || "Фото задачи").slice(0, 80) });
+      setTool("pen");
+      toast("Фото добавлено. Теперь можно писать и рисовать поверх условия.");
+    } catch (error) {
+      toast(error && error.message ? error.message : "Не удалось добавить фото.");
+    } finally {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    }
   }
   function clearBoard() {
     if (!elements.length) return;
@@ -915,6 +1001,7 @@ export function mountPhysicsWhiteboard(root, options = {}) {
       if (name === "redo") redo();
       if (name === "clear") clearBoard();
       if (name === "export") exportPng();
+      if (name === "add-image") { imageInput.click(); return; }
       if (name === "add-note") addNote();
       if (name === "add-function") addFunctionGraph();
       if (name === "add-point") addPoint();
@@ -948,6 +1035,11 @@ export function mountPhysicsWhiteboard(root, options = {}) {
   root.addEventListener("change", event => {
     if (event.target.matches("[data-wb-board]")) switchBoard(event.target.value);
     if (event.target.matches("[data-wb-grid]")) { gridVisible = event.target.checked; render(); }
+    if (event.target.matches("[data-wb-image-input]")) {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = "";
+      if (file) addImageFile(file);
+    }
   });
   const handleGlobalKeydown = event => {
     if (disposed || document.body.dataset.currentTab !== "whiteboard") return;
