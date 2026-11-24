@@ -1895,15 +1895,15 @@ function courseScheduleNeedsUpdate(existingTasks){
 async function generatePhysicsCoursePlan(silent=false){
  const button=$("generatePhysicsPlanBtn");
  if(!silent&&!button)return;
- if(!silent&&!confirm("Перенести весь курс на расписание с 25 ноября 2026 года? Старые карточки будут объединены с новыми: статусы, выполненные отметки, XP и заметки сохранятся, дубликаты исчезнут."))return;
- if(button){button.disabled=true;button.textContent="Переносим и объединяем задания…";}
+ if(!silent&&!confirm("Перенести курс на расписание с 25 ноября 2026 года? Старые стартовые карточки будут сохранены в архиве и убраны из активной доски. Прогресс по новому курсу сохранится."))return;
+ if(button){button.disabled=true;button.textContent="Обновляем календарь…";}
  try{
   const schedule=buildPhysicsCourseSchedule();
   const byDay=new Map(schedule.map(item=>[item.courseWeek+"-"+item.courseDay,item]));
   const currentById=new Map(tasks.map(t=>[t.id,t]));
   const writes=[];
+  const archiveWrites=[];
   const legacyDeletes=[];
-  const statusRank={todo:0,review:1,doing:2,done:3};
   for(const item of schedule){
    for(const student of students){
     const canonicalId="physics-2027-w"+item.courseWeek+"-d"+item.courseDay+"-"+student.id;
@@ -1911,26 +1911,36 @@ async function generatePhysicsCoursePlan(silent=false){
     const canonical=currentById.get(canonicalId);
     const legacy=currentById.get(legacyId);
     const {id:dropCanonicalId,...canonicalData}=canonical||{};
-    const {id:dropLegacyId,...legacyData}=legacy||{};
     const data={
-     ...legacyData,
      ...canonicalData,
      ...item,
      subject:"Физика",
      person:student.name,
-     daily:false,
-     status:[canonical?.status,legacy?.status].filter(Boolean).sort((a,b)=>(statusRank[b]??0)-(statusRank[a]??0))[0]||"todo",
-     createdAt:canonical?.createdAt||legacy?.createdAt||serverTimestamp(),
-     createdBy:canonical?.createdBy||legacy?.createdBy||user.uid
+     daily:false
     };
-    data.completedAt=canonical?.completedAt||legacy?.completedAt||null;
-    data.completedBy=canonical?.completedBy||legacy?.completedBy||null;
+    if(!canonical){
+     data.status="todo";
+     data.createdAt=serverTimestamp();
+     data.createdBy=user.uid;
+     data.completedAt=null;
+     data.completedBy=null;
+    }
     writes.push({id:canonicalId,data});
-    if(legacy)legacyDeletes.push(legacyId);
+    if(legacy){
+     const {id:dropLegacyId,...legacyData}=legacy;
+     archiveWrites.push({
+      id:legacyId,
+      data:{...legacyData,originalId:legacyId,archivedAt:serverTimestamp(),archiveReason:"legacy-physics-course-replaced"}
+     });
+     legacyDeletes.push(legacyId);
+    }
    }
   }
   for(let i=0;i<writes.length;i+=12){
    await Promise.all(writes.slice(i,i+12).map(entry=>setDoc(taskDoc(entry.id),entry.data,{merge:true})));
+  }
+  for(let i=0;i<archiveWrites.length;i+=12){
+   await Promise.all(archiveWrites.slice(i,i+12).map(entry=>setDoc(doc(db,"rooms","oge2027","archivedTasks",entry.id),entry.data,{merge:true})));
   }
   for(let i=0;i<legacyDeletes.length;i+=12){
    await Promise.all(legacyDeletes.slice(i,i+12).map(id=>deleteDoc(taskDoc(id))));
@@ -1944,7 +1954,7 @@ async function generatePhysicsCoursePlan(silent=false){
    if(item)await updateDoc(taskDoc(task.id),{date:item.date,courseVersion:2,courseScheduleVersion:3});
   }
   const first=formatCourseDate(schedule[0].date),last=formatCourseDate(schedule[schedule.length-1].date);
-  toast("Готово: "+writes.length+" заданий по новому графику · "+legacyDeletes.length+" старых дублей объединено · "+first+" — "+last+". Прогресс сохранён.");
+  toast("Календарь обновлён: "+writes.length+" заданий · "+legacyDeletes.length+" старых карточек в архиве · "+first+" — "+last+".");
   renderCalendar();renderBoard();renderDaily();renderStats();
  }catch(err){
   console.error("Ошибка переноса дат курса:",err);
