@@ -3016,3 +3016,31 @@ body[data-theme="dark"] .wb-tips-card{background:var(--soft)}
  .wb-paper-head{padding:9px 10px}
  .wb-title-input{font-size:10px}
 }
+
+/* OGE platform: three learners and embedded lesson resources */
+.students{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.student{min-width:0}
+.avatar.green{background:#24483f;color:#a7f3d0}
+.task-avatar.avatar-bogdan,.task-avatars .avatar-bogdan{background:#245b4b;color:#baf4d5}
+.task-avatars i{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;font-style:normal;font-size:9px;font-weight:850;background:#263f69;color:#a8ceff}
+.task-avatars .avatar-daniil{background:#44346a;color:#dac7ff}
+.task-avatars .avatar-bogdan{background:#245b4b;color:#baf4d5}
+.lesson-videos{display:grid;gap:10px;margin:18px 0 22px;padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.lesson-videos-heading{display:grid;gap:3px}
+.lesson-videos-heading .eyebrow{font-size:9px;letter-spacing:.12em;color:var(--accent);font-weight:850}
+.lesson-videos-heading>b{font-size:13px;color:var(--text)}
+.lesson-video-list{display:grid;gap:7px}
+.lesson-video-card{display:grid;grid-template-columns:36px minmax(0,1fr) 20px;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:11px;background:var(--soft);color:var(--text);text-decoration:none;transition:border-color .15s,background .15s}
+.lesson-video-card:hover{border-color:var(--accent);background:var(--accentSoft)}
+.lesson-video-play{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e94b56;color:white;font-size:13px;padding-left:2px}
+.lesson-video-copy{display:grid;gap:3px;min-width:0}
+.lesson-video-copy>b{font-size:11px;line-height:1.35}
+.lesson-video-copy>small{font-size:9px;color:var(--muted)}
+.lesson-video-open{color:var(--muted);font-size:15px;text-align:center}
+.duel-create-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}
+.duel-create-fields label{min-width:0}
+#duelOpponent{min-width:145px}
+body[data-theme="dark"] .lesson-video-card{background:var(--soft);border-color:var(--line);color:var(--text)}
+body[data-theme="dark"] .lesson-videos{background:var(--surface);border-color:var(--line)}
+@media(max-width:760px){.duel-create-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.duel-create-fields{grid-template-columns:minmax(0,1fr)}}
