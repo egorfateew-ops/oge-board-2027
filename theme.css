@@ -3044,3 +3044,8 @@ body[data-theme="dark"] .lesson-video-card{background:var(--soft);border-color:v
 body[data-theme="dark"] .lesson-videos{background:var(--surface);border-color:var(--line)}
 @media(max-width:760px){.duel-create-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:460px){.duel-create-fields{grid-template-columns:minmax(0,1fr)}}
+
+.avatar.purple{background:#eee8ff;color:#6e55a6}
+.user-chip-avatars i:nth-child(3){background:#d9f0e6;color:#286b50}
+.user-chip-copy b{max-width:190px}
+@media(max-width:760px){.user-chip-copy b{max-width:145px}}
