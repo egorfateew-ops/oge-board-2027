@@ -1880,10 +1880,10 @@ function courseScheduleNeedsUpdate(existingTasks){
  }));
  const legacyNeeds=existingTasks.some(t=>{
   if(t.subject!=="Физика")return false;
-  const match=String(t.id||"").match(/^physics-w(\d+)-d(\d+)-([a-z0-9]+)$/i);
+  const match=String(t.id||"").match(/^physics-w(\\d+)-d(\\d+)-([a-z0-9]+)$/i);
   if(!match)return false;
-  const item=byDay.get(Number(match[1])+"-"+Number(match[2]));
-  return !!item&&(t.date!==item.date||t.courseScheduleVersion!==3);
+  const student=students.find(s=>s.id===match[3]||s.name===t.person);
+  return Boolean(student&&byDay.has(Number(match[1])+"-"+Number(match[2])));
  });
  const mappedNeeds=existingTasks.some(t=>{
   if(t.subject!=="Физика"||!Number.isInteger(Number(t.courseWeek))||!Number.isInteger(Number(t.courseDay)))return false;
@@ -1895,36 +1895,56 @@ function courseScheduleNeedsUpdate(existingTasks){
 async function generatePhysicsCoursePlan(silent=false){
  const button=$("generatePhysicsPlanBtn");
  if(!silent&&!button)return;
- if(!silent&&!confirm("Перенести даты всего курса на новый график с 25 ноября 2026 года? Будут обновлены новые и старые записи для всех трёх учеников. Статусы, выполненные задания и результаты сохранятся."))return;
- if(button){button.disabled=true;button.textContent="Обновляем даты курса…";}
+ if(!silent&&!confirm("Перенести весь курс на расписание с 25 ноября 2026 года? Старые карточки будут объединены с новыми: статусы, выполненные отметки, XP и заметки сохранятся, дубликаты исчезнут."))return;
+ if(button){button.disabled=true;button.textContent="Переносим и объединяем задания…";}
  try{
   const schedule=buildPhysicsCourseSchedule();
   const byDay=new Map(schedule.map(item=>[item.courseWeek+"-"+item.courseDay,item]));
-  const writes=new Map();
-  schedule.forEach(item=>students.forEach(student=>{
-   const id="physics-2027-w"+item.courseWeek+"-d"+item.courseDay+"-"+student.id;
-   const existing=tasks.find(t=>t.id===id);
-   const data={...item,subject:"Физика",person:student.name,daily:false};
-   if(!existing)Object.assign(data,{status:"todo",createdAt:serverTimestamp(),createdBy:user.uid,completedAt:null,completedBy:null});
-   writes.set(id,{id,data});
-  }));
-  tasks.forEach(task=>{
-   if(task.subject!=="Физика")return;
-   const id=String(task.id||"");
-   const legacy=id.match(/^physics-w(\d+)-d(\d+)-([a-z0-9]+)$/i);
-   const week=legacy?Number(legacy[1]):Number(task.courseWeek);
-   const day=legacy?Number(legacy[2]):Number(task.courseDay);
-   if(!Number.isInteger(week)||!Number.isInteger(day))return;
-   const item=byDay.get(week+"-"+day);
-   if(!item)return;
-   writes.set(id,{id,data:{date:item.date,courseWeek:week,courseDay:day,courseVersion:2,courseScheduleVersion:3}});
+  const currentById=new Map(tasks.map(t=>[t.id,t]));
+  const writes=[];
+  const legacyDeletes=[];
+  const statusRank={todo:0,review:1,doing:2,done:3};
+  for(const item of schedule){
+   for(const student of students){
+    const canonicalId="physics-2027-w"+item.courseWeek+"-d"+item.courseDay+"-"+student.id;
+    const legacyId="physics-w"+item.courseWeek+"-d"+item.courseDay+"-"+student.id;
+    const canonical=currentById.get(canonicalId);
+    const legacy=currentById.get(legacyId);
+    const {id:dropCanonicalId,...canonicalData}=canonical||{};
+    const {id:dropLegacyId,...legacyData}=legacy||{};
+    const data={
+     ...legacyData,
+     ...canonicalData,
+     ...item,
+     subject:"Физика",
+     person:student.name,
+     daily:false,
+     status:[canonical?.status,legacy?.status].filter(Boolean).sort((a,b)=>(statusRank[b]??0)-(statusRank[a]??0))[0]||"todo",
+     createdAt:canonical?.createdAt||legacy?.createdAt||serverTimestamp(),
+     createdBy:canonical?.createdBy||legacy?.createdBy||user.uid
+    };
+    data.completedAt=canonical?.completedAt||legacy?.completedAt||null;
+    data.completedBy=canonical?.completedBy||legacy?.completedBy||null;
+    writes.push({id:canonicalId,data});
+    if(legacy)legacyDeletes.push(legacyId);
+   }
+  }
+  for(let i=0;i<writes.length;i+=12){
+   await Promise.all(writes.slice(i,i+12).map(entry=>setDoc(taskDoc(entry.id),entry.data,{merge:true})));
+  }
+  for(let i=0;i<legacyDeletes.length;i+=12){
+   await Promise.all(legacyDeletes.slice(i,i+12).map(id=>deleteDoc(taskDoc(id))));
+  }
+  const extraLegacy=tasks.filter(t=>{
+   if(t.subject!=="Физика"||String(t.id||"").startsWith("physics-w"))return false;
+   return Number.isInteger(Number(t.courseWeek))&&Number.isInteger(Number(t.courseDay));
   });
-  const entries=[...writes.values()];
-  for(let i=0;i<entries.length;i+=12){
-   await Promise.all(entries.slice(i,i+12).map(entry=>setDoc(taskDoc(entry.id),entry.data,{merge:true})));
+  for(const task of extraLegacy){
+   const item=byDay.get(Number(task.courseWeek)+"-"+Number(task.courseDay));
+   if(item)await updateDoc(taskDoc(task.id),{date:item.date,courseVersion:2,courseScheduleVersion:3});
   }
   const first=formatCourseDate(schedule[0].date),last=formatCourseDate(schedule[schedule.length-1].date);
-  toast("Даты курса обновлены: "+entries.length+" записей · "+first+" — "+last+". Прогресс сохранён.");
+  toast("Готово: "+writes.length+" заданий по новому графику · "+legacyDeletes.length+" старых дублей объединено · "+first+" — "+last+". Прогресс сохранён.");
   renderCalendar();renderBoard();renderDaily();renderStats();
  }catch(err){
   console.error("Ошибка переноса дат курса:",err);
