@@ -1880,7 +1880,7 @@ function courseScheduleNeedsUpdate(existingTasks){
  }));
  const legacyNeeds=existingTasks.some(t=>{
   if(t.subject!=="Физика")return false;
-  const match=String(t.id||"").match(/^physics-w(\\d+)-d(\\d+)-([a-z0-9]+)$/i);
+  const match=String(t.id||"").match(/^physics-w(\d+)-d(\d+)-([a-z0-9]+)$/i);
   if(!match)return false;
   const item=byDay.get(Number(match[1])+"-"+Number(match[2]));
   return !!item&&(t.date!==item.date||t.courseScheduleVersion!==3);
@@ -1911,7 +1911,7 @@ async function generatePhysicsCoursePlan(silent=false){
   tasks.forEach(task=>{
    if(task.subject!=="Физика")return;
    const id=String(task.id||"");
-   const legacy=id.match(/^physics-w(\\d+)-d(\\d+)-([a-z0-9]+)$/i);
+   const legacy=id.match(/^physics-w(\d+)-d(\d+)-([a-z0-9]+)$/i);
    const week=legacy?Number(legacy[1]):Number(task.courseWeek);
    const day=legacy?Number(legacy[2]):Number(task.courseDay);
    if(!Number.isInteger(week)||!Number.isInteger(day))return;
