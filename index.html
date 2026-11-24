@@ -611,7 +611,7 @@ function showApp(){ $('auth').classList.add('hidden');$('app').classList.remove(
 
 let studyWeekIndex=0,studyLessonIndex=0,completedLessons=new Set(),practiceResults={},stopProgress=null;
 let studyNotes={},activeSubjectName="",activeTopicId="";
-let calendarMonth=(()=>{const d=dateFromKey(courseStartDate());return new Date(d.getFullYear(),d.getMonth(),1)})(),calendarSelectedDate=courseStartDate();
+let calendarMonth=(()=>{const d=dateFromKey(calendarInitialDate());return new Date(d.getFullYear(),d.getMonth(),1)})(),calendarSelectedDate=calendarInitialDate();
 let testSession=null,testTimerHandle=null,testSecondsLeft=0,testHistory=[],testQuestionIndex=0;
 let fullExamSession=null,fullExamTimerHandle=null,fullExamSecondsLeft=0,fullExamQuestionIndex=0;
 const testResultsCol=()=>collection(db,"rooms","oge2027","testResults");
@@ -709,7 +709,8 @@ async function saveSubjectNote(){
 }
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function dateFromKey(key){const p=key.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])}
-function courseStartDate(){const d=dateFromKey(today());d.setDate(d.getDate()+1);return dateKey(d)}
+function courseStartDate(){return "2026-11-25"}
+function calendarInitialDate(){return today()<courseStartDate()?courseStartDate():today()}
 function isCourseRestDay(key){
  const start=dateFromKey(courseStartDate()),date=dateFromKey(key);
  const offset=Math.round((date-start)/86400000);
